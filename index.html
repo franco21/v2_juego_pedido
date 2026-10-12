@@ -82,10 +82,12 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 @keyframes sube{30%{transform:scale(1.25);color:#fff3a0}}
 #tPts.baja .grande{animation:baja .45s ease-out}
 @keyframes baja{30%{transform:scale(1.2);color:#ff5a4a}}
-.resumen{display:flex;flex-direction:column;gap:8px;width:min(100%,520px)}
+.resumen{display:flex;flex-direction:column;gap:6px;width:min(100%,520px)}
 .resumen .fila{justify-content:center}
-.resumen .tarjeta{min-width:0;flex:1;align-items:center;padding:8px 12px}
-.resumen .tarjeta .grande{font-size:clamp(24px,5.5vw,52px)}
+.resumen .tarjeta{min-width:0;flex:1;align-items:center;padding:3px 10px}
+.resumen .tarjeta .grande{font-size:clamp(16px,2.6vw,22px)}
+.datos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;font-size:clamp(11px,1.6vw,15px);color:var(--cal);text-align:left}
+.datos b{color:var(--sol)}
 .desglose{display:flex;height:16px;border:2px solid #3a3352;background:#0b0a12;overflow:hidden}
 .desglose i{display:block;height:100%}
 .leyenda{display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:center;font-size:clamp(9px,1.3vw,13px);color:var(--chapa)}
@@ -119,6 +121,7 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .tactil button{pointer-events:auto;font-family:var(--display);font-size:clamp(20px,6vmin,34px);width:clamp(58px,19vmin,104px);height:clamp(58px,19vmin,104px);border-radius:50%;border:3px solid #f4ecdfaa;background:#2e2748a6;color:var(--cal);touch-action:none;-webkit-tap-highlight-color:transparent;padding:0;opacity:.82}
 .tactil .grande{width:clamp(72px,25vmin,128px);height:clamp(72px,25vmin,128px);font-size:clamp(26px,8vmin,44px);background:#c8553dcc}
 .tactil .chico{width:clamp(46px,14vmin,78px);height:clamp(46px,14vmin,78px)}
+.tactil .col{display:flex;flex-direction:column;gap:clamp(8px,2.4vmin,20px);align-items:center}
 .tactil button.on{background:var(--ladrillo);opacity:1;transform:scale(.93)}
 body.touch .tactil{display:flex}
 .girar{display:none;position:fixed;inset:0;z-index:20;background:var(--noche);color:var(--cal);font-family:var(--display);font-size:clamp(18px,5vw,28px);align-items:center;justify-content:center;text-align:center;padding:24px;flex-direction:column;gap:12px}
@@ -130,7 +133,7 @@ body.touch .ayuda,body.touch .solo-teclado,body.touch #estacionHud{display:none}
 body.touch .mute{padding:6px 12px;font-size:14px}
 body.touch .dif,body.touch .ped{padding:8px 14px;min-height:40px}
 body.touch button.btn{padding:10px 22px}
-body.touch #numPedido{display:none}
+body.touch #numPedido,body.touch #pausar{display:none}
 body.touch .hud{gap:4px 10px;padding:6px 10px}
 @media (max-height:560px){
   .capa{gap:6px;padding:8px 12px 8px}
@@ -162,6 +165,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <button class="mute" id="pausar" title="Pausa (P)" aria-label="Pausa">⏸</button>
     <button class="mute" id="salir" title="Volver a elegir escenario (Esc)">⟵ Escenarios</button>
     <button class="mute" id="sonido" aria-pressed="false">🔊 Sonido</button>
+    <button class="mute btnPantalla" id="pantalla" title="Pantalla completa (F)" aria-label="Pantalla completa">⛶</button>
   </div>
 
   <div class="reloj" id="reloj" hidden>
@@ -184,10 +188,11 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
   <div class="pista" id="pista" hidden aria-live="polite"></div>
   <div class="tactil" id="tactil" hidden>
     <div class="mov" id="padMov"><button data-k="izq" aria-label="Izquierda">◀</button><button data-k="der" aria-label="Derecha">▶</button></div>
-    <div class="acc"><button class="chico" data-k="charly" aria-label="Charly tira un hueso">🦴</button><button class="grande" data-k="salto" aria-label="Saltar">▲</button></div>
+    <div class="acc"><div class="col"><button class="chico" id="pausarT" aria-label="Pausa">⏸</button><button class="chico" data-k="charly" aria-label="Charly tira un hueso">🦴</button></div><button class="grande" data-k="salto" aria-label="Saltar">▲</button></div>
   </div>
 
   <div class="capa" id="inicio">
+    <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
     <h1>Pedido en Camino</h1>
     <p>Seis lugares del país, cinco pedidos en cada uno. Sumá ★ para abrir el escenario siguiente: una por entregar, otra por ganar la propina y otra por pisar enemigos.</p>
     <div class="dificultad" id="dificultad" role="group" aria-label="Dificultad"></div>
@@ -207,7 +212,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
   <div class="capa" id="fin" hidden>
     <h2 id="finTitulo"></h2>
     <div class="resumen" id="resumen" hidden></div>
-    <p id="finTexto"></p>
+    <ul class="datos" id="finTexto"></ul>
     <div class="botones"><button class="btn" id="sig">Siguiente pedido</button><button class="btn" id="otra">Reintentar</button><button class="btn sec" id="menu">Elegir escenario</button></div>
   </div>
 </div>
@@ -234,7 +239,7 @@ function prng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
 const NIVELES=[
  {id:'conurbano',nombre:'Conurbano bonaerense',lugar:'Provincia de Buenos Aires',
   ticket:'PEDIDO #0347 · 1 docena de empanadas<br>Destino: Calle 9 de Julio 1234 · Pagó en efectivo',
-  texto:'Cruzá el barrio saltando pozos. Los perros sueltos te persiguen y a los chorros y motochorros les pisás la cabeza antes de que te afanen el pedido.',
+  texto:'Cruzá el barrio saltando pozos. Pisá a los chorros y esquivá a los perros.',
   frio:'Las empanadas llegaron frías y el cliente canceló.',
   item:'medialuna',icono:'🥐',unidad:'cuadras',div:190,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
@@ -247,7 +252,7 @@ const NIVELES=[
   caja:['kiosco','conte','bondi','conte'],flota:'chapa',seed:1201},
  {id:'iguazu',nombre:'Cataratas del Iguazú',lugar:'Puerto Iguazú, Misiones',
   ticket:'PEDIDO #0412 · 12 chipá y un tereré bien frío<br>Destino: Puesto de guardaparques, Garganta del Diablo',
-  texto:'Pasarelas, tierra colorada y el río abajo. Los coatíes huelen los chipá y te persiguen, los monos caí te quieren manotear y los tucanes vuelan bajito.',
+  texto:'Pasarelas y río abajo. Coatíes y monos te acosan; los tucanes vuelan bajito.',
   frio:'Los chipá se pusieron duros y el tereré se calentó.',
   item:'chipa',icono:'🥯',unidad:'metros',div:4,
   skin:{perro:'coati',chorro:'mono',moto:'tucan'},
@@ -258,7 +263,7 @@ const NIVELES=[
   seed:4412,pedidos:['12 chipá y un tereré · Puesto de guardaparques','Sopa paraguaya · Estación Cataratas','Chipá guazú y mbejú · Mirador Salto Bossetti','Reviro con mandioca · Hotel en la selva','Pacú a la parrilla para 4 · Garganta del Diablo'],clientes:['Guardaparque Ramón','Lucía','Don Benítez','Tamara','Capitán Sosa'],caja:'roca',flota:'pasarela',clima:'mariposas'},
  {id:'quebrada',nombre:'Quebrada de Humahuaca',lugar:'Purmamarca, Jujuy',
   ticket:'PEDIDO #0458 · 6 empanadas salteñas y 2 humitas<br>Destino: Peña en Purmamarca',
-  texto:'Al pie del Cerro de los Siete Colores. Las llamas te corren, los zorros grises se hacen los vivos y los remolinos de tierra cruzan el camino.',
+  texto:'Al pie del Cerro de los Siete Colores. Llamas, zorros y remolinos de tierra.',
   frio:'Las humitas se enfriaron y la peña ya cerró.',
   item:'empanada',icono:'🥟',unidad:'metros',div:4,
   skin:{perro:'llama',chorro:'zorrog',moto:'remolino'},
@@ -269,7 +274,7 @@ const NIVELES=[
   seed:5813,pedidos:['6 empanadas salteñas y 2 humitas · Peña en Purmamarca','Tamales para 4 · Plaza de Purmamarca','Locro y tortillas · Hospedaje Los Colores','Guiso de quinoa · Comedor La Pachamama','Picante de pollo para la peña · Tilcara'],clientes:['Doña Juana','Wayra','Don Cruz','Nina','El Coya Ramos'],caja:'adobe',flota:'cardon',clima:null},
  {id:'mendoza',nombre:'Viñedos de Mendoza',lugar:'Luján de Cuyo, Mendoza',
   ticket:'PEDIDO #0503 · Tomaticán y 1 docena de empanadas<br>Destino: Bodega en Luján de Cuyo',
-  texto:'Entre hileras de malbec, con los Andes nevados atrás. Ojo con las acequias, los perros de finca, los ladrones de uva y el tractor de la vendimia.',
+  texto:'Entre viñas, con los Andes de fondo. Ojo con las acequias y el tractor.',
   frio:'El tomaticán se enfrió y en la bodega ya brindaron sin vos.',
   item:'uva',icono:'🍇',unidad:'metros',div:4,
   skin:{perro:'perro',chorro:'ladronS',moto:'tractor'},
@@ -280,7 +285,7 @@ const NIVELES=[
   seed:6029,pedidos:['Tomaticán y 1 docena de empanadas · Bodega en Luján','Sopaipillas con mate · Finca Don Pedro','Chivito al horno · Bodega Los Álamos','Picada para la degustación · Chacras de Coria','Cena de la Vendimia para 20 · Teatro Griego'],clientes:['Enóloga Paula','Don Pedro','Sofi','Martín de la bodega','La Reina de la Vendimia'],caja:'barrica',flota:'tabla',clima:null},
  {id:'glaciar',nombre:'Glaciar Perito Moreno',lugar:'El Calafate, Santa Cruz',
   ticket:'PEDIDO #0577 · 6 alfajores de calafate y chocolate caliente<br>Destino: Refugio frente al glaciar',
-  texto:'Nieve, viento y placas de hielo que patinan. El zorro colorado te sigue, hay ladrones abrigados y bolas de nieve que bajan rodando.',
+  texto:'Nieve, viento y hielo que patina. Zorros, ladrones y bolas de nieve.',
   frio:'El chocolate se congeló antes de llegar.',
   item:'alfajor',icono:'🍫',unidad:'metros',div:4,
   skin:{perro:'zorroc',chorro:'ladronG',moto:'bola'},
@@ -291,7 +296,7 @@ const NIVELES=[
   seed:7741,pedidos:['6 alfajores de calafate · Refugio frente al glaciar','Chocolate caliente para 4 · Pasarelas','Cordero patagónico · Casa de té','Trucha ahumada · Mirador Principal','Cena para el grupo de trekking · Base del glaciar'],clientes:['Guía Ezequiel','Ana','Don Klaus','Malena','Grupo de trekking'],caja:'hielo',flota:'tabla',clima:'nieve',extra:10},
  {id:'boca',nombre:'La Boca, Caminito',lugar:'Ciudad de Buenos Aires',
   ticket:'PEDIDO #0621 · 1 fugazzeta y 4 porciones de fainá<br>Destino: Conventillo en Caminito',
-  texto:'Chapas de colores, adoquines y tango en cada esquina. Juntá las estrellas azul y oro del barrio. Ojo con los perros del puerto, los ladrones con boina y los motochorros.',
+  texto:'Chapas de colores y adoquines. Juntá las estrellas azul y oro; ojo con los motochorros.',
   frio:'La fugazzeta llegó fría. En La Boca eso no se perdona.',
   item:'xeneize',icono:'⭐',unidad:'cuadras',div:190,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
@@ -301,7 +306,7 @@ const NIVELES=[
   destino:{pared:'#f2c14e',techo:'#c0392b',puerta:'#1d4e89',rotulo:'CAMINITO',chapa:true},
   seed:8833,pedidos:['1 fugazzeta y 4 de fainá · Conventillo en Caminito','Sorrentinos con tuco · Cantina Don Nicola','Choripán para 6 · Afuera de la cancha','Pizza de muzza y moscato · Pasaje Caminito','Banquete para el show de tango · Vuelta de Rocha'],clientes:['Tita','El Pibe','Doña Carmela','Gardelito','La Milonguera'],caja:'conte',flota:'chapa',clima:null},
  {id:'apagon',nombre:'Apagón de Santa Rosa',lugar:'Quilmes, Buenos Aires',
-  texto:'Se largó la tormenta de Santa Rosa y un rayo dejó sin luz a todo el barrio. Sin la linterna no ves nada: te alumbra siempre hacia donde mirás. Juntá ⭐ para las pilas y aprovechá cada relámpago para ver el camino.',
+  texto:'Un rayo dejó el barrio sin luz. Alumbrá con la linterna y juntá ⭐ para las pilas.',
   frio:'Las tortas fritas se enfriaron. Con esta lluvia, imperdonable.',
   item:'tortafrita',icono:'🫓',unidad:'cuadras',div:190,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
@@ -509,6 +514,7 @@ const mapa={KeyC:'charly',ArrowLeft:'izq',KeyA:'izq',ArrowRight:'der',KeyD:'der'
 addEventListener('keydown',e=>{
   if(mapa[e.code]&&estado==='juego'){tecla[mapa[e.code]]=true;e.preventDefault();}
   if(e.code==='KeyP')alternarPausa();
+  if(e.code==='KeyF')pantallaCompleta();
   if(e.code==='KeyM'){ponerMudo(!mudo);}
   if(e.code==='Escape'&&(estado==='juego'||estado==='brief'||estado==='fin')){e.preventDefault();salirAlMenu();}
   if(e.code==='Enter'&&estado==='brief'){e.preventDefault();arrancar();}
@@ -522,7 +528,7 @@ addEventListener('keyup',e=>{if(mapa[e.code])tecla[mapa[e.code]]=false;});
   pad.addEventListener('pointermove',e=>{if(e.pointerId===padId)dir(e.clientX);});
   const soltar=e=>{if(e.pointerId!==padId)return;padId=null;tecla.izq=tecla.der=false;pb.forEach(b=>b.classList.remove('on'));};
   pad.addEventListener('pointerup',soltar);pad.addEventListener('pointercancel',soltar);pad.addEventListener('lostpointercapture',soltar);
-  document.querySelectorAll('#tactil .acc button').forEach(b=>{
+  document.querySelectorAll('#tactil .acc button[data-k]').forEach(b=>{
     const k=b.dataset.k;
     b.addEventListener('pointerdown',e=>{e.preventDefault();try{b.setPointerCapture(e.pointerId);}catch(_){}tecla[k]=true;b.classList.add('on');vib(k==='salto'?8:12);});
     const off=()=>{tecla[k]=false;b.classList.remove('on');};
@@ -555,13 +561,12 @@ function abrirBrief(i,pi){
   $('pedidos').querySelectorAll('.ped').forEach(b=>b.onclick=()=>abrirBrief(NI,+b.dataset.k));
   const rec=leerRecord(claveRec()),seg=segundosPedido();
   $('bTicket').innerHTML=`PEDIDO #${NI+1}${PI+1}${(NI*7+PI*3)%10}${(NI+PI*5)%10} · ${DF().icono} ${DF().nombre}<br>${N.pedidos[PI]}<br>Cliente: ${N.clientes[PI]} · Tiempo: ${fmt(seg).slice(0,-2)} · ${DF().vidas} ${DF().vidas>1?'vidas':'vida'}<br>${ESTACIONES[EST].icono} ${ESTACIONES[EST].nombre}${esNoche()?(N.noche?' · 🌙 Noche de apagón':' · 🌙 A mitad de camino se hace de noche'):''}`+(rec?` · Récord ${rec.toLocaleString('es-AR')}`:'')+`<br>★ entregar · ★ propina (llegá en ${fmt(TOT*0.55/60).slice(0,-2)}) · ★ pisá ${retoMeta} enemigo${retoMeta>1?'s':''}`;
-  const extra=[' En este primer pedido te vamos guiando.',' Al pasar la mitad del camino cae un rayo y se hace de noche: la linterna te alumbra siempre hacia donde mirás. Juntá estrellas para las pilas. Aparecen charcos y barro.',' Desde acá sopla el viento y aparecen enemigos que vienen de frente.',' Otra vez se hace de noche a mitad de camino, más largo y con viento. Hay ladrones en los techos que tiran macetas: Charly les tira huesos con la C.',' El más largo y con el reloj más justo. Más techos con ladrones: Charly te cubre a huesazos.'][PI];
-  $('bTexto').textContent=N.texto+extra+' La tierra se derrumba detrás tuyo: no te frenes. El camino no es parejo: hay túneles, cerros, viaductos y pilas de cajas que tenés que trepar para pasar.'+(PI>0?' Algunos pozos son demasiado anchos para saltarlos: esperá la plataforma móvil en el borde, subite y bajá del otro lado.':'')+' Cuidado con los cables sueltos de los postes: si te tocan, perdés puntos.';
+  const extra=[' Te vamos guiando.',' A mitad de camino cae un rayo y se hace de noche.',' Sopla el viento.',' Otra noche, con ladrones en los techos: Charly los espanta.',' El más largo y con el reloj más justo.'][PI];
+  $('bTexto').textContent=N.texto+extra+(plataformas.some(p=>p.t==='movil')?' Pozo ancho: usá la plataforma móvil.':'');
   mostrar('brief');$('jugar').focus();
 }
 function arrancar(){
   audioInit();if(AC)AC.resume();nuevaPartida();ambienteNivel(N.id);estado='juego';pausa=false;$('pausar').textContent='⏸';mostrar(null);
-  if(esTouch()&&!document.fullscreenElement&&document.documentElement.requestFullscreen){try{document.documentElement.requestFullscreen({navigationUI:'hide'}).then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})).catch(()=>{});}catch(_){}}
   $('hud').hidden=false;$('reloj').hidden=false;$('izq').hidden=false;ptsPrev=-1;if(hayNoche)sfx.click();$('icono').textContent=N.icono;$('numPedido').textContent=`Pedido ${PI+1}/5`;$('estacionHud').textContent=ESTACIONES[EST].icono+' '+ESTACIONES[EST].nombre;hudPrev='';$('juego').focus();
 }
 $('jugar').onclick=arrancar;$('otra').onclick=arrancar;$('volver').onclick=abrirMenu;$('menu').onclick=abrirMenu;
@@ -574,8 +579,13 @@ function salirAlMenu(){
 }
 $('salir').onclick=salirAlMenu;
 $('sonido').onclick=()=>{ponerMudo(!mudo);$('juego').focus();};
-function alternarPausa(){if(estado!=='juego')return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();$('pausar').textContent=pausa?'▶':'⏸';$('pausar').setAttribute('aria-label',pausa?'Seguir':'Pausa');}
+function alternarPausa(){if(estado!=='juego')return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();for(const id of ['pausar','pausarT']){$(id).textContent=pausa?'▶':'⏸';$(id).setAttribute('aria-label',pausa?'Seguir':'Pausa');}}
 $('pausar').onclick=()=>{alternarPausa();$('juego').focus();};
+$('pausarT').addEventListener('click',alternarPausa);
+// pantalla completa (en iPhone el navegador no la permite: ahí el botón se oculta)
+function pantallaCompleta(){const d=document,el=d.documentElement;if(d.fullscreenElement){d.exitFullscreen&&d.exitFullscreen();}else if(el.requestFullscreen){el.requestFullscreen({navigationUI:'hide'}).then(()=>{try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{});}catch(_){}}).catch(()=>{});}}
+document.querySelectorAll('.btnPantalla').forEach(b=>{if(!document.documentElement.requestFullscreen)b.hidden=true;b.onclick=()=>{pantallaCompleta();$('juego').focus();};});
+document.addEventListener('fullscreenchange',()=>document.querySelectorAll('.btnPantalla').forEach(b=>b.textContent=document.fullscreenElement?'⤡':'⛶'));
 cv.addEventListener('pointerdown',()=>{if(pausa&&estado==='juego')alternarPausa();});
 // el juego se pausa solo si se pierde el foco o si se gira el celular a vertical
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&estado==='juego'&&!pausa)alternarPausa();});
@@ -599,15 +609,17 @@ function terminar(gano,motivo){
     const partes=[['Rapidez',bono,'#f2a65a'],['Comida',cuentaMedias*10,'#7fb069'],['Pisotones',pisotones*PTS_PISO,'#3fa7d6'],['Huesos de Charly',huesazos*PTS_HUESO,'#8fd0e8'],['Vidas',vidas*200,'#e47fb0'],['Propina',ptsProp,'#f2c14e']].filter(x=>x[1]>0);
     const sp=partes.reduce((a,x)=>a+x[1],0)||1;
     $('resumen').innerHTML=`<div class="estrellas"><span class="on">★ Entregado</span><span class="${conProp?'on':''}">★ Propina</span><span class="${retoOk?'on':''}">★ Pisaste ${Math.min(pisotones,retoMeta)}/${retoMeta}</span></div><div class="fila">
-      <div class="tarjeta" id="rProp"><span class="lbl">💸 Propina de ${N.clientes[PI]}</span><span class="grande" style="color:${conProp?'#f2c14e':'var(--chapa)'}">${conProp?'$'+ar(prop):'Sin propina'}</span><span class="sub">${conProp?'+'+ar(ptsProp)+' puntos':'había que llegar en '+fmt(objetivo/60).slice(0,-2)}</span></div>
+      <div class="tarjeta" id="rProp"><span class="lbl">💸 Propina de ${N.clientes[PI]}</span><span class="grande" style="color:${conProp?'#f2c14e':'var(--chapa)'}${conProp?'':';font-size:clamp(11px,1.6vw,14px)'}">${conProp?'$'+ar(prop):'Sin propina'}</span><span class="sub">${conProp?'+'+ar(ptsProp)+' puntos':'había que llegar en '+fmt(objetivo/60).slice(0,-2)}</span></div>
       <div class="tarjeta"><span class="lbl">⭐ Puntos</span><span class="grande" style="color:var(--sol)">${ar(total)}</span><span class="sub">${total>record?'¡Nuevo récord!':'Récord: '+ar(record)}</span></div></div>
       <div class="desglose" role="img" aria-label="Desglose de puntos">${partes.map(([n,v,c])=>`<i style="width:${(v/sp*100).toFixed(1)}%;background:${c}" title="${n}: ${ar(v)}"></i>`).join('')}</div>
       <div class="leyenda">${partes.map(([n,v,c])=>`<span style="--c:${c}">${n} ${ar(v)}</span>`).join('')}${penal>0?`<span style="--c:#e04b4b">Cables −${ar(penal)}</span>`:''}</div>`;
-    $('finTexto').textContent=`Llegaste en ${fmt(t/60)} con ${fmt(seg)} de sobra. ★ ${estrellasEscenario(NI)}/15 en este escenario.`+(nuevo?' ¡Escenario nuevo desbloqueado!':'')+(hayProx&&!abiertoAhora?` Para abrir el siguiente necesitás ${EST_REQ}★: mejorá tus pedidos.`:'');
+    const lin=[`⏱ Llegaste en <b>${fmt(t/60)}</b>`,`⏳ Te sobraron <b>${fmt(seg)}</b>`,`★ <b>${estrellasEscenario(NI)}/15</b> estrellas en este escenario`];
+    if(nuevo)lin.push('🔓 <b>¡Escenario nuevo desbloqueado!</b>');else if(hayProx&&!abiertoAhora)lin.push(`🔒 Para abrir el siguiente necesitás <b>${EST_REQ}★</b> (te faltan ${EST_REQ-estrellasEscenario(NI)})`);
+    $('finTexto').innerHTML=lin.map(x=>`<li>${x}</li>`).join('');
     ($('sig').hidden?$('menu'):$('sig')).focus();
   }else{
     $('finTitulo').textContent=motivo==='frio'?'Se te acabó el tiempo':'Te quedaste sin pedido';
-    $('finTexto').textContent=motivo==='frio'?N.frio+' La próxima, menos vueltas.':'El pedido no llegó. Volvé a buscarlo y arrancá de nuevo.';
+    $('finTexto').innerHTML=`<li>${motivo==='frio'?N.frio+' La próxima, menos vueltas.':'El pedido no llegó. Volvé a buscarlo y arrancá de nuevo.'}</li>`;
     $('otra').focus();
   }
 }
@@ -817,12 +829,17 @@ function perderVida(){
   if(vidas<=0){terminar(false,'vidas');return;}
   reaparecer();
 }
+// punto de reaparición: piso firme con 110 px de piso por delante, lejos de los bordes de los pozos y sin cajas ni plataformas en el lugar
+function puntoSeguro(x0){
+  const ok=x=>suelo.some(([a,w])=>x>=a+30&&x+P.w+110<=a+w)&&!bloques.some(b=>b.x<x+P.w+16&&b.x+b.w>x-16)&&!plataformas.some(q=>q.x<x+P.w+16&&q.x+q.w>x-16);
+  for(let d=0;d<=500;d+=6)if(ok(x0+d))return x0+d;
+  for(let d=6;d<=300&&x0-d>=cam+8;d+=6)if(ok(x0-d))return x0-d;
+  return x0;
+}
 function reaparecer(){
   VAR++;armarLayout();
-  let x=Math.max(P.x,cam+8);
-  if(!suelo.some(([a,w])=>x>=a+4&&x<a+w-20)){const sig=suelo.find(([a])=>a>x);x=sig?sig[0]+10:x;}
+  let x=puntoSeguro(Math.max(P.x,cam+8));
   if(x>FIN-60)x=FIN-60;
-  for(const pl of plataformas)if(pl.y>GY-40&&x+P.w>pl.x&&x<pl.x+pl.w)x=pl.x+pl.w+4;
   P.x=x;P.y=20;P.vx=0;P.vy=0;P.inv=110;P.piso=false;P.barro=0;estrellas=[];
   medias=defMedias.filter(([mx])=>mx>x+20).map(([mx,my])=>({x:mx,y:my,ok:true}));
   crearEnemigos(x);
