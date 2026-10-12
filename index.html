@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Plataformero 2D de delivery a contrarreloj por siete escenarios argentinos.">
+<meta name="description" content="Plataformero 2D de delivery a contrarreloj por nueve escenarios argentinos.">
 <meta name="theme-color" content="#1c1830">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>html,body{margin:0}body{font:14px system-ui,sans-serif}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}</style>
@@ -226,7 +226,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
     <div style="position:absolute;top:8px;left:8px;display:flex;gap:6px"><button class="mute" id="aTitulo">‹ Inicio</button><button class="mute" id="verGuia">❓ Cómo se juega</button></div>
     <h1>Pedido en Camino</h1>
-    <p>Seis lugares del país, cinco pedidos en cada uno. Sumá ★ para abrir el escenario siguiente: una por entregar, otra por ganar la propina y otra por pisar enemigos.</p>
+    <p>Nueve lugares del país, cinco pedidos en cada uno. Sumá ★ para abrir el escenario siguiente: una por entregar, otra por ganar la propina y otra por pisar enemigos.</p>
     <div class="dificultad" id="dificultad" role="group" aria-label="Dificultad"></div>
     <div class="niveles" id="niveles"></div>
     <small class="solo-teclado">← → moverte · Espacio saltar · C huesos de Charly · P pausa · M sonido · Esc volver a escenarios</small>
@@ -350,15 +350,37 @@ const NIVELES=[
   seed:7741,pedidos:['6 alfajores de calafate · Refugio frente al glaciar','Chocolate caliente para 4 · Pasarelas','Cordero patagónico · Casa de té','Trucha ahumada · Mirador Principal','Cena para el grupo de trekking · Base del glaciar'],clientes:['Guía Ezequiel','Ana','Don Klaus','Malena','Grupo de trekking'],caja:'hielo',flota:'tabla',clima:'nieve',extra:10},
  {id:'boca',nombre:'La Boca, Caminito',lugar:'Ciudad de Buenos Aires',
   ticket:'PEDIDO #0621 · 1 fugazzeta y 4 porciones de fainá<br>Destino: Conventillo en Caminito',
-  texto:'Chapas de colores y adoquines. Juntá las estrellas azul y oro; ojo con los motochorros.',
+  texto:'Chapas de colores y adoquines, con la Bombonera de fondo. Cruzá el Riachuelo por el puente de hierro. Juntá las estrellas azul y oro; ojo con los motochorros.',
   frio:'La fugazzeta llegó fría. En La Boca eso no se perdona.',
-  item:'xeneize',icono:'⭐',unidad:'cuadras',div:190,
+  item:'xeneize',icono:'⭐',unidad:'cuadras',div:190,rio:true,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
   cielo:['#3d8fd6','#7cbbe8','#c9e5f5','#f2e6c9'],
   suelo:{top:'#7d7a76',top2:'#5a5753',tierra:'#4a3b30',speck:'#5d4a3c',junta:'#5f5c58',pozo:'#141414',agua:'#3a4a3a',aguaTop:'#5f6f55',adoquin:true},
   charco:{tipo:'lento',c1:'#4f6f86',c2:'#8fb3c9'},
   destino:{pared:'#f2c14e',techo:'#c0392b',puerta:'#1d4e89',rotulo:'CAMINITO',chapa:true},
   seed:8833,pedidos:['1 fugazzeta y 4 de fainá · Conventillo en Caminito','Sorrentinos con tuco · Cantina Don Nicola','Choripán para 6 · Afuera de la cancha','Pizza de muzza y moscato · Pasaje Caminito','Banquete para el show de tango · Vuelta de Rocha'],clientes:['Tita','El Pibe','Doña Carmela','Gardelito','La Milonguera'],caja:'conte',flota:'chapa',clima:null},
+ {id:'nunez',nombre:'Núñez, el Monumental',lugar:'Ciudad de Buenos Aires',
+  ticket:'PEDIDO #0688 · 1 docena de empanadas y gaseosa<br>Destino: Departamento en Av. del Libertador',
+  texto:'Veredas anchas, plátanos y el Monumental de fondo. Juntá las bandas rojas y blancas; ojo con los motochorros.',
+  frio:'Las empanadas llegaron frías y el partido ya había empezado.',
+  item:'banda',icono:'🔴',unidad:'cuadras',div:190,
+  skin:{perro:'perro',chorro:'ladron',moto:'moto'},
+  cielo:['#3a86d2','#7fb8e6','#c8e2f2','#f4eed6'],
+  suelo:{top:'#a9a59c',top2:'#7a766e',tierra:'#5a4a3c',speck:'#6e5a46',junta:'#8a867d',pozo:'#16121a',agua:'#4a6a7a',aguaTop:'#8fb0bd'},
+  charco:{tipo:'lento',c1:'#5f8aa0',c2:'#a8cddc'},
+  destino:{pared:'#efe6d4',techo:'#b53a3a',puerta:'#8a2a2a',rotulo:'DPTO 4B',reja:true},
+  seed:9241,pedidos:['1 docena de empanadas · Departamento en Av. del Libertador','Choripán y gaseosa · Plaza frente al Monumental','Pizza de muzza y fainá · Calle Vedia','Helado para 6 · Parque Norte','Asado para el banderazo · Estadio Monumental'],clientes:['Doña Elvira','Julián','Marta','Los pibes de la escuelita','La barra del banderazo'],caja:['kiosco','conte','bondi'],flota:'chapa',clima:null},
+ {id:'sanrafael',nombre:'San Rafael, Mendoza',lugar:'San Rafael, Mendoza',
+  ticket:'PEDIDO #0734 · Dulce de leche casero y mate<br>Destino: Finca en San Rafael',
+  texto:'Álamos y viñas con el dique Valle Grande, Arenas del Nihuil y el arco de fondo. Juntá mates y trepá los potes de dulce de leche.',
+  frio:'El mate se enfrió y el dulce de leche se endureció.',
+  item:'mate',icono:'🧉',unidad:'metros',div:4,
+  skin:{perro:'perro',chorro:'ladronS',moto:'tractor'},
+  cielo:['#2f7fd0','#6fb0e4','#bfe0f0','#f6e6c0'],
+  suelo:{top:'#c08a58',top2:'#9a6a40',tierra:'#7a4a2c',speck:'#94603a',junta:'#b0804e',pozo:'#2a1810',agua:'#2fa8b8',aguaTop:'#9fe0e8'},
+  charco:{tipo:'lento',c1:'#2fa8b8',c2:'#9fe0e8',acequia:true},
+  destino:{pared:'#f1e9da',techo:'#b4532e',puerta:'#5a3b22',rotulo:'FINCA'},
+  seed:10453,pedidos:['Dulce de leche casero y mate · Finca en San Rafael','Alfajores de dulce de leche · Dique Valle Grande','Sopaipillas con mate · Arenas del Nihuil','Tabla de quesos y vino · Bodega en Cuadro Nacional','Asado y flan con dulce de leche · Cañón del Atuel'],clientes:['Doña Mirta','Nacho','Tía Delia','Enólogo Bruno','Los guías de rafting'],caja:['adobe','barrica'],flota:'tabla',clima:null},
  {id:'apagon',nombre:'Apagón de Santa Rosa',lugar:'Quilmes, Buenos Aires',
   texto:'Un rayo dejó el barrio sin luz. Alumbrá con la linterna y juntá ⭐ para las pilas.',
   frio:'Las tortas fritas se enfriaron. Con esta lluvia, imperdonable.',
@@ -400,7 +422,7 @@ const claveRec=()=>N.id+'-'+PI+(modo==='normal'?'':'-'+modo);
 function calcularReto(){const n=defEnem.filter(e=>e.tipo==='chorro'||e.tipo==='perro').length+(SKIN[N.skin.moto].pisable?disparos.length:0);return Math.max(1,Math.ceil(n*0.6));}
 function cfgPedido(){
   const k=PI;
-  return{seed:N.seed+k*101+VAR*7919,largo:1650+k*410,dif:Math.min(2.4,k*0.5+NI*0.08),caja:N.caja,flota:N.flota,
+  return{rio:!!N.rio,seed:N.seed+k*101+VAR*7919,largo:1650+k*410,dif:Math.min(2.4,k*0.5+NI*0.08),caja:N.caja,flota:N.flota,
     puentes:k===0?0.5:0.3,colgantes:k===0?0:0.5,roto:k>=2,ruinas:k===0?0.35:0.3,tuneles:k===0?0.7:0.6,techos:k>=3,pEnem:Math.min(0.98,0.35+k*0.15+DF().enem),pSigue:k===0?0:Math.min(0.9,0.35+k*0.1+DF().sigue),motos:k>=2||(modo!=='normal'&&k>=1),barro:k>=1,charcos:k>=1,
     derr:Math.min(1.4,0.6+k*0.16+NI*0.02)*DF().derr,
     cables:k===0?0.7:0.95,cajas:k===0?0.6:0.7,altos:k===0?0:0.5,moviles:k===0?0:DF().moviles,
@@ -444,9 +466,12 @@ function ponerRuta(libre,fin,en,r,cfg){
 function generar(cfg){
   const r=prng(cfg.seed),L=cfg.largo,cola=Math.round(Math.min(1000,L*0.3));
   suelo=[];plataformas=[];charcos=[];barros=[];casasTecho=[];checkpoints=[];defEnem=[];defMedias=[];defBloques=[];cables=[];disparos=[];
-  let x=0,k=0;
+  let x=0,k=0,rioHecho=false;
   while(true){
     let len=k===0?520:300+Math.floor(r()*340);
+    // el Riachuelo: hasta pasar el puente obligatorio, ningún tramo se pasa de la mitad del recorrido
+    const rioPend=cfg.rio&&!rioHecho&&k>0;
+    if(rioPend)len=Math.min(len,Math.max(300,Math.round(L*0.45)-x));
     const ultimo=x+len>L-cola;if(ultimo)len=L-x;
     suelo.push([x,len]);checkpoints.push(x+12);
     if(k===0){for(let j=0;j<3;j++)defMedias.push([200+j*14,164]);pilaCajas(380,[1,2,3,2,1]);}
@@ -492,6 +517,14 @@ function generar(cfg){
       }
     }
     if(ultimo)break;
+    // el Riachuelo: puente de hierro largo que hay que cruzar, con el agua abajo
+    if(rioPend&&x+len>=L*0.4){
+      x+=len;const gw=300;
+      plataformas.push({x,y:GY,w:gw,h:6,t:'puente',ini:true,fin:true,rio:true});
+      for(let j=1;j<=6;j++)defMedias.push([x+j*gw/7,GY-12]);
+      defMedias.push([x+gw*0.3,GY-46],[x+gw*0.5,GY-54],[x+gw*0.7,GY-46]);
+      rioHecho=true;x+=gw;k++;continue;
+    }
     // casa derrumbada sobre el pozo: se sube por los escombros y se cruza por la losa
     if(cfg.ruinas&&k>0&&r()<cfg.ruinas){
       x+=len;const gw=110+Math.floor(r()*40);
@@ -948,6 +981,24 @@ const AMB={
     cada(gen,5000,12000,()=>{for(let k=0;k<2;k++)tono(1300,800,0.25,'sawtooth',0.02,k*0.3,bus);});
     cada(gen,16000,32000,()=>sfx.sirena(bus));
   },
+  nunez(bus,gen){
+    ruidoCont(bus,'lowpass',320,0.04);
+    const mus=filtroMusica(bus,1600,1.5),negra=60/104;
+    compases(gen,negra*4,(c,n)=>{
+      [0,1,2,3].forEach(b=>tono(95,45,0.16,'sine',b%2?0.1:0.16,c+b*negra,mus));
+      [0.5,1.5,2.5,3.5].forEach(b=>ruido(0.05,5200,'highpass',0.025,c+b*negra,1,0,bus));
+      if(n%2===0)[0,1.5,3].forEach(b=>tono(196,196,negra*0.5,'triangle',0.05,c+b*negra,mus));});
+    cada(gen,9000,20000,()=>{ruido(2.4,800,'bandpass',0.11,0,0.5,0,bus);ruido(2.4,1800,'bandpass',0.05,0.1,0.6,0,bus);});
+    cada(gen,14000,28000,()=>sfx.sirena(bus));
+  },
+  sanrafael(bus,gen){
+    const v=ruidoCont(bus,'bandpass',500,0.03,0.6);lfo(v.gn.gain,0.1,0.025);lfo(v.fl.frequency,0.06,200);
+    cada(gen,1500,4500,()=>pajaros(bus));
+    const mus=filtroMusica(bus,2200,1.3),corch=60/140,acordes=[[110,220,261.6,329.6],[146.8,220,261.6,293.7],[110,220,261.6,329.6],[82.4,196,246.9,329.6]];
+    compases(gen,corch*6,(c,n)=>{const ac=acordes[n%4];
+      tono(ac[0],ac[0],corch*5,'triangle',0.08,c,mus);
+      [1,2,3,2,1].forEach((k,j)=>tono(ac[k]*2,ac[k]*2,0.9,'triangle',0.035,c+corch*(j+1),mus));});
+  },
 };
 let glacEvento=null;
 function ambienteNivel(id){
@@ -1210,6 +1261,7 @@ function avisosCamino(){
     if(p.t==='tunel'&&!pistasDadas.has('tunel')){pistasDadas.add('tunel');pista('Cerro con túnel: por abajo pasás rápido pero sin poder saltar alto (Charly con la C). Por arriba hay más comida: subí por la escalera de cajas.');}
     if(p.t==='ruina'&&!pistasDadas.has('ruina')){pistasDadas.add('ruina');pista('Casa derrumbada: subí por los escombros y cruzá el pozo por arriba de la losa.');}
     if(p.t==='puente'&&!pistasDadas.has('puente')&&!(p.ini&&p.fin)){pistasDadas.add('puente');pista('¡Ojo! Este puente tiene un tramo roto: saltá el hueco.');}
+    if(p.rio&&!pistasDadas.has('rio')){pistasDadas.add('rio');pista('El Riachuelo: cruzá el puente de hierro sin frenarte y no te caigas al agua.');}
     if(p.t==='tablon'&&!pistasDadas.has('tablon')){pistasDadas.add('tablon');pista('Puente colgante: los tablones ceden apenas los pisás. ¡No te frenes!');}}
   if(!pistasDadas.has('cajas')&&!plataformas.some(p=>p.t==='tunel'&&p.x>P.x&&p.x-P.x<260)&&bloques.some(b=>b.x>P.x&&b.x-P.x<160)){pistasDadas.add('cajas');pista('Cajas en el camino: saltá de a una y subí por arriba para pasar.');}
 }
@@ -1235,7 +1287,7 @@ function cielo(){
   ctx.fillStyle=N._g;ctx.fillRect(0,0,W,H);
 }
 // bruma de lejanía: aclara y desatura todo el fondo hacia el color del aire para que suelo, plataformas y enemigos resalten
-const BRUMA={conurbano:['#c9a0b8',0.22],iguazu:['#cdeaf0',0.4],quebrada:['#a9c4e4',0.45],mendoza:['#c4d4ec',0.36],glaciar:['#6f9cc8',0.3],boca:['#b5d0ea',0.34]};
+const BRUMA={conurbano:['#c9a0b8',0.22],iguazu:['#cdeaf0',0.4],quebrada:['#a9c4e4',0.45],mendoza:['#c4d4ec',0.36],glaciar:['#6f9cc8',0.3],boca:['#b5d0ea',0.34],nunez:['#c9d8ec',0.3],sanrafael:['#ecd4b0',0.3]};
 function bruma(){
   const b=BRUMA[N.id];if(!b)return;
   const a=b[1]*(hayNoche?1-noche.nivel:1);if(a<0.01)return;
@@ -1540,6 +1592,7 @@ function fondoBoca(){
     R(0,134,W,24,'#41594a');
     ctx.strokeStyle='#ffffffaa';ctx.lineWidth=1.2;for(let k=0;k<4;k++){const x=((k*97+t*0.4)%(W+40))-20,y=40+k*12+Math.sin(t*0.05+k)*4;ctx.beginPath();ctx.moveTo(x-4,y-2);ctx.quadraticCurveTo(x-2,y,x,y);ctx.quadraticCurveTo(x+2,y,x+4,y-2);ctx.stroke();}
   },3);
+  for(const [i,x] of slots(cam*0.3,620,1))bombonera(x+30);
   const f2=cam*0.5;
   for(const [i,x] of slots(f2,104)){
     if(rnd(i+905)<.35){baldio(x,i,true);continue;}
@@ -1555,6 +1608,150 @@ function fondoBoca(){
 function faroles(){
   for(const [i,x0] of slots(cam,190,1)){const x=x0+80;R(x,GY-70,2,70,'#2a2a30');R(x-4,GY-74,10,6,'#2a2a30');R(x-3,GY-72,8,4,'#ffe9a0');R(x-6,GY-2,14,2,'#2a2a30');}
 }
+// la Bombonera: tribuna alta con la hinchada azul y oro, fachada azul con la franja amarilla y las torres de luces
+function bombonera(x){
+  const y=GY-98,w=180;
+  for(const tx of [x+8,x+w-12]){R(tx+3,y-12,2,42,'#6a6a78');R(tx-3,y-18,14,8,'#2a2a34');for(let k=0;k<4;k++)R(tx-2+k*3,y-17,2,2,'#fff6c8');}
+  ctx.fillStyle='#9aa3b8';ctx.beginPath();ctx.moveTo(x+4,y+46);ctx.lineTo(x+18,y+6);ctx.lineTo(x+w-18,y+6);ctx.lineTo(x+w-4,y+46);ctx.fill();
+  for(let yy=y+10;yy<y+46;yy+=4){const dx=(yy-y-6)*0.3,a=x+18-dx,ww=w-36+dx*2;R(a,yy,ww,1,'#7b849a');
+    for(let k=0;k<ww;k+=4)if(rnd(yy*13+k)<.55)R(a+k,yy-2,2,2,rnd(yy+k*3)<.5?'#1a4a9c':'#f2c200');}
+  R(x+14,y+3,w-28,3,'#f2c200');R(x+14,y+6,w-28,1,'#0e2f6e');
+  R(x,y+46,w,52,'#1a4a9c');for(let k=0;k<w;k+=12)R(x+k,y+46,1,52,'#153d82');
+  R(x-2,y+42,4,56,'#0e2f6e');R(x+w-2,y+42,4,56,'#0e2f6e');R(x-2,y+44,w+4,2,'#0e2f6e');
+  R(x,y+62,w,10,'#f2c200');
+  ctx.textAlign='center';ctx.font='700 6px Fredoka, sans-serif';ctx.fillStyle='#f2c200';ctx.fillText('BOCA JUNIORS',x+w/2,y+57);
+  ctx.font='700 8px Fredoka, sans-serif';ctx.fillStyle='#0e2f6e';ctx.fillText('LA BOMBONERA',x+w/2,y+70);ctx.textAlign='left';
+  for(let k=8;k<w-14;k+=22){R(x+k,y+80,12,18,'#0b1c40');R(x+k+1,y+78,10,2,'#0b1c40');}
+}
+// el Riachuelo: puente de hierro sobre el agua verdosa, con una lancha amarrada y el cartel del río
+function puenteRiachuelo(p,x,y){
+  const w=p.w;
+  R(x,y+11,w,H-y-11,'#3f5a44');R(x,y+11,w,2,'#8aa67c');R(x,y+26,w,H-y-26,'#324a38');
+  for(let k=0;k<w;k+=9){const o=((t>>3)+k)%6;R(x+k,y+15+(k*5)%14,4+o%3,1,'#7a9670');}
+  const bx=x+w*0.5-18,by=y+16+Math.sin(t*0.05)*1.2;
+  R(bx,by,36,7,'#e04b5b');R(bx,by,36,2,'#f2c14e');R(bx+4,by-8,14,8,'#f4ecdf');R(bx+6,by-6,4,3,'#2f3e55');R(bx+12,by-6,4,3,'#2f3e55');R(bx+24,by-12,2,12,'#3a3a3a');R(bx+2,by+7,32,1,'#00000050');
+  for(const px of [x+3,x+w/2-3,x+w-9]){R(px,y+6,6,H-y-6,'#5a5a60');R(px,y+6,1,H-y-6,'#ffffff22');R(px-1,y+18,8,2,'#7a7a82');}
+  R(x,y,w,4,'#3a3a40');R(x,y+4,w,3,'#252529');for(let k=3;k<w;k+=14)R(x+k,y+1,7,1,'#c9c9d0');
+  const fe='#c0502a',os='#7a2f1a';
+  R(x,y-30,w,2,fe);R(x,y-31,w,1,'#e8845a');R(x,y-2,w,2,fe);
+  ctx.strokeStyle=fe;ctx.lineWidth=1;ctx.beginPath();for(let k=0;k<=w-20;k+=20){ctx.moveTo(x+k,y-2);ctx.lineTo(x+k+10,y-30);ctx.lineTo(x+k+20,y-2);}ctx.stroke();
+  for(let k=0;k<=w-2;k+=20)R(x+k,y-30,2,28,os);
+  for(const tx of [x-3,x+w-5]){R(tx,y-60,8,60,os);R(tx+1,y-60,2,60,fe);R(tx-2,y-63,12,4,fe);}
+  R(x+w/2-34,y-52,68,12,'#1d4e89');R(x+w/2-34,y-52,68,1,'#ffffff44');R(x+w/2-30,y-40,2,10,os);R(x+w/2+28,y-40,2,10,os);
+  ctx.textAlign='center';ctx.font='700 7px Fredoka, sans-serif';ctx.fillStyle='#f2c14e';ctx.fillText('RIACHUELO',x+w/2,y-43);ctx.textAlign='left';
+}
+
+// =====================================================================
+// ESCENARIO 7: NÚÑEZ
+// =====================================================================
+const cartelesNunez=[['CAFÉ','LA ESQUINA'],['FARMACIA','DEL PARQUE'],['PIZZERÍA','LA COSTANERA'],['LIBRERÍA','NÚÑEZ'],['BAR','EL ENCUENTRO'],['PARRILLA','LOS TRES AMIGOS'],['HELADERÍA','VEDIA'],['KIOSCO','24 HS']];
+const coloresNunez=['#efe6d4','#e3d3b8','#d9e4ea','#e8cfc0','#cfd8c4','#f4efe4'];
+// el Monumental: tribuna alta blanca y roja, fachada con la banda y las torres de luces
+function monumental(x){
+  const y=GY-90,w=220,cx=x+w/2;
+  for(const tx of [x+8,x+54,x+w-58,x+w-12]){R(tx+3,y-10,2,36,'#6a6a78');R(tx-3,y-16,14,8,'#2a2a34');for(let k=0;k<4;k++)R(tx-2+k*3,y-15,2,2,'#fff6c8');}
+  ctx.fillStyle='#d9dae2';ctx.beginPath();ctx.moveTo(x+6,y+40);ctx.lineTo(x+22,y+8);ctx.lineTo(x+w-22,y+8);ctx.lineTo(x+w-6,y+40);ctx.fill();
+  for(let yy=y+12;yy<y+40;yy+=4){const dx=(yy-y-8)*0.45,a=x+22-dx,ww=w-44+dx*2;R(a,yy,ww,1,'#b8bac8');
+    for(let k=0;k<ww;k+=5)if(rnd(yy*7+k)<.5)R(a+k,yy-2,2,2,'#c8102e');}
+  R(x+20,y+5,w-40,3,'#c8102e');R(x+20,y+8,w-40,1,'#7a0a1c');
+  R(x,y+40,w,50,'#f1f1f4');for(let k=0;k<w;k+=10)R(x+k,y+40,1,50,'#d4d4dc');
+  R(x-2,y+38,w+4,3,'#c8102e');
+  for(let k=8;k<w-10;k+=18){if(Math.abs(x+k+5-cx)<48)continue;R(x+k,y+68,10,22,'#3a3a48');R(x+k+1,y+66,8,2,'#3a3a48');}
+  R(cx-28,y+46,56,22,'#ffffff');ctx.fillStyle='#e0102e';ctx.beginPath();ctx.moveTo(cx-28,y+46);ctx.lineTo(cx-12,y+46);ctx.lineTo(cx+28,y+68);ctx.lineTo(cx+12,y+68);ctx.fill();
+  R(cx-28,y+46,56,1,'#c8102e');R(cx-28,y+67,56,1,'#c8102e');
+  R(cx-44,y+72,88,12,'#c8102e');ctx.textAlign='center';ctx.font='700 8px Fredoka, sans-serif';ctx.fillStyle='#ffffff';ctx.fillText('MONUMENTAL',cx,y+81);ctx.textAlign='left';
+}
+// plazoleta con plátanos y algún jacarandá en flor
+function plazaNunez(x,i){
+  for(let k=0;k<2;k++){const tx=x+16+k*30,th=30+rnd(i*3+k+1130)*14,col=rnd(i+k+1131)<.4?'#a58ad8':rnd(i+k+1132)<.5?'#5f9a45':'#4a8a3a';
+    R(tx,GY-th*0.55,4,th*0.55,'#5a4632');ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(tx+2,GY-th*0.7,13,th*0.45,0,0,7);ctx.fill();
+    ctx.fillStyle='#ffffff22';ctx.beginPath();ctx.ellipse(tx-2,GY-th*0.8,5,th*0.2,0,0,7);ctx.fill();}
+  R(x+26,GY-9,20,2,'#6a4a2a');R(x+26,GY-7,2,7,'#3a3a40');R(x+44,GY-7,2,7,'#3a3a40');
+}
+function fondoNunez(){
+  cielo();
+  borroso(()=>{
+    // Río de la Plata, "color de león", con velas, y las torres de la costa
+    R(0,134,W,24,'#a8946e');R(0,134,W,2,'#c9b38a');
+    for(const [i,x] of slots(cam*0.1,30)){R(x,138+rnd(i+1100)*10,10+rnd(i+1101)*8,1,'#c9b38a');}
+    for(let k=0;k<3;k++){const sx=((k*140-cam*0.06+t*0.08)%(W+60)+W+60)%(W+60)-30,sy=132+k*3;ctx.fillStyle='#f4ecdf';ctx.beginPath();ctx.moveTo(sx,sy-14);ctx.lineTo(sx,sy);ctx.lineTo(sx+8,sy);ctx.fill();R(sx-3,sy,12,2,'#3a3a4a');}
+    for(const [i,x] of slots(cam*0.15,52)){if(rnd(i+1110)<.3)continue;const h=44+Math.floor(rnd(i+1111)*52);R(x,134-h,24,h,rnd(i+1112)<.5?'#8da2c2':'#a9b6cf');for(let yy=134-h+4;yy<130;yy+=6)R(x+3,yy,18,2,'#dbe6f4');}
+  },3);
+  for(const [i,x] of slots(cam*0.3,660,1))monumental(x+20);
+  const f2=cam*0.5;
+  for(const [i,x] of slots(f2,96)){
+    if(rnd(i+1120)<.3){plazaNunez(x,i);continue;}
+    const h=52+Math.floor(rnd(i+1121)*40),w=62,y=GY-h,c1=coloresNunez[Math.floor(rnd(i+1122)*6)];
+    R(x,y,w,h,c1);ctx.fillStyle='#00000012';for(let k=0;k<w;k+=3)ctx.fillRect(x+k,y,1,h);R(x-1,y-2,w+2,3,'#8a7a6a');
+    for(let yy=y+8;yy<GY-50;yy+=14)for(let k=6;k<w-12;k+=18){R(x+k,yy,10,8,'#3a4a5e');R(x+k-1,yy+8,12,2,'#6a6a72');}
+    R(x+4,GY-24,w-26,16,'#2e3a4a');R(x+4,GY-24,w-26,16,'#f4c86a44');
+    for(let k=0;k<w-20;k+=6)R(x+2+k,GY-30,6,5,(k/6|0)%2?'#f4ecdf':'#c8102e');
+    R(x+w-18,GY-24,10,24,'#4a3b35');
+    cartel(x+3,GY-46,w-6,cartelesNunez[((i%8)+8)%8],[['#f4ecdf','#a52a22','#2a2238'],['#1d4e89','#f4ecdf','#f2c14e'],['#2f6b4f','#f4ecdf','#f2c14e']][Math.floor(rnd(i+1123)*3)]);
+  }
+}
+
+// =====================================================================
+// ESCENARIO 8: SAN RAFAEL, MENDOZA
+// =====================================================================
+const cartelesSanRafael=[['BODEGA','LOS ÁLAMOS'],['DULCE DE LECHE','CASERO'],['YERBA Y MATE','EL ARRIERO'],['RAFTING','CAÑÓN DEL ATUEL'],['OLIVOS','Y ACEITES'],['FINCA','LA ACEQUIA']];
+// dique Valle Grande: cañón rojizo, lago turquesa y el muro de la presa
+function diqueValleGrande(x,yb){
+  // cerros del fondo y lago turquesa entre las paredes del cañón
+  R(x+30,yb-82,130,20,'#a86a4a');R(x+30,yb-82,130,2,'#c98a62');
+  ctx.fillStyle='#2fb6c4';ctx.beginPath();ctx.moveTo(x+30,yb-64);ctx.lineTo(x+160,yb-64);ctx.lineTo(x+146,yb-44);ctx.lineTo(x+44,yb-44);ctx.fill();
+  for(let k=0;k<6;k++)R(x+50+((k*37+(t>>3))%80),yb-61+k*3,12+(k%3)*4,1,'#8fe6ee');
+  ctx.fillStyle='#b5603a';ctx.beginPath();ctx.moveTo(x,yb);ctx.lineTo(x,yb-96);ctx.lineTo(x+26,yb-92);ctx.lineTo(x+30,yb-64);ctx.lineTo(x+44,yb-44);ctx.lineTo(x+30,yb-20);ctx.lineTo(x+24,yb);ctx.fill();
+  ctx.fillStyle='#a8553a';ctx.beginPath();ctx.moveTo(x+190,yb);ctx.lineTo(x+190,yb-100);ctx.lineTo(x+164,yb-94);ctx.lineTo(x+160,yb-64);ctx.lineTo(x+146,yb-44);ctx.lineTo(x+160,yb-20);ctx.lineTo(x+166,yb);ctx.fill();
+  for(let yy=yb-92;yy<yb;yy+=6){R(x,yy,26,1,'#8a4528');R(x+164,yy,26,1,'#8a4528');}
+  // muro de la presa con el vertedero y la pileta de abajo
+  R(x+30,yb-14,130,14,'#2fa8b8');for(let k=0;k<120;k+=10)R(x+34+k,yb-10+(k*3)%8,5,1,'#8fe6ee');
+  ctx.fillStyle='#d6d2c4';ctx.beginPath();ctx.moveTo(x+44,yb-44);ctx.lineTo(x+146,yb-44);ctx.lineTo(x+152,yb-14);ctx.lineTo(x+38,yb-14);ctx.fill();
+  for(let k=0;k<=6;k++){ctx.strokeStyle='#b5b0a0';ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(x+44+k*17,yb-44);ctx.lineTo(x+38+k*19,yb-14);ctx.stroke();}
+  R(x+40,yb-47,110,3,'#f0ece0');for(let k=52;k<140;k+=16)R(x+k,yb-44,6,6,'#5a6a7a');
+  R(x+90,yb-44,10,30,'#e8fbff');for(let k=0;k<30;k+=6)R(x+91+((k+(t>>1))%3),yb-44+k,2,3,'#8fe6ee');
+  ctx.fillStyle='rgba(255,255,255,0.7)';ctx.beginPath();ctx.ellipse(x+95,yb-13,14,3,0,0,7);ctx.fill();
+}
+// Arenas del Nihuil: sierras, lago, tablas de windsurf y las dunas
+function arenasNihuil(x,yb){
+  ctx.fillStyle='#b0704a';ctx.beginPath();ctx.moveTo(x,yb-24);ctx.lineTo(x+40,yb-56);ctx.lineTo(x+78,yb-34);ctx.lineTo(x+120,yb-62);ctx.lineTo(x+170,yb-24);ctx.fill();
+  R(x+4,yb-28,162,16,'#3f9ec4');R(x+4,yb-28,162,2,'#9fdcf0');for(let k=0;k<160;k+=13)R(x+6+k,yb-22+(k*7)%9,6,1,'#9fdcf0');
+  [['#e04b5b',30],['#f2c14e',74],['#3fa7d6',118]].forEach(([c,sx],k)=>{const px=x+sx+Math.sin(t*0.02+k*2)*6;R(px-4,yb-20,12,1,'#f4ecdf');R(px,yb-36,1,16,'#3a3a40');ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(px+1,yb-36);ctx.lineTo(px+9,yb-22);ctx.lineTo(px+1,yb-22);ctx.fill();});
+  ctx.fillStyle='#e3c88e';ctx.beginPath();ctx.ellipse(x+30,yb+2,52,16,0,Math.PI,0);ctx.fill();ctx.beginPath();ctx.ellipse(x+130,yb+2,72,22,0,Math.PI,0);ctx.fill();
+  ctx.fillStyle='#f0dca8';ctx.beginPath();ctx.ellipse(x+122,yb-3,52,12,0,Math.PI,0);ctx.fill();
+}
+// el arco de hormigón de la salida hacia Mendoza
+function arcoSanRafael(x,yb){
+  ctx.strokeStyle='#e8e4d8';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(x+5,yb);ctx.quadraticCurveTo(x+50,yb-140,x+95,yb);ctx.stroke();
+  ctx.strokeStyle='#b5b0a0';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+9,yb);ctx.quadraticCurveTo(x+50,yb-132,x+91,yb);ctx.stroke();
+  R(x+26,yb-60,48,11,'#2f6b4f');R(x+26,yb-60,48,1,'#ffffff55');
+  ctx.textAlign='center';ctx.font='700 6px Fredoka, sans-serif';ctx.fillStyle='#f4ecdf';ctx.fillText('SAN RAFAEL',x+50,yb-52);ctx.textAlign='left';
+  R(x+14,yb-3,72,3,'#4a4a50');for(let k=16;k<84;k+=8)R(x+k,yb-2,4,1,'#f2c14e');
+}
+function fondoSanRafael(){
+  cielo();
+  borroso(()=>{
+    montanas(0.04,124,'#b9825a','#d9a878',0);montanas(0.08,132,'#9a6040','#c08a5c',50);
+    R(0,128,W,30,'#b98a58');
+    const f=cam*0.2;for(const [i,x] of slots(f,14)){if(rnd(i+1200)<.5)continue;ctx.fillStyle='#3f6a3a';ctx.beginPath();ctx.ellipse(x,124,3,14,0,0,7);ctx.fill();}
+  },3);
+  // el dique, Arenas del Nihuil y el arco: se repiten cada 990 px del fondo
+  const fh=cam*0.45,yb=GY-34,hitos=[[40,diqueValleGrande,['DIQUE','VALLE GRANDE']],[370,arenasNihuil,['ARENAS','DEL NIHUIL']],[700,arcoSanRafael,null]];
+  for(let r=0;r<3;r++)for(const [px,fn] of hitos){const x=px+r*990-fh;if(x>W||x<-200)continue;fn(x,yb);}
+  const f2=cam*0.5;
+  R(0,GY-34,W,34,'#9a7a4a');
+  for(const [i,x] of slots(f2,14,4)){R(x,GY-26,1,26,'#6a5034');}
+  ctx.strokeStyle='#5a4a30';ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(0,GY-22);ctx.lineTo(W,GY-22);ctx.stroke();
+  for(const [i,x] of slots(f2,9,4)){ctx.fillStyle=rnd(i+1210)<.5?'#4f8a3a':'#3f7a30';ctx.beginPath();ctx.ellipse(x,GY-21,6,5,0,0,7);ctx.fill();if(rnd(i+1211)<.35){ctx.fillStyle='#5a2a6a';ctx.beginPath();ctx.arc(x+2,GY-16,1.5,0,7);ctx.arc(x+3,GY-14,1.2,0,7);ctx.arc(x+1,GY-14,1.2,0,7);ctx.fill();}}
+  for(let r=0;r<3;r++)for(const [px,fn,txt] of hitos){const x=px+r*990-fh;if(!txt||x>W||x<-200)continue;letrero(x+70,txt,['#5a3b22','#f6e7b0','#e8c46a']);}
+  for(const [i,x] of slots(f2,120)){
+    if(rnd(i+1220)<.4){const bx=x+20,w=70,h=40;R(bx,GY-h,w,h,'#f1e9da');ctx.fillStyle='#b4532e';ctx.beginPath();ctx.moveTo(bx-4,GY-h);ctx.lineTo(bx+w/2,GY-h-14);ctx.lineTo(bx+w+4,GY-h);ctx.fill();
+      R(bx+w/2-7,GY-18,14,18,'#5a3b22');ctx.fillStyle='#5a3b22';ctx.beginPath();ctx.arc(bx+w/2,GY-18,7,Math.PI,0);ctx.fill();
+      cartel(bx+4,GY-h+4,w-8,cartelesSanRafael[((i%6)+6)%6],[['#5a1a2a','#f4ecdf','#e8c46a'],['#f4ecdf','#5a1a2a','#7a6a42'],['#2f6b4f','#f4ecdf','#f2c14e']][Math.floor(rnd(i+1221)*3)]);}
+    else if(rnd(i+1222)<.5){for(let k=0;k<3;k++){const ax=x+30+k*16,h=70+rnd(i*3+k+1230)*20;R(ax,GY-h*0.3,2,h*0.3,'#6a5034');ctx.fillStyle=k%2?'#3f6a32':'#4a7a3a';ctx.beginPath();ctx.ellipse(ax+1,GY-h*0.6,5,h*0.35,0,0,7);ctx.fill();}}
+    else{for(let k=0;k<2;k++){const ox=x+34+k*34;R(ox,GY-14,3,14,'#5a4632');ctx.fillStyle='#7a8a62';ctx.beginPath();ctx.ellipse(ox+1.5,GY-20,14,10,0,0,7);ctx.fill();ctx.fillStyle='#9aa87a';ctx.beginPath();ctx.ellipse(ox-2,GY-23,6,4,0,0,7);ctx.fill();}}
+  }
+}
 
 // ---------- tabla de dibujo por escenario ----------
 const ESC={
@@ -1564,6 +1761,8 @@ const ESC={
   mendoza:{fondo:fondoMendoza,primer:primerMendoza},
   glaciar:{fondo:fondoGlaciar,primer:primerGlaciar},
   boca:{fondo:fondoBoca,cerca:faroles,primer:()=>primerUrbano(coloresBoca)},
+  nunez:{fondo:fondoNunez,cerca:faroles,primer:()=>primerUrbano(['#5a6070','#7a6a5a','#4a5a4a','#8a8a98'])},
+  sanrafael:{fondo:fondoSanRafael,primer:primerMendoza},
   apagon:{fondo:fondoConurbano,cerca:postesConurbano,primer:()=>primerUrbano()},
 };
 
@@ -1623,13 +1822,26 @@ function dibujarSuelo(){
     if(c.tipo==='resbala')for(let k=4;k<ch.w;k+=9)R(sx+k,GY,3,1,'#ffffff');}
 }
 const RUINAS={conurbano:['#a9472f','#c9b79d','#8d8a86','#7a3a2a'],apagon:['#7a3a2a','#8a8070','#5d5a56','#5a2a1a'],boca:['#9b5a44','#f2c14e','#7d7a76','#6a3a2a'],
-  iguazu:['#6a4a2a','#8a6a42','#7a7068','#3a2a1a'],quebrada:['#b88a5a','#c9a27a','#9a8a7a','#6a4a2a'],mendoza:['#c9a27a','#f1e9da','#9a8a7a','#5a3b22'],glaciar:['#8a5a3a','#a07050','#9aa8b4','#4a3428']};
+  iguazu:['#6a4a2a','#8a6a42','#7a7068','#3a2a1a'],quebrada:['#b88a5a','#c9a27a','#9a8a7a','#6a4a2a'],mendoza:['#c9a27a','#f1e9da','#9a8a7a','#5a3b22'],glaciar:['#8a5a3a','#a07050','#9aa8b4','#4a3428'],
+  nunez:['#b5533c','#efe6d4','#8d8a86','#7a3a2a'],sanrafael:['#c08a5c','#f1e9da','#9a8a7a','#5a3b22']};
 const PUENTES={conurbano:['#9a958c','#6f6a63','#c0392b','#7a756e'],apagon:['#6a6e75','#45484e','#8a3a2a','#55585e'],boca:['#7a2a22','#4a1a16','#c0392b','#5a2a22'],
-  iguazu:['#8a9096','#5a6066','#a0a6ac','#6a7076'],quebrada:['#8a6a42','#5a4428','#6a4a2a','#6a4a2a'],mendoza:['#9a6a3a','#6a4a2a','#6a4a2a','#7a5a3a'],glaciar:['#8a6a4a','#5a3a2a','#f4f8fb','#6a4a3a']};
+  iguazu:['#8a9096','#5a6066','#a0a6ac','#6a7076'],quebrada:['#8a6a42','#5a4428','#6a4a2a','#6a4a2a'],mendoza:['#9a6a3a','#6a4a2a','#6a4a2a','#7a5a3a'],glaciar:['#8a6a4a','#5a3a2a','#f4f8fb','#6a4a3a'],
+  nunez:['#9a958c','#6f6a63','#c8102e','#7a756e'],sanrafael:['#9a6a3a','#6a4a2a','#6a4a2a','#7a5a3a']};
 const TUNELES={conurbano:['#8d8a86','#b0aca6','#5f5c58','PASO BAJO NIVEL',true],apagon:['#5d5a56','#7a7772','#3f3c38','PASO BAJO NIVEL',true],boca:['#9b5a44','#c2684a','#6a3a2a','PASO BAJO NIVEL',true],
-  iguazu:['#5b5244','#4f8a3e','#3a3428','TÚNEL DE LA SELVA',false],quebrada:['#9a6a4a','#c99c62','#6a4430','TÚNEL DE PIEDRA',false],mendoza:['#7a6a5a','#9b8a5a','#4a3a2a','TÚNEL DEL CANAL',false],glaciar:['#9fd0e8','#f4f8fb','#6fa8c7','TÚNEL DE HIELO',false]};
+  iguazu:['#5b5244','#4f8a3e','#3a3428','TÚNEL DE LA SELVA',false],quebrada:['#9a6a4a','#c99c62','#6a4430','TÚNEL DE PIEDRA',false],mendoza:['#7a6a5a','#9b8a5a','#4a3a2a','TÚNEL DEL CANAL',false],glaciar:['#9fd0e8','#f4f8fb','#6fa8c7','TÚNEL DE HIELO',false],
+  nunez:['#8d8a86','#b0aca6','#5f5c58','PASO BAJO NIVEL',true],sanrafael:['#a8663a','#d8a060','#6a3a20','TÚNEL DEL ATUEL',false]};
 // ---------- cajas, maderas, derrumbe y piezas que caen ----------
+// San Rafael: en lugar de cajas, potes de vidrio con dulce de leche (tapa de tela a cuadros y etiqueta)
+function poteDulce(x,y,s){
+  R(x+2,y,s-4,3,'#b8352a');for(let k=3;k<s-5;k+=3)R(x+k,y,1,3,'#f4ecdf');
+  R(x+3,y+3,s-6,2,'#d8d0c0');
+  R(x+1,y+5,s-2,s-6,'#9a5a1e');R(x+2,y+s-1,s-4,1,'#9a5a1e');
+  R(x+2,y+6,s-4,s-8,'#c07a30');R(x+2,y+6,2,s-9,'#e6b87a');R(x+s-4,y+7,2,s-10,'#8a4a1a');
+  R(x+3,y+8,s-6,5,'#f4ecdf');R(x+3,y+8,s-6,1,'#c8553d');R(x+3,y+12,s-6,1,'#c8553d');
+  R(x+s/2-1,y+9,2,2,'#8a4a1a');R(x+s/2,y+11,1,1,'#8a4a1a');
+}
 function cajaGfx(x,y,s){
+  if(N.id==='sanrafael'){poteDulce(x,y,s);return;}
   R(x,y,s,s,'#6a4422');R(x+1,y+1,s-2,s-2,'#b8844a');
   for(let k=4;k<s-1;k+=4)R(x+1,y+k,s-2,1,'#9a6a38');
   ctx.strokeStyle='#7a4f28';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x+2,y+2);ctx.lineTo(x+s-2,y+s-2);ctx.moveTo(x+s-2,y+2);ctx.lineTo(x+2,y+s-2);ctx.stroke();
@@ -1720,6 +1932,7 @@ function dibujarPlat(p){
     ctx.strokeStyle='#2a2238';ctx.beginPath();ctx.moveTo(x+p.w*0.4,y);ctx.lineTo(x+p.w*0.43,y+4);ctx.lineTo(x+p.w*0.4,y+8);ctx.stroke();
   }break;
   case 'puente':{const c=PUENTES[N.id]||PUENTES.conurbano;
+    if(p.rio){puenteRiachuelo(p,x,y);break;}
     R(x,y,p.w,4,c[0]);R(x,y+4,p.w,2,c[1]);for(let k=0;k<p.w;k+=6)R(x+k,y,1,4,c[1]);
     for(let k=0;k<=p.w-2;k+=12)R(x+k,y-12,1.5,12,c[2]);R(x,y-12,p.w,1.5,c[2]);R(x,y-6,p.w,1,c[2]);
     const pil=[];if(p.ini)pil.push(x+2);if(p.fin)pil.push(x+p.w-7);if(p.w>100)pil.push(x+p.w/2-2);
@@ -1787,6 +2000,10 @@ function dibujarItem(m){
   case 'alfajor':R(x-4,y-2,9,5,'#5a3420');R(x-4,y,9,1,'#f4ecdf');R(x-3,y-2,7,1,'#7a4a2a');break;
   case 'tortafrita':ctx.fillStyle='#d9a24a';ctx.beginPath();ctx.ellipse(x,y,5,3.6,0,0,7);ctx.fill();ctx.fillStyle='#b07a2a';ctx.fillRect(x-1,y-1,1,1);ctx.fillRect(x+2,y+1,1,1);ctx.fillStyle='#fff6e0';ctx.fillRect(x-3,y-2,1,1);ctx.fillRect(x+1,y-2,1,1);ctx.fillRect(x+3,y,1,1);break;
   case 'xeneize':estrellaAzulOro(x,y);break;
+  case 'mate':ctx.fillStyle='#9a6a2e';ctx.beginPath();ctx.ellipse(x,y+1.5,4.2,4.5,0,0,7);ctx.fill();R(x-3,y-2.5,6,2,'#4f8a3a');R(x-3,y-3,6,1,'#7fb069');R(x-4,y+1,8,1,'#c8a050');R(x-1,y+3,1,1,'#c89a5a');R(x-3,y+4,6,1,'#5a3a1a');
+    ctx.strokeStyle='#d8dce2';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(x+1,y-2);ctx.lineTo(x+4,y-7);ctx.stroke();R(x+3,y-8,3,1,'#d8dce2');break;
+  case 'banda':ctx.fillStyle='#f4f4f6';ctx.beginPath();ctx.arc(x,y,5.5,0,7);ctx.fill();ctx.save();ctx.beginPath();ctx.arc(x,y,5.5,0,7);ctx.clip();ctx.fillStyle='#d4122e';ctx.beginPath();ctx.moveTo(x-6,y-6);ctx.lineTo(x-2,y-6);ctx.lineTo(x+6,y+6);ctx.lineTo(x+2,y+6);ctx.closePath();ctx.fill();ctx.restore();
+    ctx.strokeStyle='#1a1a2a';ctx.lineWidth=0.5;ctx.beginPath();ctx.arc(x,y,5.5,0,7);ctx.stroke();break;
   case 'pizza':ctx.fillStyle='#f2c14e';ctx.beginPath();ctx.moveTo(x-4,y-3);ctx.lineTo(x+4,y-3);ctx.lineTo(x,y+5);ctx.fill();R(x-4,y-4,9,2,'#c8803a');ctx.fillStyle='#2a2a2a';ctx.fillRect(x-1,y-1,1,1);ctx.fillStyle='#4f8a3a';ctx.fillRect(x+1,y+1,1,1);break;
   }
 }
