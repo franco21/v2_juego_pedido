@@ -12,7 +12,7 @@ Mecánicas del recorrido
                por arriba hay más comida: se sube por una escalera de cajas.
   Cajas        pilas fijas de cajas en el camino (escaleras, pirámides): hay que trepar para pasar. No se juntan.
   Viaductos    puentes altos: se sube por una escalera de cajas, se cruza por arriba y se baja al otro lado.
-  Cables       postes con cables sueltos que se balancean; si te tocan, perdés puntos. Hay varios por tramo.
+  Cables       postes con cables sueltos que se balancean; si te tocan, perdés 3 segundos. Hay varios por tramo.
   Puentes      además del puente fijo y el roto, hay puentes colgantes: cada tablón cede poco después
                de pisarlo.
   Móviles      pozos demasiado anchos para saltar, con una plataforma que va y viene: esperarla, subirse y bajar.
@@ -22,7 +22,8 @@ Progreso y dificultad
                Experto (1 vida, reloj al 80%). Se elige en el menú y se guarda en el navegador.
   Estrellas    cada pedido da hasta 3: entregar, ganar la propina y pisar la cantidad de enemigos del reto
                (contador 👟 en pantalla). Con 8 de las 15 de un escenario se abre el siguiente.
-  Puntos       pisar a un enemigo vale 100; espantarlo con los huesos de Charly vale 30.
+  Puntos       salen de la rapidez (segundos que sobran), de pisar enemigos (100 cada uno) y de la propina.
+  Guía         la primera vez sale una guía corta de cómo se juega (se puede omitir); después, desde "❓ Cómo se juega".
   Probar       agregar ?todo a la URL abre todos los escenarios.
 
 Celular

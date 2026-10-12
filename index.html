@@ -595,7 +595,7 @@ function abrirBrief(i,pi){
   $('pedidos').querySelectorAll('.ped').forEach(b=>b.onclick=()=>abrirBrief(NI,+b.dataset.k));
   const rec=leerRecord(claveRec()),seg=segundosPedido();
   $('bTicket').innerHTML=`PEDIDO #${NI+1}${PI+1}${(NI*7+PI*3)%10}${(NI+PI*5)%10} · ${DF().icono} ${DF().nombre}<br>${N.pedidos[PI]}<br>Cliente: ${N.clientes[PI]} · Tiempo: ${fmt(seg).slice(0,-2)} · ${DF().vidas} ${DF().vidas>1?'vidas':'vida'}<br>${ESTACIONES[EST].icono} ${ESTACIONES[EST].nombre}${esNoche()?(N.noche?' · 🌙 Noche de apagón':' · 🌙 A mitad de camino se hace de noche'):''}`+(rec?` · Récord ${rec.toLocaleString('es-AR')}`:'')+`<br>★ entregar · ★ propina (llegá en ${fmt(TOT*0.55/60).slice(0,-2)}) · ★ pisá ${retoMeta} enemigo${retoMeta>1?'s':''}`;
-  const extra=[' Te vamos guiando.',' A mitad de camino cae un rayo y se hace de noche.',' Sopla el viento.',' Otra noche, con ladrones en los techos: Charly los espanta.',' El más largo y con el reloj más justo.'][PI];
+  const extra=[' Te vamos guiando.',' A mitad de camino cae un rayo y se hace de noche.','',' Otra noche, con ladrones en los techos: Charly los espanta.',' El más largo y con el reloj más justo.'][PI];
   $('bTexto').textContent=N.texto+extra+(plataformas.some(p=>p.t==='movil')?' Pozo ancho: usá la plataforma móvil.':'');
   mostrar('brief');$('jugar').focus();
 }
@@ -1460,9 +1460,11 @@ function dibujarViento(){
   ctx.strokeStyle=N.id==='glaciar'||N.id==='iguazu'||N.id==='quebrada'?'#ffffffbb':'#f4ecdf99';ctx.lineWidth=0.8;
   for(const r of rafagas){r.x+=v*9*r.s;if(r.x>W+20)r.x=-20;if(r.x<-20)r.x=W+20;
     ctx.beginPath();ctx.moveTo(r.x,r.y);ctx.quadraticCurveTo(r.x-Math.sign(v)*r.l/2,r.y-1.5,r.x-Math.sign(v)*r.l,r.y);ctx.stroke();}
-  const a=Math.abs(v),txt=`VIENTO ${a>0.55?'FUERTE ':a<0.3?'SUAVE ':''}${v>0?'›››':'‹‹‹'}`;
-  ctx.font='700 8px Fredoka, sans-serif';ctx.textAlign='center';
-  ctx.fillStyle='#000a';ctx.fillText(txt,W/2+0.7,GY+20.7);ctx.fillStyle='#f4ecdf';ctx.fillText(txt,W/2,GY+20);ctx.textAlign='left';
+  if(PI===0){ // el cartel de viento solo se muestra en el primer pedido
+    const a=Math.abs(v),txt=`VIENTO ${a>0.55?'FUERTE ':a<0.3?'SUAVE ':''}${v>0?'›››':'‹‹‹'}`;
+    ctx.font='700 8px Fredoka, sans-serif';ctx.textAlign='center';
+    ctx.fillStyle='#000a';ctx.fillText(txt,W/2+0.7,GY+20.7);ctx.fillStyle='#f4ecdf';ctx.fillText(txt,W/2,GY+20);ctx.textAlign='left';
+  }
 }
 function clima(){
   if(N.clima==='lluvia')lluvia();
