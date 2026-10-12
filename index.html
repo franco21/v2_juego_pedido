@@ -88,6 +88,12 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .resumen .tarjeta .grande{font-size:clamp(16px,2.6vw,22px)}
 .datos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;font-size:clamp(11px,1.6vw,15px);color:var(--cal);text-align:left}
 .datos b{color:var(--sol)}
+.paso{display:flex;flex-direction:column;align-items:center;gap:6px;max-width:44ch;min-height:clamp(110px,26vh,170px);justify-content:center}
+.paso .ico{font-size:clamp(34px,8vw,56px);line-height:1}
+.paso b{font-family:var(--display);color:var(--sol);font-size:clamp(15px,2.4vw,22px)}
+.puntos{display:flex;gap:6px;justify-content:center}
+.puntos i{width:8px;height:8px;border-radius:50%;background:#4a4066}
+.puntos i.on{background:var(--sol)}
 .desglose{display:flex;height:16px;border:2px solid #3a3352;background:#0b0a12;overflow:hidden}
 .desglose i{display:block;height:100%}
 .leyenda{display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:center;font-size:clamp(9px,1.3vw,13px);color:var(--chapa)}
@@ -193,6 +199,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
 
   <div class="capa" id="inicio">
     <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
+    <button class="mute" id="verGuia" style="position:absolute;top:8px;left:8px">❓ Cómo se juega</button>
     <h1>Pedido en Camino</h1>
     <p>Seis lugares del país, cinco pedidos en cada uno. Sumá ★ para abrir el escenario siguiente: una por entregar, otra por ganar la propina y otra por pisar enemigos.</p>
     <div class="dificultad" id="dificultad" role="group" aria-label="Dificultad"></div>
@@ -209,6 +216,12 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <div class="botones"><button class="btn" id="jugar">Salir a repartir</button><button class="btn sec" id="volver">Elegir otro</button></div>
   </div>
 
+  <div class="capa" id="guia" hidden>
+    <h2>Cómo se juega</h2>
+    <div class="paso" id="guiaPaso"></div>
+    <div class="puntos" id="guiaPuntos"></div>
+    <div class="botones"><button class="btn" id="guiaSig">Siguiente</button><button class="btn sec" id="guiaOmitir">Omitir</button></div>
+  </div>
   <div class="capa" id="fin" hidden>
     <h2 id="finTitulo"></h2>
     <div class="resumen" id="resumen" hidden></div>
@@ -455,10 +468,10 @@ function generar(cfg){
 
 let N=NIVELES[0],NI=0,PI=0,VAR=0,flash=0,CFG,barros=[];
 let suelo,plataformas,charcos,checkpoints,disparos,defEnem,defMedias,LARGO,FIN,TOT,SOL;
-let P,enemigos,medias,parts,cam=0,estado='inicio',restante,vidas,cuentaMedias,pisotones,huesazos,motosDisparadas,t=0,pausa=false;
-let derr={x:-1e9,v:0,espera:0,on:false},cae=[],bloques=[],defBloques=[],temblor=0,dolor=0,penal=0,cables=[];
+let P,enemigos,medias,parts,cam=0,estado='inicio',restante,vidas,cuentaMedias,pisotones,motosDisparadas,t=0,pausa=false;
+let derr={x:-1e9,v:0,espera:0,on:false},cae=[],bloques=[],defBloques=[],temblor=0,dolor=0,cables=[];
 
-const PTS_PISO=100,PTS_HUESO=30; // saltarle encima al enemigo vale más que espantarlo con los huesos de Charly
+const PTS_PISO=100; // los puntos salen de la rapidez, de pisar enemigos y de la propina
 function armarLayout(){
   CFG=cfgPedido();generar(CFG);prepararHielo();bloques=defBloques.map(b=>({w:BLOQUE,h:BLOQUE,t:'caja',apoyo:b.y+BLOQUE,...b}));cae=[];armarSOL();
 }
@@ -478,7 +491,7 @@ function nuevaPartida(){
   P={x:40,y:GY-22,w:8,h:22,vx:0,vy:0,piso:false,dir:1,inv:0,anim:0,coyote:0,buffer:0};
   restante=TOT;vidas=DF().vidas;resetCharly();rayos=[];quemaduras=[];destello=0;sacudida=0;proxRayo=0;prepararNoche();viento={v:0,obj:0,timer:600+Math.random()*400,activo:false};P.barro=0;
   objetivo=Math.round(TOT*0.55);propinaMonto=Math.round((500+PI*300+NI*150)/50)*50;pistasDadas=new Set();$('pista').hidden=true;
-  cuentaMedias=0;pisotones=0;huesazos=0;motosDisparadas=new Set();penal=0;dolor=0;
+  cuentaMedias=0;pisotones=0;motosDisparadas=new Set();dolor=0;
   crearEnemigos(-1e9);derrInit(P.x-300,PI===0?420:300);
 }
 function crearEnemigos(cerca){
@@ -518,6 +531,7 @@ addEventListener('keydown',e=>{
   if(e.code==='KeyM'){ponerMudo(!mudo);}
   if(e.code==='Escape'&&(estado==='juego'||estado==='brief'||estado==='fin')){e.preventDefault();salirAlMenu();}
   if(e.code==='Enter'&&estado==='brief'){e.preventDefault();arrancar();}
+  if(e.code==='Escape'&&estado==='guia'){e.preventDefault();cerrarGuia();}
 });
 addEventListener('keyup',e=>{if(mapa[e.code])tecla[mapa[e.code]]=false;});
 { // controles táctiles: cruz izquierda con deslizamiento entre ◀ y ▶; saltar y Charly a la derecha; varios dedos a la vez
@@ -548,7 +562,27 @@ function armarMenu(){
     return `<button class="nivel bloq" data-i="${i}" disabled><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>🔒 ${n.nombre}</b><span>Necesitás ${EST_REQ}★ en ${NIVELES[i-1].nombre} (${estrellasEscenario(i-1)}/${EST_REQ})</span></button>`;}).join('');
   $('niveles').querySelectorAll('.nivel:not(.bloq)').forEach(b=>{b.onclick=()=>abrirBrief(+b.dataset.i);b.onfocus=b.onmouseenter=()=>{if(estado==='inicio'&&NI!==+b.dataset.i){cargarNivel(+b.dataset.i);}};});
 }
-function mostrar(id){['inicio','brief','fin'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;}
+function mostrar(id){['inicio','brief','fin','guia'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;}
+// guía de cómo se juega: sale la primera vez y se puede omitir; después se abre desde el menú
+const guiaVista=()=>{try{return localStorage.getItem('pec-guia')==='1';}catch(e){return false;}};
+let guiaN=0;
+function pasosGuia(){const tc=esTouch();return[
+  ['🎯','Llegá a tiempo','Entregá el pedido en la casa del final antes de que se acabe el reloj. Si llegás rápido, el cliente te deja propina.'],
+  ['🏃','Movete y saltá',tc?'Con el pulgar izquierdo te movés (deslizá entre ◀ y ▶). El botón ▲ salta: mantenelo apretado para saltar más alto.':'Con ← → te movés y con Espacio saltás: mantenelo apretado para saltar más alto.'],
+  ['👟','Pisá a los enemigos','Saltales encima desde arriba. Charly también ayuda: '+(tc?'tocá 🦴':'apretá C')+' y tira huesos a los ladrones de los techos.'],
+  ['🌋','No te frenes','La tierra se derrumba detrás tuyo. Trepá cajas, cruzá túneles y puentes, y esquivá los cables: te cuestan 3 segundos.'],
+  ['★','Ganá estrellas','Cada pedido da hasta 3. Con 8 de las 15 de un escenario se abre el siguiente.']];}
+function pintarGuia(){
+  const ps=pasosGuia(),p=ps[guiaN];
+  $('guiaPaso').innerHTML=`<span class="ico">${p[0]}</span><b>${p[1]}</b><p>${p[2]}</p>`;
+  $('guiaPuntos').innerHTML=ps.map((_,i)=>`<i class="${i===guiaN?'on':''}"></i>`).join('');
+  $('guiaSig').textContent=guiaN<ps.length-1?'Siguiente':'¡A jugar!';$('guiaOmitir').hidden=guiaN===ps.length-1;
+}
+function abrirGuia(){guiaN=0;estado='guia';mostrar('guia');pintarGuia();$('guiaSig').focus();}
+function cerrarGuia(){try{localStorage.setItem('pec-guia','1');}catch(e){}abrirMenu();}
+$('guiaSig').onclick=()=>{if(guiaN<pasosGuia().length-1){guiaN++;pintarGuia();}else cerrarGuia();};
+$('guiaOmitir').onclick=cerrarGuia;
+$('verGuia').onclick=abrirGuia;
 function abrirMenu(){if(derr.on)cargarNivel(NI,PI);estado='inicio';$('izq').hidden=true;armarMenu();mostrar('inicio');$('hud').hidden=true;$('reloj').hidden=true;audioInit();ambienteNivel(N.id);$('niveles').querySelector(`[data-i="${NI}"]`)?.focus();}
 function abrirBrief(i,pi){
   if(!escenarioAbierto(i)){abrirMenu();return;}
@@ -596,8 +630,8 @@ function terminar(gano,motivo){
   const ultimoDeTodo=NI===NIVELES.length-1&&PI===4;
   $('sig').hidden=true;$('sig').textContent=PI<4?'Siguiente pedido':'Siguiente escenario';
   if(gano){
-    const seg=restante/60,bono=Math.round(seg*100),base=cuentaMedias*10+pisotones*PTS_PISO+huesazos*PTS_HUESO+vidas*200,conProp=t<=objetivo,prop=conProp?propinaMonto:0,ptsProp=Math.round(prop/5);
-    const total=Math.max(0,bono+base+ptsProp-penal),clave=claveRec(),record=leerRecord(clave);
+    const seg=restante/60,bono=Math.round(seg*100),base=pisotones*PTS_PISO,conProp=t<=objetivo,prop=conProp?propinaMonto:0,ptsProp=Math.round(prop/5);
+    const total=Math.max(0,bono+base+ptsProp),clave=claveRec(),record=leerRecord(clave);
     if(total>record)try{localStorage.setItem('pec-rec-'+clave,total);}catch(e){}
     const retoOk=pisotones>=retoMeta,est=1+(conProp?1:0)+(retoOk?1:0),hayProx=!ultimoDeTodo,abiertoAntes=hayProx&&escenarioAbierto(NI+1);
     guardarProg(N.id,PI+1);guardarEstrellas(N.id,PI,est);
@@ -606,13 +640,13 @@ function terminar(gano,motivo){
     if(conProp)setTimeout(()=>sfx.caja(),300);
     $('finTitulo').textContent=ultimoDeTodo?'¡Entregaste todos los pedidos del país!':`¡Pedido ${PI+1} entregado!`;
     const ar=v=>v.toLocaleString('es-AR');
-    const partes=[['Rapidez',bono,'#f2a65a'],['Comida',cuentaMedias*10,'#7fb069'],['Pisotones',pisotones*PTS_PISO,'#3fa7d6'],['Huesos de Charly',huesazos*PTS_HUESO,'#8fd0e8'],['Vidas',vidas*200,'#e47fb0'],['Propina',ptsProp,'#f2c14e']].filter(x=>x[1]>0);
+    const partes=[['Rapidez',bono,'#f2a65a'],['Pisotones',pisotones*PTS_PISO,'#3fa7d6'],['Propina',ptsProp,'#f2c14e']].filter(x=>x[1]>0);
     const sp=partes.reduce((a,x)=>a+x[1],0)||1;
     $('resumen').innerHTML=`<div class="estrellas"><span class="on">★ Entregado</span><span class="${conProp?'on':''}">★ Propina</span><span class="${retoOk?'on':''}">★ Pisaste ${Math.min(pisotones,retoMeta)}/${retoMeta}</span></div><div class="fila">
       <div class="tarjeta" id="rProp"><span class="lbl">💸 Propina de ${N.clientes[PI]}</span><span class="grande" style="color:${conProp?'#f2c14e':'var(--chapa)'}${conProp?'':';font-size:clamp(11px,1.6vw,14px)'}">${conProp?'$'+ar(prop):'Sin propina'}</span><span class="sub">${conProp?'+'+ar(ptsProp)+' puntos':'había que llegar en '+fmt(objetivo/60).slice(0,-2)}</span></div>
       <div class="tarjeta"><span class="lbl">⭐ Puntos</span><span class="grande" style="color:var(--sol)">${ar(total)}</span><span class="sub">${total>record?'¡Nuevo récord!':'Récord: '+ar(record)}</span></div></div>
       <div class="desglose" role="img" aria-label="Desglose de puntos">${partes.map(([n,v,c])=>`<i style="width:${(v/sp*100).toFixed(1)}%;background:${c}" title="${n}: ${ar(v)}"></i>`).join('')}</div>
-      <div class="leyenda">${partes.map(([n,v,c])=>`<span style="--c:${c}">${n} ${ar(v)}</span>`).join('')}${penal>0?`<span style="--c:#e04b4b">Cables −${ar(penal)}</span>`:''}</div>`;
+      <div class="leyenda">${partes.map(([n,v,c])=>`<span style="--c:${c}">${n} ${ar(v)}</span>`).join('')}</div>`;
     const lin=[`⏱ Llegaste en <b>${fmt(t/60)}</b>`,`⏳ Te sobraron <b>${fmt(seg)}</b>`,`★ <b>${estrellasEscenario(NI)}/15</b> estrellas en este escenario`];
     if(nuevo)lin.push('🔓 <b>¡Escenario nuevo desbloqueado!</b>');else if(hayProx&&!abiertoAhora)lin.push(`🔒 Para abrir el siguiente necesitás <b>${EST_REQ}★</b> (te faltan ${EST_REQ-estrellasEscenario(NI)})`);
     $('finTexto').innerHTML=lin.map(x=>`<li>${x}</li>`).join('');
@@ -927,21 +961,21 @@ function tablonesPaso(){
 // CABLES SUELTOS: cuelgan de un poste, se balancean y quitan puntos
 // =====================================================================
 function cableGeom(c){const a=c.A*Math.sin(t*c.w+c.f),px=c.x+12,py=GY-100;return{a,px,py,bx:px+Math.sin(a)*c.L,by:py+Math.cos(a)*c.L};}
-function lastimar(pts){
-  P.inv=90;dolor=1.2;penal+=pts;sfx.zap();P.vy=-2.4;P.vx*=0.4;sacudida=Math.max(sacudida,8);
-  texto(P.x-8,P.y-12,'-'+pts+' puntos');
+function lastimar(seg){ // un cable pelado te saca segundos del reloj
+  P.inv=90;dolor=1.2;restante=Math.max(0,restante-seg*60);sfx.zap();P.vy=-2.4;P.vx*=0.4;sacudida=Math.max(sacudida,8);
+  texto(P.x-8,P.y-12,'-'+seg+' s');
   for(let i=0;i<10;i++)parts.push({x:P.x+4,y:P.y+8,vx:(Math.random()-.5)*4,vy:-Math.random()*3,v:16,c:Math.random()<.5?'#fff27a':'#8fd0ff',r:1});
 }
 function cablesPaso(){
   for(const c of cables){
     const dx=c.x-P.x;if(dx<-40||dx>230)continue;
-    if(!pistasDadas.has('cable')&&dx>0&&dx<190){pistasDadas.add('cable');pista('Cable pelado: se balancea. Esperá que se aleje y pasá por debajo (o saltá). Si te toca, perdés puntos.');}
+    if(!pistasDadas.has('cable')&&dx>0&&dx<190){pistasDadas.add('cable');pista('Cable pelado: se balancea. Esperá que se aleje y pasá por debajo (o saltá). Si te toca, perdés 3 segundos.');}
     if(t%40===0&&Math.abs(dx)<170)sfx.chispa();
     if(P.inv>0)continue;
     const g=cableGeom(c);
     for(let k=1;k<=10;k++){
       const f=k/10,x=g.px+(g.bx-g.px)*f,y=g.py+(g.by-g.py)*f;
-      if(x>P.x-1.5&&x<P.x+P.w+1.5&&y>P.y-1.5&&y<P.y+P.h+1.5){lastimar(50);break;}
+      if(x>P.x-1.5&&x<P.x+P.w+1.5&&y>P.y-1.5&&y<P.y+P.h+1.5){lastimar(3);break;}
     }
   }
 }
@@ -1955,7 +1989,7 @@ function charlyPaso(){
       if(!e.vivo||h.x<e.x-3||h.x>e.x+e.w+3||h.y<e.y-3||h.y>e.y+e.h+3)continue;
       h.fin=true;
       if(DUROS.has(e.skin)){sfx.toc();texto(e.x,e.y-6,'¡TOC!');h.fin=false;h.vx*=-0.5;h.vy=-2;break;}
-      e.vivo=false;e.vy=-2.4;e.vx=h.vx>0?1.4:-1.4;huesazos++;texto(e.x-6,e.y-20,'+'+PTS_HUESO);
+      e.vivo=false;e.vy=-2.4;e.vx=h.vx>0?1.4:-1.4;
       sfx.toc();setTimeout(()=>sfx.ay(),90);
       texto(e.x-6,e.y-10,e.tipo==='techo'?'¡AY, MI CABEZA!':e.tipo==='perro'?'¡CAÍ!':'¡AUCH!');
       for(let k=0;k<6;k++)parts.push({x:h.x,y:h.y,vx:(Math.random()-.5)*2.6,vy:-Math.random()*2.4,v:22,c:k%2?'#f4ecdf':'#e8dcc0',r:1.5});
@@ -2124,14 +2158,14 @@ function hud(){
   $('propSub').textContent=quedaProp>0?`te quedan ${fmt(quedaProp/60).slice(0,-2)}`:'se te pasó';
   if(est!==propEstado){propEstado=est;$('tProp').className='tarjeta '+(est==='activa'?'':est);}
   // puntos en vivo con un saltito cada vez que suben
-  const pts=Math.max(0,cuentaMedias*10+pisotones*PTS_PISO+huesazos*PTS_HUESO-penal);
+  const pts=pisotones*PTS_PISO;
   if(pts!==ptsPrev){if(ptsPrev>=0){const c=$('tPts'),cl=pts>ptsPrev?'sube':'baja';c.classList.remove('sube','baja');void c.offsetWidth;c.classList.add(cl);}ptsPrev=pts;$('ptsNum').textContent=pts.toLocaleString('es-AR');}
   $('tiempo').textContent=fmt(restante/60);
   $('arco').setAttribute('stroke-dashoffset',(282.7*(1-Math.min(1,restante/TOT))).toFixed(1));
   $('bono').textContent='Bono '+Math.round(restante/60*100).toLocaleString('es-AR');
   $('reloj').classList.toggle('apurado',restante<10*60);
   const falta=Math.max(0,Math.ceil((FIN-P.x)/N.div)),fTxt=N.unidad==='metros'?`${Math.ceil(falta/10)*10} m`:`${falta} cuadras`;
-  const s=`${vidas}|${cuentaMedias}|${pisotones}|${huesazos}|${fTxt}|${retoMeta}`;
+  const s=`${vidas}|${cuentaMedias}|${pisotones}|${fTxt}|${retoMeta}`;
   if(s===hudPrev)return;hudPrev=s;
   $('vidas').textContent='♥'.repeat(Math.max(0,vidas))+'♡'.repeat(Math.max(0,DF().vidas-vidas));
   $('retoHud').textContent=`👟 ${Math.min(pisotones,retoMeta)}/${retoMeta}${pisotones>=retoMeta?' ✓':''}`;
@@ -2140,6 +2174,7 @@ function hud(){
 }
 P={x:40,y:GY-22,w:8,h:22,vx:0,vy:0,piso:true,dir:1,inv:0,anim:0,coyote:0,buffer:0,barro:0};
 cargarNivel(0);armarMenu();
+if(!guiaVista())abrirGuia();
 let ultimo=performance.now(),acum=0;
 function bucle(ahora){
   acum+=Math.min(100,ahora-ultimo);ultimo=ahora;
@@ -2147,7 +2182,7 @@ function bucle(ahora){
     if(!pausa)heliPaso();
     if(flash>0&&!pausa)flash--;if(dolor>0&&!pausa)dolor=Math.max(0,dolor-0.016);
     if(estado==='juego'&&!pausa)paso();
-    else if(estado==='inicio'||estado==='brief'){t++;cam=(cam+0.45)%(LARGO-W);}
+    else if(estado==='inicio'||estado==='brief'||estado==='guia'){t++;cam=(cam+0.45)%(LARGO-W);}
     else if(estado==='fin')t++;
     acum-=1000/60;
   }
