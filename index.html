@@ -221,7 +221,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <h2>Cómo se juega</h2>
     <div class="paso" id="guiaPaso"></div>
     <div class="puntos" id="guiaPuntos"></div>
-    <div class="botones"><button class="btn" id="guiaSig">Siguiente</button><button class="btn sec" id="guiaOmitir">Omitir</button></div>
+    <div class="botones"><button class="btn" id="guiaSig">Siguiente</button><button class="btn sec" id="guiaCarteles">📋 Carteles anteriores</button><button class="btn sec" id="guiaOmitir">Omitir</button></div>
   </div>
   <div class="capa" id="fin" hidden>
     <h2 id="finTitulo"></h2>
@@ -422,13 +422,26 @@ function generar(cfg){
       }
       const fin=ultimo?Math.min(x+len,L-160-Math.round(cola*0.56)-20):x+len-20;
       if(fin-libre>110){
-        let en=null;if(r()<cfg.pEnem){const sigue=r()<cfg.pSigue;en={tipo:sigue||(cfg.pSigue>0&&r()<0.25)?'perro':'chorro',a:libre,b:fin,sigue};defEnem.push(en);}
         const zona=fin-libre;
-        if(cfg.charcos&&r()<0.4){const cw=36+Math.floor(r()*14),cx=libre+Math.floor(r()*Math.max(1,zona/2-cw));charcos.push({x:cx,w:cw});}
-        if(cfg.techos&&!tunel&&zona>100&&r()<0.6){const cx=libre+Math.floor(r()*(zona-70));casasTecho.push({x:cx,w:64});defEnem.push({tipo:'techo',a:cx+4,b:cx+60});}
-        if(cfg.barro&&r()<0.45){const bw=30+Math.floor(r()*18),bx=libre+zona/2+Math.floor(r()*Math.max(1,zona/2-bw));barros.push({x:bx,w:bw});}
-        ponerRuta(libre,fin,en,r,cfg);
-        if(cfg.cables&&zona>150)for(let n=0;n<(zona>250?2:1);n++){if(r()>=cfg.cables)continue;for(let q=0;q<6;q++){const cx=libre+60+Math.floor(r()*Math.max(1,zona-130));if(casasTecho.some(h=>cx>h.x-90&&cx<h.x+h.w+90)||cables.some(c=>Math.abs(c.x-cx)<150)||defBloques.some(b=>b.x>cx-70&&b.x<cx+95)||plataformas.some(p=>p.t==='puente'&&p.x<cx+95&&p.x+p.w>cx-70))continue;cables.push({x:cx,A:0.85+r()*0.2,w:Math.PI*2/(210-PI*16-Math.floor(r()*40)),f:r()*6.28,L:88});break;}}
+        // charco, barro, techo, cajas, cables y enemigo se ubican sin pisarse: no se juntan varios peligros en el mismo lugar
+        const cerca=(a,z,m)=>charcos.some(c=>c.x<z+m&&c.x+c.w>a-m)||barros.some(c=>c.x<z+m&&c.x+c.w>a-m)||casasTecho.some(c=>c.x<z+m&&c.x+c.w>a-m)||cables.some(c=>c.x-76<z+m&&c.x+100>a-m)||defBloques.some(c=>c.x<z+m&&c.x+BLOQUE>a-m)||plataformas.some(c=>c.t==='puente'&&c.x<z+m&&c.x+c.w>a-m);
+        ponerRuta(libre,fin,null,r,cfg);
+        if(cfg.cables&&zona>172)for(let n=0;n<(zona>330?2:1);n++){if(r()>=cfg.cables)continue;for(let q=0;q<8;q++){const cx=libre+76+Math.floor(r()*Math.max(1,zona-176));if(cerca(cx-76,cx+100,12)||cables.some(c=>Math.abs(c.x-cx)<170))continue;cables.push({x:cx,A:0.85+r()*0.2,w:Math.PI*2/(210-PI*16-Math.floor(r()*40)),f:r()*6.28,L:88});break;}}
+        if(cfg.techos&&!tunel&&zona>100&&r()<0.6){const cx=libre+Math.floor(r()*(zona-70));if(!cerca(cx,cx+64,50)){casasTecho.push({x:cx,w:64});defEnem.push({tipo:'techo',a:cx+4,b:cx+60});}}
+        if(cfg.charcos&&r()<0.4){const cw=36+Math.floor(r()*14),cx=libre+Math.floor(r()*Math.max(1,zona/2-cw));if(!cerca(cx,cx+cw,30))charcos.push({x:cx,w:cw});}
+        if(cfg.barro&&r()<0.45){const bw=30+Math.floor(r()*18),bx=libre+zona/2+Math.floor(r()*Math.max(1,zona/2-bw));if(!cerca(bx,bx+bw,30))barros.push({x:bx,w:bw});}
+        // el enemigo patrulla el tramo libre más largo: sin barro, charcos, cables ni cajas encima
+        if(r()<cfg.pEnem){
+          const ob=[],mete=(a,b)=>{if(b>libre&&a<fin)ob.push([a-24,b+24]);};
+          charcos.forEach(c=>mete(c.x,c.x+c.w));barros.forEach(c=>mete(c.x,c.x+c.w));cables.forEach(c=>mete(c.x-76,c.x+100));casasTecho.forEach(c=>mete(c.x,c.x+c.w));defBloques.forEach(b=>mete(b.x,b.x+BLOQUE));
+          plataformas.forEach(p=>{if(p.t==='puente'||p.t==='tablon')mete(p.x,p.x+p.w);});
+          ob.sort((a,b)=>a[0]-b[0]);
+          let mejor=null,cur=libre;const largo=m=>m?m[1]-m[0]:0;
+          for(const [a,b] of ob){if(a-cur>largo(mejor))mejor=[cur,a];cur=Math.max(cur,b);}
+          if(fin-cur>largo(mejor))mejor=[cur,fin];
+          const sigue=r()<cfg.pSigue,tipo=sigue||(cfg.pSigue>0&&r()<0.25)?'perro':'chorro';
+          if(largo(mejor)>=80)defEnem.push({tipo,a:mejor[0],b:mejor[1],sigue});
+        }
       }
     }
     if(ultimo)break;
@@ -498,8 +511,7 @@ function nuevaPartida(){
 function crearEnemigos(cerca){
   const sk=N.skin;
   enemigos=defEnem.filter(d=>d.b<cerca-60||d.a>cerca+150).map(d=>{
-    const seg=suelo.find(([x,w])=>d.a>=x&&d.a<x+w)||[d.a,d.b-d.a];
-    if(d.tipo==='perro'){const s=SKIN[sk.perro];return{tipo:'perro',skin:sk.perro,x:d.a+10,y:GY-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:0.9,vivo:true,sigue:d.sigue,smin:seg[0]+2,smax:seg[0]+seg[1]-2,cd:0,guau:0};}
+    if(d.tipo==='perro'){const s=SKIN[sk.perro];return{tipo:'perro',skin:sk.perro,x:d.a+10,y:GY-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:0.9,vivo:true,sigue:d.sigue,smin:d.a,smax:d.b,cd:0,guau:0};}
     if(d.tipo==='techo'){const s=SKIN[sk.chorro];return{tipo:'techo',skin:sk.chorro,x:d.a+10,y:GY-CASA_H-3-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:0.25,vivo:true,cd:40,tira:0};}
     const s=SKIN[sk.chorro];return{tipo:'chorro',skin:sk.chorro,x:d.a+30,y:GY-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:-0.55,vivo:true};
   });
@@ -563,7 +575,7 @@ function armarMenu(){
     return `<button class="nivel bloq" data-i="${i}" disabled><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>🔒 ${n.nombre}</b><span>Necesitás ${EST_REQ}★ en ${NIVELES[i-1].nombre} (${estrellasEscenario(i-1)}/${EST_REQ})</span></button>`;}).join('');
   $('niveles').querySelectorAll('.nivel:not(.bloq)').forEach(b=>{b.onclick=()=>abrirBrief(+b.dataset.i);b.onfocus=b.onmouseenter=()=>{if(estado==='inicio'&&NI!==+b.dataset.i){cargarNivel(+b.dataset.i);}};});
 }
-function mostrar(id){['inicio','brief','fin','guia'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;}
+function mostrar(id){['inicio','brief','fin','guia'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;if(id!==null)$('pista').hidden=true;}
 // guía de cómo se juega: sale la primera vez y se puede omitir; después se abre desde el menú
 const guiaVista=()=>{try{return localStorage.getItem('pec-guia')==='1';}catch(e){return false;}};
 let guiaN=0;
@@ -573,13 +585,22 @@ function pasosGuia(){const tc=esTouch();return[
   ['👟','Pisá a los enemigos','Saltales encima desde arriba. Charly también ayuda: '+(tc?'tocá 🦴':'apretá C')+' y tira huesos a los ladrones de los techos.'],
   ['🌋','No te frenes','La tierra se derrumba detrás tuyo. Trepá cajas, cruzá túneles y puentes, y esquivá los cables: te cuestan 3 segundos.'],
   ['★','Ganá estrellas','Cada pedido da hasta 3. Con 8 de las 15 de un escenario se abre el siguiente.']];}
+let guiaModo='pasos';
 function pintarGuia(){
+  if(guiaModo==='carteles'){ // repaso de los carteles que ya pasaron
+    const l=leerCarteles();
+    $('guiaPaso').innerHTML=`<span class="ico">📋</span><b>Carteles que viste</b>`+(l.length?`<ul class="datos">${l.map(x=>`<li>• ${x}</li>`).join('')}</ul>`:'<p>Todavía no viste ninguno: aparecen mientras jugás el primer pedido de cada escenario.</p>');
+    $('guiaPuntos').innerHTML='';$('guiaSig').hidden=true;$('guiaOmitir').hidden=false;$('guiaOmitir').textContent='Cerrar';$('guiaCarteles').textContent='↩ Volver a la guía';
+    return;
+  }
   const ps=pasosGuia(),p=ps[guiaN];
   $('guiaPaso').innerHTML=`<span class="ico">${p[0]}</span><b>${p[1]}</b><p>${p[2]}</p>`;
   $('guiaPuntos').innerHTML=ps.map((_,i)=>`<i class="${i===guiaN?'on':''}"></i>`).join('');
-  $('guiaSig').textContent=guiaN<ps.length-1?'Siguiente':'¡A jugar!';$('guiaOmitir').hidden=guiaN===ps.length-1;
+  $('guiaSig').hidden=false;$('guiaSig').textContent=guiaN<ps.length-1?'Siguiente':'¡A jugar!';
+  $('guiaOmitir').hidden=guiaN===ps.length-1;$('guiaOmitir').textContent='Omitir';$('guiaCarteles').textContent='📋 Carteles anteriores';
 }
-function abrirGuia(){guiaN=0;estado='guia';mostrar('guia');pintarGuia();$('guiaSig').focus();}
+function abrirGuia(){guiaN=0;guiaModo='pasos';estado='guia';mostrar('guia');pintarGuia();$('guiaSig').focus();}
+$('guiaCarteles').onclick=()=>{guiaModo=guiaModo==='pasos'?'carteles':'pasos';pintarGuia();};
 function cerrarGuia(){try{localStorage.setItem('pec-guia','1');}catch(e){}abrirMenu();}
 $('guiaSig').onclick=()=>{if(guiaN<pasosGuia().length-1){guiaN++;pintarGuia();}else cerrarGuia();};
 $('guiaOmitir').onclick=cerrarGuia;
@@ -1078,7 +1099,10 @@ function vientoPaso(){
 // ---------- propina y pistas del primer pedido ----------
 let objetivo=0,propinaMonto=0,pistasDadas=new Set(),pistaT=null;
 // las pistas de qué hacer salen solo en el primer pedido de cada escenario
-function pista(txt){if(PI!==0)return;const p=$('pista');p.textContent=txt;p.hidden=false;clearTimeout(pistaT);pistaT=setTimeout(()=>p.hidden=true,4200);}
+// los carteles que salen se guardan para poder repasarlos desde la guía
+const leerCarteles=()=>{try{return JSON.parse(localStorage.getItem('pec-carteles')||'[]');}catch(e){return [];}};
+function guardarCartel(txt){try{const l=leerCarteles();if(!l.includes(txt)){l.push(txt);localStorage.setItem('pec-carteles',JSON.stringify(l.slice(-30)));}}catch(e){}}
+function pista(txt){if(PI!==0)return;guardarCartel(txt);const p=$('pista');p.textContent=txt;p.hidden=false;clearTimeout(pistaT);pistaT=setTimeout(()=>p.hidden=true,4200);}
 function pistasPaso(){
   if(PI!==0)return;
   const pp=(id,txt)=>{if(!pistasDadas.has(id)){pistasDadas.add(id);pista(txt);}};

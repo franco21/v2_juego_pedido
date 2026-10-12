@@ -24,6 +24,8 @@ Progreso y dificultad
                (contador 👟 en pantalla). Con 8 de las 15 de un escenario se abre el siguiente.
   Puntos       salen de la rapidez (segundos que sobran), de pisar enemigos (100 cada uno) y de la propina.
   Guía         la primera vez sale una guía corta de cómo se juega (se puede omitir); después, desde "❓ Cómo se juega".
+               Ahí mismo, "📋 Carteles anteriores" vuelve a mostrar los carteles de ayuda que ya pasaron.
+  Peligros     el barro, los charcos, los cables y los enemigos se ubican sin pisarse: no se juntan en el mismo lugar.
   Probar       agregar ?todo a la URL abre todos los escenarios.
 
 Celular
