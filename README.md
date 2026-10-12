@@ -29,7 +29,8 @@ Progreso y dificultad
   Puntos       salen de la rapidez (segundos que sobran), de pisar enemigos (100 cada uno) y de la propina.
   Guía         la primera vez sale una guía corta de cómo se juega (se puede omitir; hay botón Anterior);
                después, desde "❓ Cómo se juega".
-  Vidas        al perder una, reaparecés un poco más atrás, sobre piso firme y lejos de pozos, cables, barro y enemigos.
+  Vidas        al perder una, reaparecés un poco más atrás (nunca más adelante), sobre piso firme y lejos de pozos,
+               cables, barro y enemigos. Las pisadas suenan igual en todas las estaciones.
   Peligros     el barro, los charcos, los cables y los enemigos se ubican sin pisarse: no se juntan en el mismo lugar.
   Probar       agregar ?todo a la URL abre todos los escenarios.
 

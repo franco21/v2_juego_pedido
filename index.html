@@ -733,7 +733,7 @@ function tono(f1,f2,dur,tipo,g,cuando=0,dest,ataque=0){
   o.connect(gn);gn.connect(dest||master);o.start(t0);o.stop(t0+dur+0.05);return o;
 }
 const sfx={
-  pisada(tipo){tipo==='nieve'?(ruido(0.1,1800,'bandpass',0.3,0,1.2),ruido(0.06,600,'lowpass',0.15)):tipo==='barro'?(ruido(0.16,380,'lowpass',0.4),tono(160,90,0.1,'sine',0.06)):tipo==='lento'?ruido(0.14,2400,'highpass',0.12):tipo==='resbala'?ruido(0.12,5000,'highpass',0.08):(N.id==='glaciar'?ruido(0.08,1500,'highpass',0.25):ruido(0.06,700+Math.random()*400,'bandpass',0.35,0,2));},
+  pisada(){ruido(0.06,700+Math.random()*400,'bandpass',0.35,0,2);}, // el mismo sonido de pisada en todas las estaciones y terrenos
   salto(){tono(260,620,0.13,'square',0.05);},
   aterrizo(){ruido(0.09,400,'lowpass',0.3);},
   media(){tono(988,988,0.06,'square',0.04);tono(1319,1319,0.12,'square',0.04,0.06);},
@@ -754,7 +754,6 @@ const sfx={
   rafaga(f,dur,dir){if(!AC)return;const t0=AC.currentTime;const s=AC.createBufferSource();s.buffer=ruidoBuf;s.loop=true;const fl=AC.createBiquadFilter();fl.type='bandpass';fl.Q.value=0.8;fl.frequency.setValueAtTime(300,t0);fl.frequency.linearRampToValueAtTime(700+f*600,t0+dur*0.4);fl.frequency.linearRampToValueAtTime(350,t0+dur);
     const g=AC.createGain();g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.08+f*0.25,t0+dur*0.3);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur+0.8);
     s.connect(fl);fl.connect(g);if(AC.createStereoPanner){const p=AC.createStereoPanner();p.pan.setValueAtTime(-dir*0.7,t0);p.pan.linearRampToValueAtTime(dir*0.7,t0+dur);g.connect(p);p.connect(master);}else g.connect(master);s.start(t0);s.stop(t0+dur+1);},
-  hojas(){const n=4+Math.floor(Math.random()*4);for(let k=0;k<n;k++)ruido(0.025+Math.random()*0.03,2500+Math.random()*4000,'bandpass',0.35+Math.random()*0.25,k*0.018+Math.random()*0.012,2.5);ruido(0.08,900,'bandpass',0.12,0,1);},
   cruje(n){for(let k=0;k<2+n;k++){tono(2600+Math.random()*1800,1800,0.05,'sine',0.05,k*0.03);ruido(0.03,4500,'highpass',0.25,k*0.03,1);}tono(300,140,0.08,'sine',0.06);},
   rompe(){ruido(0.3,3000,'highpass',0.4,0,0.7);for(let k=0;k<10;k++)tono(2200+Math.random()*3500,1500+Math.random()*2000,0.12+Math.random()*0.2,'sine',0.035,Math.random()*0.25);ruido(0.35,600,'lowpass',0.35,0.08);ruido(0.4,1200,'bandpass',0.2,0.12,1);},
   click(){ruido(0.02,3000,'highpass',0.3);tono(1800,1200,0.03,'square',0.03);},
@@ -911,18 +910,19 @@ function perderVida(){
 }
 // punto de reaparición: un poco más atrás de donde perdió la vida, sobre piso firme con 110 px por delante y sin pozos, cajas,
 // plataformas, cables, barro, charcos ni enemigos cerca
-function puntoSeguro(x0){
+function puntoSeguro(x0,tope){
   const base=x=>suelo.some(([a,w])=>x>=a+30&&x+P.w+110<=a+w)&&!bloques.some(b=>b.x<x+P.w+16&&b.x+b.w>x-16)&&!plataformas.some(q=>q.x<x+P.w+16&&q.x+q.w>x-16);
   const limpio=x=>base(x)&&!cables.some(c=>c.x-106<x+P.w&&c.x+130>x)&&!barros.some(c=>c.x<x+P.w+24&&c.x+c.w>x-24)&&!charcos.some(c=>c.x<x+P.w+24&&c.x+c.w>x-24)&&!defEnem.some(e=>e.b>x-90&&e.a<x+170);
-  for(const ok of [limpio,base]){
-    for(let d=0;d<=420&&x0-d>=8;d+=6)if(ok(x0-d))return x0-d; // primero un poco más atrás
-    for(let d=6;d<=900;d+=6)if(ok(x0+d))return x0+d;           // si no hay lugar, más adelante
-  }
-  return x0;
+  const atras=(ok,max)=>{for(let d=0;d<=max&&x0-d>=8;d+=6)if(ok(x0-d))return x0-d;return null;};
+  const hasta=ok=>{for(let x=x0+6;x<=tope;x+=6)if(ok(x))return x;return null;}; // como mucho hasta donde perdiste la vida
+  // nunca más adelante que donde moriste; cerca y limpio primero, si no se puede, cerca (se quitan los peligros del lugar) y recién después más atrás
+  const x=atras(limpio,150)??atras(base,150)??hasta(base)??atras(base,900);
+  if(x!==null)return x;
+  return 40; // sin lugar (muy raro): al inicio del recorrido
 }
 function reaparecer(){
   VAR++;armarLayout();
-  let x=puntoSeguro(Math.max(P.x-90,8));
+  let x=puntoSeguro(Math.max(P.x-90,8),P.x);
   if(x>FIN-60)x=FIN-60;
   cables=cables.filter(c=>!(c.x-96<x+P.w&&c.x+120>x));barros=barros.filter(c=>!(c.x<x+P.w+20&&c.x+c.w>x-20));charcos=charcos.filter(c=>!(c.x<x+P.w+20&&c.x+c.w>x-20));
   P.x=x;P.y=20;P.vx=0;P.vy=0;P.inv=110;P.piso=false;P.barro=0;estrellas=[];cam=Math.max(0,Math.min(x-W*0.4,LARGO-W));
@@ -1064,11 +1064,10 @@ function paso(){
   if(!antes&&P.piso){sfx.aterrizo();for(const c of charcos)if(P.x+P.w>c.x&&P.x<c.x+c.w&&P.y+P.h>=GY-1)pisarHielo(c);for(let k=0;k<4;k++)parts.push({x:P.x+5,y:P.y+P.h-1,vx:(k-1.5)*0.5,vy:-0.4,v:14,c:'#ffffff88',r:1});}
   const pasoN=Math.floor(P.anim/2);
   if(P.piso&&pasoN!==P.ultPaso&&Math.abs(P.vx)>0.2){
-    if(P.barro>0){P.barro--;sfx.pisada('barro');for(let k=0;k<3;k++)parts.push({x:P.x+5,y:GY-2,vx:(Math.random()-.5)*1.5,vy:-1-Math.random(),v:18,c:'#6a4a2a',r:1.5});if(P.barro===0)texto(P.x-6,P.y-6,'¡Listo!');}
+    if(P.barro>0){P.barro--;sfx.pisada();for(let k=0;k<3;k++)parts.push({x:P.x+5,y:GY-2,vx:(Math.random()-.5)*1.5,vy:-1-Math.random(),v:18,c:'#6a4a2a',r:1.5});if(P.barro===0)texto(P.x-6,P.y-6,'¡Listo!');}
     else if(chRef&&chRef.hielo&&chRef.hp>0)pisarHielo(chRef);
-    else if(EST==='otoño'&&!charco){sfx.hojas();for(let k=0;k<2;k++)parts.push({x:P.x+5,y:GY-2,vx:(Math.random()-.5)*1.6,vy:-0.8-Math.random(),v:20,c:['#c8642a','#e09a3a','#a0441e'][k%3],r:1.5});}
-    else if(EST==='invierno'&&!charco&&N.id!=='glaciar'&&!N.tormenta)sfx.pisada('nieve');
-    else sfx.pisada(charco);}
+    else if(EST==='otoño'&&!charco){sfx.pisada();for(let k=0;k<2;k++)parts.push({x:P.x+5,y:GY-2,vx:(Math.random()-.5)*1.6,vy:-0.8-Math.random(),v:20,c:['#c8642a','#e09a3a','#a0441e'][k%3],r:1.5});}
+    else sfx.pisada();}
   P.ultPaso=pasoN;
   if(P.inv>0)P.inv--;
   if(P.y>H+20){caer();return;}
