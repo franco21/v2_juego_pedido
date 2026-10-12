@@ -24,12 +24,13 @@
   color-scheme: dark;
 }
 [hidden]{display:none!important}
-html,body{height:100%}
+html,body{height:100%;height:100dvh}
 body{background:var(--noche);color:var(--cal);font-family:var(--body);display:flex;flex-direction:column;align-items:center;justify-content:center;padding-inline:16px;padding-block:12px;box-sizing:border-box;gap:10px}
-.juego{position:relative;width:100%;max-width:1152px;aspect-ratio:16/9;max-height:calc(100% - 20px);background:#000;border:3px solid #3a3352;border-radius:4px;overflow:hidden;outline:none}
+.juego{position:relative;box-sizing:border-box;width:min(100%,calc((100dvh - 60px)*16/9));max-width:1152px;aspect-ratio:16/9;background:#000;border:3px solid #3a3352;border-radius:4px;overflow:hidden;outline:none}
 .juego:focus-visible{border-color:var(--sol)}
 canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
-.hud{position:absolute;inset:0 0 auto 0;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:8px 12px;font-family:var(--display);font-size:clamp(11px,1.8vw,18px);text-shadow:2px 2px 0 #000;pointer-events:none}
+.hud{position:absolute;inset:0 0 auto 0;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;padding:8px 12px;font-family:var(--display);font-size:clamp(11px,1.8vw,18px);text-shadow:2px 2px 0 #000;pointer-events:none}
+@media (max-width:1100px){#estacionHud{display:none}}
 .hud .item{display:flex;align-items:center;gap:6px}
 .hud .der{margin-left:auto}
 .reloj{position:absolute;right:12px;top:clamp(36px,7vw,56px);width:clamp(84px,13vw,144px);aspect-ratio:1;max-width:100%;border-radius:50%;background:radial-gradient(circle at 50% 40%,#1d1830,#0b0a12);border:2px solid #3a3352;box-shadow:3px 3px 0 #0008;pointer-events:none}
@@ -104,14 +105,45 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .ped[aria-pressed="true"]{border-color:var(--sol);background:#4a3a2a;color:var(--sol)}
 .ped:disabled{opacity:.45;cursor:not-allowed}
 .ped:focus-visible{outline:2px solid var(--sol)}
-.tactil{display:none;width:100%;max-width:1152px;justify-content:space-between;gap:12px;user-select:none;-webkit-user-select:none;touch-action:none}
-.tactil div{display:flex;gap:12px}
-.tactil button{font-family:var(--display);font-size:22px;width:64px;height:64px;border-radius:50%;border:3px solid var(--cal);background:#2e2748;color:var(--cal);touch-action:none}
-.tactil button.on{background:var(--ladrillo)}
-@media (pointer:coarse){.tactil{display:flex}}
-@media (max-width:420px){.tactil button{width:52px;height:52px;font-size:19px}}
+.dificultad{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap}
+.dif{font-family:var(--display);background:#2a2340;color:var(--cal);border:2px solid #4a4066;padding:4px 12px;cursor:pointer;font-size:clamp(11px,1.5vw,15px)}
+.dif[aria-pressed="true"]{border-color:var(--sol);background:#4a3a2a;color:var(--sol)}
+.dif:focus-visible{outline:2px solid var(--sol)}
+.nivel.bloq{opacity:.55;cursor:not-allowed}
+.estrellas{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-family:var(--display);font-size:clamp(10px,1.5vw,14px)}
+.estrellas span{border:2px solid #3a3352;background:#0b0a12d9;color:var(--chapa);padding:2px 8px}
+.estrellas span.on{color:#f2c14e;border-color:#f2c14e}
+.tactil{display:none;position:absolute;left:0;right:0;bottom:0;padding:0 clamp(8px,2.2vmin,22px) clamp(8px,2.2vmin,22px);justify-content:space-between;align-items:flex-end;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;z-index:6}
+.tactil .mov,.tactil .acc{display:flex;gap:clamp(8px,2.4vmin,20px);align-items:flex-end}
+.tactil .mov{pointer-events:auto;touch-action:none;padding:10px 10px 0 0}
+.tactil button{pointer-events:auto;font-family:var(--display);font-size:clamp(20px,6vmin,34px);width:clamp(58px,19vmin,104px);height:clamp(58px,19vmin,104px);border-radius:50%;border:3px solid #f4ecdfaa;background:#2e2748a6;color:var(--cal);touch-action:none;-webkit-tap-highlight-color:transparent;padding:0;opacity:.82}
+.tactil .grande{width:clamp(72px,25vmin,128px);height:clamp(72px,25vmin,128px);font-size:clamp(26px,8vmin,44px);background:#c8553dcc}
+.tactil .chico{width:clamp(46px,14vmin,78px);height:clamp(46px,14vmin,78px)}
+.tactil button.on{background:var(--ladrillo);opacity:1;transform:scale(.93)}
+body.touch .tactil{display:flex}
+.girar{display:none;position:fixed;inset:0;z-index:20;background:var(--noche);color:var(--cal);font-family:var(--display);font-size:clamp(18px,5vw,28px);align-items:center;justify-content:center;text-align:center;padding:24px;flex-direction:column;gap:12px}
+@media (orientation:portrait){body.touch .girar{display:flex}}
 .ayuda{font-size:12px;color:var(--chapa);margin:0}
-@media (pointer:coarse){.ayuda{display:none}}
+body.touch{padding:0;gap:0}
+body.touch .juego{width:min(100vw,calc(100dvh*16/9));border:0;border-radius:0}
+body.touch .ayuda,body.touch .solo-teclado,body.touch #estacionHud{display:none}
+body.touch .mute{padding:6px 12px;font-size:14px}
+body.touch .dif,body.touch .ped{padding:8px 14px;min-height:40px}
+body.touch button.btn{padding:10px 22px}
+body.touch #numPedido{display:none}
+body.touch .hud{gap:4px 10px;padding:6px 10px}
+@media (max-height:560px){
+  .capa{gap:6px;padding:8px 12px 8px}
+  #inicio h1{font-size:clamp(18px,4.5vw,28px);text-shadow:2px 2px 0 var(--ladrillo)}
+  #inicio>p{display:none}
+  .niveles{gap:6px}
+  .nivel{padding:5px 8px}
+  .nivel b{font-size:12px}
+  .nivel span{font-size:9px}
+  .capa h2{font-size:clamp(16px,3.4vw,24px)}
+  .capa p{font-size:11px;line-height:1.3}
+  .ticket{font-size:10px;padding:5px 10px}
+}
 @media (prefers-reduced-motion:reduce){.reloj.apurado .dig,.bateria.baja,#tPts.sube .grande,#tPts.baja .grande{animation:none}}
 </style>
 
@@ -123,9 +155,11 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
     <div class="item" id="vidas">♥♥♥</div>
     <div class="item"><span id="icono">🥐</span> <span id="medias">0</span></div>
     <div class="item" id="numPedido">Pedido 1/5</div>
+    <div class="item" id="retoHud" title="Reto de la tercera estrella: pisá enemigos desde arriba">👟 0/1</div>
     <div class="item" id="estacionHud">☀️ Verano</div>
     <div class="item" id="charlyHud">🐶 Charly: huesos (C)</div>
     <div class="item der">Faltan <span id="falta">24 cuadras</span></div>
+    <button class="mute" id="pausar" title="Pausa (P)" aria-label="Pausa">⏸</button>
     <button class="mute" id="salir" title="Volver a elegir escenario (Esc)">⟵ Escenarios</button>
     <button class="mute" id="sonido" aria-pressed="false">🔊 Sonido</button>
   </div>
@@ -148,12 +182,17 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
   </div>
   </div>
   <div class="pista" id="pista" hidden aria-live="polite"></div>
+  <div class="tactil" id="tactil" hidden>
+    <div class="mov" id="padMov"><button data-k="izq" aria-label="Izquierda">◀</button><button data-k="der" aria-label="Derecha">▶</button></div>
+    <div class="acc"><button class="chico" data-k="charly" aria-label="Charly tira un hueso">🦴</button><button class="grande" data-k="salto" aria-label="Saltar">▲</button></div>
+  </div>
 
   <div class="capa" id="inicio">
     <h1>Pedido en Camino</h1>
-    <p>Seis lugares del país, cinco pedidos en cada uno. Cada pedido es más largo y con menos tiempo. Si llegás rápido, el cliente te deja propina.</p>
+    <p>Seis lugares del país, cinco pedidos en cada uno. Sumá ★ para abrir el escenario siguiente: una por entregar, otra por ganar la propina y otra por pisar enemigos.</p>
+    <div class="dificultad" id="dificultad" role="group" aria-label="Dificultad"></div>
     <div class="niveles" id="niveles"></div>
-    <small>← → moverte · Espacio saltar · C huesos de Charly · P pausa · M sonido · Esc volver a escenarios</small>
+    <small class="solo-teclado">← → moverte · Espacio saltar · C huesos de Charly · P pausa · M sonido · Esc volver a escenarios</small>
   </div>
 
   <div class="capa" id="brief" hidden>
@@ -173,18 +212,18 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
   </div>
 </div>
 
-<div class="tactil" id="tactil">
-  <div><button data-k="izq" aria-label="Izquierda">◀</button><button data-k="der" aria-label="Derecha">▶</button></div>
-  <div><button data-k="charly" aria-label="Charly tira un hueso">🦴</button><button data-k="salto" aria-label="Saltar">▲</button></div>
-</div>
 <p class="ayuda">Hacé clic en el juego si las teclas no responden.</p>
 
+<div class="girar" id="girar" role="alert"><span style="font-size:3em">📱</span>Girá el celular para jugar</div>
 <script>
 (()=>{
 const cv=document.getElementById('c');let ctx=cv.getContext('2d');
 const W=384,H=216,S=4;cv.width=W*S;cv.height=H*S;ctx.setTransform(S,0,0,S,0,0);ctx.imageSmoothingEnabled=false;
 const GY=184;
 const $=id=>document.getElementById(id);
+// modo táctil: se activa solo en pantallas de dedo o con el primer toque
+{const marcar=()=>document.body.classList.add('touch');if(matchMedia('(pointer:coarse)').matches)marcar();addEventListener('pointerdown',e=>{if(e.pointerType==='touch')marcar();},{passive:true});}
+const esTouch=()=>document.body.classList.contains('touch');
 const R=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,h);};
 const rnd=i=>{const s=Math.sin(i*127.1+311.7)*43758.5453;return s-Math.floor(s);};
 function prng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
@@ -277,13 +316,28 @@ const NIVELES=[
 
 // ---------- Generador para los demás escenarios ----------
 // parámetros de cada pedido: el 1 es un tutorial y cada uno suma largo, enemigos y mecánicas
-const DIFS=['Primer pedido: aprendé','Fácil','Normal','Difícil','Experto'];
+// dificultad: se elige en el menú y se guarda; cambia vidas, reloj, derrumbe, enemigos y plataformas móviles
+const DIFICULTADES={
+  normal:{nombre:'Normal',icono:'🙂',vidas:3,tiempo:1,derr:1,enem:0,sigue:0,moviles:0.3},
+  dificil:{nombre:'Difícil',icono:'😤',vidas:2,tiempo:0.9,derr:1.2,enem:0.12,sigue:0.1,moviles:0.45},
+  experto:{nombre:'Experto',icono:'💀',vidas:1,tiempo:0.8,derr:1.4,enem:0.25,sigue:0.2,moviles:0.6}};
+let modo=(()=>{try{const d=localStorage.getItem('pec-dif');return DIFICULTADES[d]?d:'normal';}catch(e){return 'normal';}})();
+const DF=()=>DIFICULTADES[modo];
+// estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente (?todo en la URL abre todos, para probar)
+const EST_REQ=8,TODO=/[?&]todo\b/.test(location.search);
+let retoMeta=1;
+function leerEstrellas(id,pi){try{return +localStorage.getItem(`pec-est-${id}-${pi}`)||0;}catch(e){return 0;}}
+function guardarEstrellas(id,pi,n){try{if(n>leerEstrellas(id,pi))localStorage.setItem(`pec-est-${id}-${pi}`,n);}catch(e){}}
+const estrellasEscenario=i=>[0,1,2,3,4].reduce((a,k)=>a+leerEstrellas(NIVELES[i].id,k),0);
+const escenarioAbierto=i=>TODO||i===0||estrellasEscenario(i-1)>=EST_REQ;
+const claveRec=()=>N.id+'-'+PI+(modo==='normal'?'':'-'+modo);
+function calcularReto(){const n=defEnem.filter(e=>e.tipo==='chorro').length+(SKIN[N.skin.moto].pisable?disparos.length:0);return Math.max(1,Math.ceil(n*0.6));}
 function cfgPedido(){
   const k=PI;
   return{seed:N.seed+k*101+VAR*7919,largo:1650+k*410,dif:Math.min(2.4,k*0.5+NI*0.08),caja:N.caja,flota:N.flota,
-    puentes:k===0?0.5:0.3,colgantes:k===0?0:0.5,roto:k>=2,ruinas:k===0?0.35:0.3,tuneles:k===0?0.7:0.6,techos:k>=3,pEnem:0.35+k*0.15,pSigue:k===0?0:0.35+k*0.1,motos:k>=2,barro:k>=1,charcos:k>=1,
-    derr:Math.min(1.4,0.6+k*0.16+NI*0.02),
-    cables:k===0?0.7:0.95,cajas:k===0?0.6:0.7,altos:k===0?0:0.5,
+    puentes:k===0?0.5:0.3,colgantes:k===0?0:0.5,roto:k>=2,ruinas:k===0?0.35:0.3,tuneles:k===0?0.7:0.6,techos:k>=3,pEnem:Math.min(0.98,0.35+k*0.15+DF().enem),pSigue:k===0?0:Math.min(0.9,0.35+k*0.1+DF().sigue),motos:k>=2||(modo!=='normal'&&k>=1),barro:k>=1,charcos:k>=1,
+    derr:Math.min(1.4,0.6+k*0.16+NI*0.02)*DF().derr,
+    cables:k===0?0.7:0.95,cajas:k===0?0.6:0.7,altos:k===0?0:0.5,moviles:k===0?0:DF().moviles,
     viento:k>=2?(0.55+(k-2)*0.25)*(N.id==='glaciar'||N.id==='quebrada'?1.25:1):0};
 }
 // zonas de cajas y viaductos: el camino no es parejo; hay pilas que se trepan y "techos" de cajas sobre soportes que se pueden pasar por abajo o recorrer por arriba
@@ -376,6 +430,13 @@ function generar(cfg){
       for(let j=1;j<4;j++)defMedias.push([x+j*gw/4,GY-12]);
       x+=gw;k++;continue;
     }
+    // pozo ancho (no se puede saltar) con una plataforma móvil que lo cruza yendo y viniendo: hay que esperarla, subirse y bajar del otro lado
+    if(cfg.moviles&&k>0&&r()<cfg.moviles){
+      x+=len;const gw=150+Math.floor(r()*40),pw=48;
+      plataformas.push({t:'movil',estilo:cfg.flota,x:x+3,y:GY,w:pw,h:8,x0:x+3,rango:gw-pw-6,f:r()*6.28,wv:Math.PI*2/(260+Math.floor(r()*80)),dx:0});
+      for(let j=0;j<3;j++)defMedias.push([x+gw*(j+1)/4,GY-46]);
+      x+=gw;k++;continue;
+    }
     const gap=46+Math.floor(r()*(8+cfg.dif*4));
     x+=len;
     if(r()<0.35){plataformas.push({x:x+gap/2-24,y:132,w:48,h:8,t:cfg.flota});defMedias.push([x+gap/2-6,120],[x+gap/2+6,120]);}
@@ -397,10 +458,10 @@ function armarLayout(){
   CFG=cfgPedido();generar(CFG);prepararHielo();bloques=defBloques.map(b=>({w:BLOQUE,h:BLOQUE,t:'caja',apoyo:b.y+BLOQUE,...b}));cae=[];armarSOL();
 }
 // reloj: 30 s el primer pedido, 40 s el último (32,5 · 35 · 37,5 los del medio)
-function segundosPedido(){return 30+PI*2.5;}
+function segundosPedido(){return Math.round((30+PI*2.5)*DF().tiempo*2)/2;}
 function cargarNivel(i,pi=0){
   NI=i;N=NIVELES[i];PI=pi;VAR=0;elegirEstacion();
-  armarLayout();
+  armarLayout();retoMeta=calcularReto();
   hayNoche=esNoche();noche={nivel:hayNoche?1:0,franjas:hayNoche?[[0,1e12]]:[]};
   TOT=segundosPedido()*60;
   cam=0;t=0;parts=[];
@@ -410,7 +471,7 @@ function cargarNivel(i,pi=0){
 function nuevaPartida(){
   cargarNivel(NI,PI);
   P={x:40,y:GY-22,w:8,h:22,vx:0,vy:0,piso:false,dir:1,inv:0,anim:0,coyote:0,buffer:0};
-  restante=TOT;vidas=3;resetCharly();rayos=[];quemaduras=[];destello=0;sacudida=0;proxRayo=0;prepararNoche();viento={v:0,obj:0,timer:600+Math.random()*400,activo:false};P.barro=0;
+  restante=TOT;vidas=DF().vidas;resetCharly();rayos=[];quemaduras=[];destello=0;sacudida=0;proxRayo=0;prepararNoche();viento={v:0,obj:0,timer:600+Math.random()*400,activo:false};P.barro=0;
   objetivo=Math.round(TOT*0.55);propinaMonto=Math.round((500+PI*300+NI*150)/50)*50;pistasDadas=new Set();$('pista').hidden=true;
   cuentaMedias=0;pisotones=0;huesazos=0;motosDisparadas=new Set();penal=0;dolor=0;
   crearEnemigos(-1e9);derrInit(P.x-300,PI===0?420:300);
@@ -447,44 +508,60 @@ const tecla={izq:false,der:false,salto:false,charly:false};let saltoPrevio=false
 const mapa={KeyC:'charly',ArrowLeft:'izq',KeyA:'izq',ArrowRight:'der',KeyD:'der',Space:'salto',ArrowUp:'salto',KeyW:'salto'};
 addEventListener('keydown',e=>{
   if(mapa[e.code]&&estado==='juego'){tecla[mapa[e.code]]=true;e.preventDefault();}
-  if(e.code==='KeyP'&&estado==='juego'){pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();}
+  if(e.code==='KeyP')alternarPausa();
   if(e.code==='KeyM'){ponerMudo(!mudo);}
   if(e.code==='Escape'&&(estado==='juego'||estado==='brief'||estado==='fin')){e.preventDefault();salirAlMenu();}
   if(e.code==='Enter'&&estado==='brief'){e.preventDefault();arrancar();}
 });
 addEventListener('keyup',e=>{if(mapa[e.code])tecla[mapa[e.code]]=false;});
-document.querySelectorAll('#tactil button').forEach(b=>{
-  const k=b.dataset.k;
-  const on=e=>{e.preventDefault();tecla[k]=true;b.classList.add('on');if(estado==='brief')arrancar();};
-  const off=e=>{e.preventDefault();tecla[k]=false;b.classList.remove('on');};
-  b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off);
-});
+{ // controles táctiles: cruz izquierda con deslizamiento entre ◀ y ▶; saltar y Charly a la derecha; varios dedos a la vez
+  const vib=ms=>{try{navigator.vibrate&&navigator.vibrate(ms);}catch(_){}};
+  const pad=$('padMov'),pb=[...pad.querySelectorAll('button')];let padId=null;
+  const dir=x=>{const r=pad.getBoundingClientRect(),izq=x<r.left+r.width/2;tecla.izq=izq;tecla.der=!izq;pb[0].classList.toggle('on',izq);pb[1].classList.toggle('on',!izq);};
+  pad.addEventListener('pointerdown',e=>{e.preventDefault();padId=e.pointerId;try{pad.setPointerCapture(e.pointerId);}catch(_){}dir(e.clientX);});
+  pad.addEventListener('pointermove',e=>{if(e.pointerId===padId)dir(e.clientX);});
+  const soltar=e=>{if(e.pointerId!==padId)return;padId=null;tecla.izq=tecla.der=false;pb.forEach(b=>b.classList.remove('on'));};
+  pad.addEventListener('pointerup',soltar);pad.addEventListener('pointercancel',soltar);pad.addEventListener('lostpointercapture',soltar);
+  document.querySelectorAll('#tactil .acc button').forEach(b=>{
+    const k=b.dataset.k;
+    b.addEventListener('pointerdown',e=>{e.preventDefault();try{b.setPointerCapture(e.pointerId);}catch(_){}tecla[k]=true;b.classList.add('on');vib(k==='salto'?8:12);});
+    const off=()=>{tecla[k]=false;b.classList.remove('on');};
+    b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('lostpointercapture',off);
+  });
+  $('tactil').addEventListener('contextmenu',e=>e.preventDefault());
+}
 {let m='';for(let k=0;k<60;k++){const a=k/60*Math.PI*2,r1=k%5?48.4:47.6;m+=`<line class="marca" x1="${50+Math.cos(a)*r1}" y1="${50+Math.sin(a)*r1}" x2="${50+Math.cos(a)*49.7}" y2="${50+Math.sin(a)*49.7}"></line>`;}$('marcas').innerHTML=m;}
 function leerRecord(id){try{return +localStorage.getItem('pec-rec-'+id)||0;}catch(e){return 0;}}
 function leerProg(id){try{return +localStorage.getItem('pec-prog-'+id)||0;}catch(e){return 0;}}
 function guardarProg(id,n){try{if(n>leerProg(id))localStorage.setItem('pec-prog-'+id,n);}catch(e){}}
 function armarMenu(){
-  $('niveles').innerHTML=NIVELES.map((n,i)=>{const pr=leerProg(n.id);return `<button class="nivel" data-i="${i}"><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>${n.nombre}</b><span>Pedidos entregados: ${pr}/5</span></button>`;}).join('');
-  $('niveles').querySelectorAll('.nivel').forEach(b=>{b.onclick=()=>abrirBrief(+b.dataset.i);b.onfocus=b.onmouseenter=()=>{if(estado==='inicio'&&NI!==+b.dataset.i){cargarNivel(+b.dataset.i);}};});
+  $('dificultad').innerHTML=Object.entries(DIFICULTADES).map(([k,d])=>`<button class="dif" data-d="${k}" aria-pressed="${k===modo}">${d.icono} ${d.nombre}</button>`).join('')+`<small>${DF().vidas} ${DF().vidas>1?'vidas':'vida'} · reloj al ${Math.round(DF().tiempo*100)}%</small>`;
+  $('dificultad').querySelectorAll('.dif').forEach(b=>b.onclick=()=>{modo=b.dataset.d;try{localStorage.setItem('pec-dif',modo);}catch(e){}armarMenu();});
+  $('niveles').innerHTML=NIVELES.map((n,i)=>{const pr=leerProg(n.id);
+    if(escenarioAbierto(i))return `<button class="nivel" data-i="${i}"><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>${n.nombre}</b><span>Entregados ${pr}/5 · ★ ${estrellasEscenario(i)}/15</span></button>`;
+    return `<button class="nivel bloq" data-i="${i}" disabled><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>🔒 ${n.nombre}</b><span>Necesitás ${EST_REQ}★ en ${NIVELES[i-1].nombre} (${estrellasEscenario(i-1)}/${EST_REQ})</span></button>`;}).join('');
+  $('niveles').querySelectorAll('.nivel:not(.bloq)').forEach(b=>{b.onclick=()=>abrirBrief(+b.dataset.i);b.onfocus=b.onmouseenter=()=>{if(estado==='inicio'&&NI!==+b.dataset.i){cargarNivel(+b.dataset.i);}};});
 }
-function mostrar(id){['inicio','brief','fin'].forEach(c=>$(c).hidden=c!==id);}
+function mostrar(id){['inicio','brief','fin'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;}
 function abrirMenu(){if(derr.on)cargarNivel(NI,PI);estado='inicio';$('izq').hidden=true;armarMenu();mostrar('inicio');$('hud').hidden=true;$('reloj').hidden=true;audioInit();ambienteNivel(N.id);$('niveles').querySelector(`[data-i="${NI}"]`)?.focus();}
 function abrirBrief(i,pi){
+  if(!escenarioAbierto(i)){abrirMenu();return;}
   const prog=leerProg(NIVELES[i].id);
   if(pi===undefined)pi=Math.min(prog,4);
-  if(NI!==i||PI!==pi||!suelo||derr.on)cargarNivel(i,pi);
+  cargarNivel(i,pi);
   estado='brief';audioInit();ambienteNivel(N.id);
   $('bLugar').textContent=N.lugar;$('bNombre').textContent=`${NI+1}. ${N.nombre}`;
-  $('pedidos').innerHTML=[0,1,2,3,4].map(k=>`<button class="ped" data-k="${k}" aria-pressed="${k===PI}" ${k>prog?'disabled':''}>${k>prog?'🔒 ':k<prog?'✓ ':''}Pedido ${k+1}</button>`).join('');
+  $('pedidos').innerHTML=[0,1,2,3,4].map(k=>{const e=leerEstrellas(N.id,k);return `<button class="ped" data-k="${k}" aria-pressed="${k===PI}" ${k>prog?'disabled':''}>${k>prog?'🔒 ':''}Pedido ${k+1}${k<prog?' '+'★'.repeat(e)+'☆'.repeat(3-e):''}</button>`;}).join('');
   $('pedidos').querySelectorAll('.ped').forEach(b=>b.onclick=()=>abrirBrief(NI,+b.dataset.k));
-  const rec=leerRecord(N.id+'-'+PI),seg=segundosPedido();
-  $('bTicket').innerHTML=`PEDIDO #${NI+1}${PI+1}${(NI*7+PI*3)%10}${(NI+PI*5)%10} · ${DIFS[PI]}<br>${N.pedidos[PI]}<br>Cliente: ${N.clientes[PI]} · Tiempo: ${fmt(seg).slice(0,-2)}<br>${ESTACIONES[EST].icono} ${ESTACIONES[EST].nombre}${esNoche()?(N.noche?' · 🌙 Noche de apagón':' · 🌙 A mitad de camino se hace de noche'):''}`+(rec?` · Récord ${rec.toLocaleString('es-AR')}`:'');
+  const rec=leerRecord(claveRec()),seg=segundosPedido();
+  $('bTicket').innerHTML=`PEDIDO #${NI+1}${PI+1}${(NI*7+PI*3)%10}${(NI+PI*5)%10} · ${DF().icono} ${DF().nombre}<br>${N.pedidos[PI]}<br>Cliente: ${N.clientes[PI]} · Tiempo: ${fmt(seg).slice(0,-2)} · ${DF().vidas} ${DF().vidas>1?'vidas':'vida'}<br>${ESTACIONES[EST].icono} ${ESTACIONES[EST].nombre}${esNoche()?(N.noche?' · 🌙 Noche de apagón':' · 🌙 A mitad de camino se hace de noche'):''}`+(rec?` · Récord ${rec.toLocaleString('es-AR')}`:'')+`<br>★ entregar · ★ propina (llegá en ${fmt(TOT*0.55/60).slice(0,-2)}) · ★ pisá ${retoMeta} enemigo${retoMeta>1?'s':''}`;
   const extra=[' En este primer pedido te vamos guiando.',' Al pasar la mitad del camino cae un rayo y se hace de noche: la linterna te alumbra siempre hacia donde mirás. Juntá estrellas para las pilas. Aparecen charcos y barro.',' Desde acá sopla el viento y aparecen enemigos que vienen de frente.',' Otra vez se hace de noche a mitad de camino, más largo y con viento. Hay ladrones en los techos que tiran macetas: Charly les tira huesos con la C.',' El más largo y con el reloj más justo. Más techos con ladrones: Charly te cubre a huesazos.'][PI];
-  $('bTexto').textContent=N.texto+extra+' La tierra se derrumba detrás tuyo: no te frenes. El camino no es parejo: hay túneles, cerros, viaductos y pilas de cajas que tenés que trepar para pasar. Cuidado con los cables sueltos de los postes: si te tocan, perdés puntos.';
+  $('bTexto').textContent=N.texto+extra+' La tierra se derrumba detrás tuyo: no te frenes. El camino no es parejo: hay túneles, cerros, viaductos y pilas de cajas que tenés que trepar para pasar.'+(PI>0?' Algunos pozos son demasiado anchos para saltarlos: esperá la plataforma móvil en el borde, subite y bajá del otro lado.':'')+' Cuidado con los cables sueltos de los postes: si te tocan, perdés puntos.';
   mostrar('brief');$('jugar').focus();
 }
 function arrancar(){
-  audioInit();if(AC)AC.resume();nuevaPartida();ambienteNivel(N.id);estado='juego';pausa=false;mostrar(null);
+  audioInit();if(AC)AC.resume();nuevaPartida();ambienteNivel(N.id);estado='juego';pausa=false;$('pausar').textContent='⏸';mostrar(null);
+  if(esTouch()&&!document.fullscreenElement&&document.documentElement.requestFullscreen){try{document.documentElement.requestFullscreen({navigationUI:'hide'}).then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})).catch(()=>{});}catch(_){}}
   $('hud').hidden=false;$('reloj').hidden=false;$('izq').hidden=false;ptsPrev=-1;if(hayNoche)sfx.click();$('icono').textContent=N.icono;$('numPedido').textContent=`Pedido ${PI+1}/5`;$('estacionHud').textContent=ESTACIONES[EST].icono+' '+ESTACIONES[EST].nombre;hudPrev='';$('juego').focus();
 }
 $('jugar').onclick=arrancar;$('otra').onclick=arrancar;$('volver').onclick=abrirMenu;$('menu').onclick=abrirMenu;
@@ -497,27 +574,36 @@ function salirAlMenu(){
 }
 $('salir').onclick=salirAlMenu;
 $('sonido').onclick=()=>{ponerMudo(!mudo);$('juego').focus();};
+function alternarPausa(){if(estado!=='juego')return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();$('pausar').textContent=pausa?'▶':'⏸';$('pausar').setAttribute('aria-label',pausa?'Seguir':'Pausa');}
+$('pausar').onclick=()=>{alternarPausa();$('juego').focus();};
+cv.addEventListener('pointerdown',()=>{if(pausa&&estado==='juego')alternarPausa();});
+// el juego se pausa solo si se pierde el foco o si se gira el celular a vertical
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&estado==='juego'&&!pausa)alternarPausa();});
+matchMedia('(orientation:portrait)').addEventListener?.('change',e=>{if(e.matches&&esTouch()&&estado==='juego'&&!pausa)alternarPausa();});
 function terminar(gano,motivo){
   estado='fin';$('hud').hidden=true;$('reloj').hidden=true;$('izq').hidden=true;$('resumen').hidden=!gano;mostrar('fin');$('pista').hidden=true;
   for(const k in tecla)tecla[k]=false;
   const ultimoDeTodo=NI===NIVELES.length-1&&PI===4;
-  $('sig').hidden=!(gano&&!ultimoDeTodo);$('sig').textContent=PI<4?'Siguiente pedido':'Siguiente escenario';
+  $('sig').hidden=true;$('sig').textContent=PI<4?'Siguiente pedido':'Siguiente escenario';
   if(gano){
     const seg=restante/60,bono=Math.round(seg*100),base=cuentaMedias*10+pisotones*PTS_PISO+huesazos*PTS_HUESO+vidas*200,conProp=t<=objetivo,prop=conProp?propinaMonto:0,ptsProp=Math.round(prop/5);
-    const total=Math.max(0,bono+base+ptsProp-penal),clave=N.id+'-'+PI,record=leerRecord(clave);
+    const total=Math.max(0,bono+base+ptsProp-penal),clave=claveRec(),record=leerRecord(clave);
     if(total>record)try{localStorage.setItem('pec-rec-'+clave,total);}catch(e){}
-    guardarProg(N.id,PI+1);
+    const retoOk=pisotones>=retoMeta,est=1+(conProp?1:0)+(retoOk?1:0),hayProx=!ultimoDeTodo,abiertoAntes=hayProx&&escenarioAbierto(NI+1);
+    guardarProg(N.id,PI+1);guardarEstrellas(N.id,PI,est);
+    const abiertoAhora=hayProx&&escenarioAbierto(NI+1),nuevo=abiertoAhora&&!abiertoAntes;
+    $('sig').hidden=!hayProx||(PI===4&&!abiertoAhora);
     if(conProp)setTimeout(()=>sfx.caja(),300);
     $('finTitulo').textContent=ultimoDeTodo?'¡Entregaste todos los pedidos del país!':`¡Pedido ${PI+1} entregado!`;
     const ar=v=>v.toLocaleString('es-AR');
     const partes=[['Rapidez',bono,'#f2a65a'],['Comida',cuentaMedias*10,'#7fb069'],['Pisotones',pisotones*PTS_PISO,'#3fa7d6'],['Huesos de Charly',huesazos*PTS_HUESO,'#8fd0e8'],['Vidas',vidas*200,'#e47fb0'],['Propina',ptsProp,'#f2c14e']].filter(x=>x[1]>0);
     const sp=partes.reduce((a,x)=>a+x[1],0)||1;
-    $('resumen').innerHTML=`<div class="fila">
+    $('resumen').innerHTML=`<div class="estrellas"><span class="on">★ Entregado</span><span class="${conProp?'on':''}">★ Propina</span><span class="${retoOk?'on':''}">★ Pisaste ${Math.min(pisotones,retoMeta)}/${retoMeta}</span></div><div class="fila">
       <div class="tarjeta" id="rProp"><span class="lbl">💸 Propina de ${N.clientes[PI]}</span><span class="grande" style="color:${conProp?'#f2c14e':'var(--chapa)'}">${conProp?'$'+ar(prop):'Sin propina'}</span><span class="sub">${conProp?'+'+ar(ptsProp)+' puntos':'había que llegar en '+fmt(objetivo/60).slice(0,-2)}</span></div>
       <div class="tarjeta"><span class="lbl">⭐ Puntos</span><span class="grande" style="color:var(--sol)">${ar(total)}</span><span class="sub">${total>record?'¡Nuevo récord!':'Récord: '+ar(record)}</span></div></div>
       <div class="desglose" role="img" aria-label="Desglose de puntos">${partes.map(([n,v,c])=>`<i style="width:${(v/sp*100).toFixed(1)}%;background:${c}" title="${n}: ${ar(v)}"></i>`).join('')}</div>
       <div class="leyenda">${partes.map(([n,v,c])=>`<span style="--c:${c}">${n} ${ar(v)}</span>`).join('')}${penal>0?`<span style="--c:#e04b4b">Cables −${ar(penal)}</span>`:''}</div>`;
-    $('finTexto').textContent=`Llegaste en ${fmt(t/60)} con ${fmt(seg)} de sobra.`;
+    $('finTexto').textContent=`Llegaste en ${fmt(t/60)} con ${fmt(seg)} de sobra. ★ ${estrellasEscenario(NI)}/15 en este escenario.`+(nuevo?' ¡Escenario nuevo desbloqueado!':'')+(hayProx&&!abiertoAhora?` Para abrir el siguiente necesitás ${EST_REQ}★: mejorá tus pedidos.`:'');
     ($('sig').hidden?$('menu'):$('sig')).focus();
   }else{
     $('finTitulo').textContent=motivo==='frio'?'Se te acabó el tiempo':'Te quedaste sin pedido';
@@ -800,6 +886,16 @@ function caePaso(){
   for(const c of cae){if(c.esp>0){c.esp--;continue;}c.vy+=0.35;if(c.pl){c.dy+=c.vy;}else c.y+=c.vy;c.rot+=c.vr;}
   cae=cae.filter(c=>(c.pl?c.pl.y+c.dy:c.y)<H+90);
 }
+// plataformas móviles: van y vienen sobre el pozo y llevan al repartidor si está parado encima
+function movilesPaso(){
+  for(const p of plataformas){
+    if(p.t!=='movil')continue;
+    const nx=p.x0+p.rango*(0.5-0.5*Math.max(-1,Math.min(1,1.6*Math.cos(t*p.wv+p.f)))); // se queda un rato quieta en cada borde para poder subir y bajar
+    const sobre=P.piso&&P.vy>=0&&Math.abs(P.y+P.h-p.y)<1.5&&P.x+P.w>p.x&&P.x<p.x+p.w;
+    p.dx=nx-p.x;p.x=nx;
+    if(sobre)P.x+=p.dx;
+  }
+}
 // puente colgante: cada tablón aguanta un instante después de pisarlo y se suelta
 function tablonesPaso(){
   let ch=false;
@@ -853,7 +949,7 @@ function paso(){
   if(!tecla.salto&&P.vy<-1.5&&!P.cortado){P.vy*=0.55;P.cortado=true;}
   const g=P.vy<-1?(tecla.salto?0.24:0.3):Math.abs(P.vy)<=1?0.16:0.3;
   P.vy=Math.min(P.vy+g,5.4);
-  vientoPaso();
+  vientoPaso();movilesPaso();
   P.x+=P.vx+viento.v*(P.piso?0.5:0.9);if(P.x<cam){P.x=cam;if(P.vx<0)P.vx=0;}
   for(const s of SOL)if(choca(P,s)){
     // las cajas apiladas se suben caminando: si el escalón es de una caja y hay lugar arriba, el repartidor sube solo
@@ -1493,6 +1589,8 @@ function dibujarPlat(p){
   case 'barrica':{const n=Math.max(1,Math.floor(p.w/22));const bw=p.w/n;for(let k=0;k<n;k++){const bx=x+k*bw;R(bx+1,y,bw-2,p.h,'#7a4a2a');R(bx+1,y+4,bw-2,2,'#3a3a3a');R(bx+1,y+p.h-6,bw-2,2,'#3a3a3a');R(bx+bw/2-1,y,2,p.h,'#8a5a32');}R(x,y,p.w,1,'#9a6a3a');}break;
   case 'tabla':R(x,y,p.w,p.h,'#9a6a3a');R(x,y,p.w,2,'#b8844a');for(let k=10;k<p.w;k+=12)R(x+k,y,1,p.h,'#6a4a2a');R(x+6,y+p.h,2,4,'#6a4a2a');R(x+p.w-8,y+p.h,2,4,'#6a4a2a');break;
   case 'hielo':R(x,y,p.w,p.h,'#bfe8f6');R(x,y,p.w,3,'#f4fcff');R(x+4,y+6,2,p.h-10,'#e6f8ff');R(x+p.w-10,y+10,6,2,'#8fd0e8');R(x,y+p.h-2,p.w,2,'#8fc8e0');break;
+  case 'movil':dibujarPlat({...p,t:p.estilo});
+    ctx.fillStyle='#f2c14e';ctx.beginPath();ctx.moveTo(x+3,y+p.h+4);ctx.lineTo(x+8,y+p.h+1);ctx.lineTo(x+8,y+p.h+7);ctx.moveTo(x+p.w-3,y+p.h+4);ctx.lineTo(x+p.w-8,y+p.h+1);ctx.lineTo(x+p.w-8,y+p.h+7);ctx.fill();break;
   case 'caja':cajaGfx(Math.round(x),Math.round(y),p.w);break;
   case 'tablon':{const sh=p.crujir>0&&(p.crujir>>1)%2?1:0,yy=y+sh,ry=y-13+Math.sin(Math.PI*(p.i+0.5)/p.n)*5+sh;
     R(x,yy,p.w+0.6,3,'#9a6a3a');R(x,yy,p.w,1,'#c99858');R(x+p.w-1,yy+1,1,2,'#5a3a1e');R(x,yy+3,p.w,1,'#5a3a1e');
@@ -2000,7 +2098,7 @@ let ptsPrev=-1,propEstado='';
 let charlyTxt='';
 function hud(){
   hudBateria();
-  const ct=charly.cd>0?'🐶 Charly recarga…':'🐶 Charly: huesos (C)';
+  const ct=charly.cd>0?'🐶 recarga…':(esTouch()?'🐶 huesos':'🐶 huesos (C)');
   if(ct!==charlyTxt){charlyTxt=ct;$('charlyHud').textContent=ct;}
   // propina: monto grande y barra con el tiempo que queda para ganarla
   const quedaProp=objetivo-t,est=quedaProp>0?(quedaProp<600?'apurada':'activa'):'perdida';
@@ -2016,9 +2114,10 @@ function hud(){
   $('bono').textContent='Bono '+Math.round(restante/60*100).toLocaleString('es-AR');
   $('reloj').classList.toggle('apurado',restante<10*60);
   const falta=Math.max(0,Math.ceil((FIN-P.x)/N.div)),fTxt=N.unidad==='metros'?`${Math.ceil(falta/10)*10} m`:`${falta} cuadras`;
-  const s=`${vidas}|${cuentaMedias}|${pisotones}|${huesazos}|${fTxt}`;
+  const s=`${vidas}|${cuentaMedias}|${pisotones}|${huesazos}|${fTxt}|${retoMeta}`;
   if(s===hudPrev)return;hudPrev=s;
-  $('vidas').textContent='♥'.repeat(Math.max(0,vidas))+'♡'.repeat(Math.max(0,3-vidas));
+  $('vidas').textContent='♥'.repeat(Math.max(0,vidas))+'♡'.repeat(Math.max(0,DF().vidas-vidas));
+  $('retoHud').textContent=`👟 ${Math.min(pisotones,retoMeta)}/${retoMeta}${pisotones>=retoMeta?' ✓':''}`;
   $('medias').textContent=cuentaMedias;
   $('falta').textContent=fTxt;
 }

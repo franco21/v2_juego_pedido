@@ -15,6 +15,21 @@ Mecánicas del recorrido
   Cables       postes con cables sueltos que se balancean; si te tocan, perdés puntos. Hay varios por tramo.
   Puentes      además del puente fijo y el roto, hay puentes colgantes: cada tablón cede poco después
                de pisarlo.
+  Móviles      pozos demasiado anchos para saltar, con una plataforma que va y viene: esperarla, subirse y bajar.
+
+Progreso y dificultad
+  Dificultad   Normal (3 vidas), Difícil (2 vidas, reloj al 90%, más enemigos y derrumbe más rápido) y
+               Experto (1 vida, reloj al 80%). Se elige en el menú y se guarda en el navegador.
+  Estrellas    cada pedido da hasta 3: entregar, ganar la propina y pisar la cantidad de enemigos del reto
+               (contador 👟 en pantalla). Con 8 de las 15 de un escenario se abre el siguiente.
+  Puntos       pisar a un enemigo vale 100; espantarlo con los huesos de Charly vale 30.
+  Probar       agregar ?todo a la URL abre todos los escenarios.
+
+Celular
+  Controles    se activan solos al tocar la pantalla: cruz a la izquierda (se puede deslizar el dedo entre
+               ◀ y ▶), saltar y Charly a la derecha, varios dedos a la vez, vibración al saltar.
+               Pausa con el botón ⏸ (también se pausa sola al salir de la app o al girar a vertical).
+               Se juega en horizontal; en vertical pide girar el celular.
 
 Publicar con la terminal (necesita Node.js):
   npm i -g vercel
