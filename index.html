@@ -132,6 +132,15 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .totalEst i{font-style:normal;font-size:clamp(12px,1.9vw,17px);line-height:1;color:#3a3352}
 .totalEst i.on{color:#f2c14e}
 .totalEst b{color:#f2c14e;margin-left:4px}
+.sub{font-family:var(--display);color:var(--chapa);font-size:clamp(12px,2vw,18px);margin:0}
+.menuV{display:flex;flex-direction:column;gap:10px;align-items:stretch;min-width:min(70%,260px)}
+.opc{display:flex;flex-direction:column;gap:8px;width:min(100%,460px);font-family:var(--display)}
+.opc label{display:grid;grid-template-columns:7em 1fr 3ch;align-items:center;gap:10px;text-align:left;font-size:clamp(12px,1.8vw,16px);color:var(--cal)}
+.opc input[type=range]{width:100%;accent-color:var(--sol);height:24px}
+.opc b{color:var(--sol);text-align:right}
+.opcMsg{min-height:1.2em;font-size:clamp(10px,1.5vw,13px);color:var(--sol)}
+.cred{align-items:flex-start;gap:6px;font-size:clamp(11px,1.7vw,16px)}
+@media (max-height:560px){.menuV{gap:6px}.opc{gap:4px}.opc input[type=range]{height:18px}#titulo h1{font-size:clamp(22px,6vw,38px)}}
 .tactil{display:none;position:absolute;left:0;right:0;bottom:0;padding:0 clamp(8px,2.2vmin,22px) clamp(8px,2.2vmin,22px);justify-content:space-between;align-items:flex-end;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;z-index:6}
 .tactil .mov,.tactil .acc{display:flex;gap:clamp(8px,2.4vmin,20px);align-items:flex-end}
 .tactil .mov{pointer-events:auto;touch-action:none;padding:10px 10px 0 0}
@@ -208,9 +217,15 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <div class="acc"><div class="col"><button class="chico" id="pausarT" aria-label="Pausa">⏸</button><button class="chico" data-k="charly" aria-label="Charly tira un hueso">🦴</button></div><button class="grande" data-k="salto" aria-label="Saltar">▲</button></div>
   </div>
 
+  <div class="capa" id="titulo" hidden>
+    <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
+    <h1>Pedido en Camino</h1>
+    <p class="sub">Un repartidor, un pedido y el reloj corriendo.</p>
+    <div class="menuV"><button class="btn" id="tJugar">▶ Jugar</button><button class="btn sec" id="tOpciones">⚙ Opciones</button><button class="btn sec" id="tCreditos">★ Créditos</button></div>
+  </div>
   <div class="capa" id="inicio">
     <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
-    <button class="mute" id="verGuia" style="position:absolute;top:8px;left:8px">❓ Cómo se juega</button>
+    <div style="position:absolute;top:8px;left:8px;display:flex;gap:6px"><button class="mute" id="aTitulo">‹ Inicio</button><button class="mute" id="verGuia">❓ Cómo se juega</button></div>
     <h1>Pedido en Camino</h1>
     <p>Seis lugares del país, cinco pedidos en cada uno. Sumá ★ para abrir el escenario siguiente: una por entregar, otra por ganar la propina y otra por pisar enemigos.</p>
     <div class="dificultad" id="dificultad" role="group" aria-label="Dificultad"></div>
@@ -230,7 +245,29 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
 
   <div class="capa" id="pausaCapa" hidden>
     <h2>Pausa</h2>
-    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button></div>
+    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pOpciones">⚙ Opciones</button></div>
+  </div>
+  <div class="capa" id="opciones" hidden>
+    <h2>Opciones</h2>
+    <div class="opc">
+      <label>🔊 Efectos<input type="range" id="volEf" min="0" max="100" step="5"><b id="volEfN">100</b></label>
+      <label>🌲 Ambiente<input type="range" id="volAm" min="0" max="100" step="5"><b id="volAmN">100</b></label>
+      <div class="botones"><button class="btn sec" id="optSonido">🔊 Sonido activado</button><button class="btn sec" id="optPriv">🔒 Privacidad</button></div>
+      <div class="botones" id="optBorrarFila"><button class="btn sec" id="borrarBtn">🗑 Borrar progreso</button><span id="borrarConf" hidden>¿Seguro? Se borran estrellas y récords. <button class="btn" id="borrarSi">Sí, borrar</button> <button class="btn sec" id="borrarNo">No</button></span></div>
+      <div class="opcMsg" id="opcMsg" role="status"></div>
+    </div>
+    <div class="botones"><button class="btn" id="optVolver">‹ Volver</button></div>
+  </div>
+  <div class="capa" id="creditos" hidden>
+    <h2>Créditos</h2>
+    <ul class="datos cred">
+      <li>🎮 Idea, diseño y juego: <b>Franco</b></li>
+      <li>🤖 Programación asistida por <b>Claude</b> (Anthropic)</li>
+      <li>🇦🇷 Siete escenarios argentinos, del Conurbano a la Patagonia</li>
+      <li>🔊 Sonidos y ambiente generados con Web Audio</li>
+      <li>🔤 Tipografías Fredoka y Chivo (SIL Open Font License)</li>
+    </ul>
+    <div class="botones"><button class="btn" id="credVolver">‹ Volver</button></div>
   </div>
   <div class="capa" id="guia" hidden>
     <h2>Cómo se juega</h2>
@@ -562,9 +599,13 @@ const mapa={KeyC:'charly',ArrowLeft:'izq',KeyA:'izq',ArrowRight:'der',KeyD:'der'
 addEventListener('keydown',e=>{
   if(mapa[e.code]&&estado==='juego'){tecla[mapa[e.code]]=true;e.preventDefault();}
   if(e.code==='KeyP')alternarPausa();
-  if(e.code==='KeyR'&&pausa&&estado==='juego')arrancar();
+  if(e.code==='KeyR'&&pausa&&estado==='juego'&&$('opciones').hidden)arrancar();
   if(e.code==='KeyF')pantallaCompleta();
   if(e.code==='KeyM'){ponerMudo(!mudo);}
+  if(e.code==='Escape'){
+    if(!$('opciones').hidden){e.preventDefault();cerrarOpciones();return;}
+    if(estado==='creditos'||estado==='inicio'){e.preventDefault();abrirTitulo();return;}
+  }
   if(e.code==='Escape'&&(estado==='juego'||estado==='brief'||estado==='fin')){e.preventDefault();salirAlMenu();}
   if(e.code==='Enter'&&estado==='brief'){e.preventDefault();arrancar();}
   if(estado==='guia'){if(e.code==='Escape'){e.preventDefault();cerrarGuia();}if(e.code==='ArrowLeft'&&guiaN>0){guiaN--;pintarGuia();}if(e.code==='ArrowRight'&&guiaN<pasosGuia().length-1){guiaN++;pintarGuia();}}
@@ -598,7 +639,7 @@ function armarMenu(){
     return `<button class="nivel bloq" data-i="${i}" disabled><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>🔒 ${n.nombre}</b><span>Necesitás ${EST_REQ}★ en ${NIVELES[i-1].nombre} (${estrellasEscenario(i-1)}/${EST_REQ})</span></button>`;}).join('');
   $('niveles').querySelectorAll('.nivel:not(.bloq)').forEach(b=>{b.onclick=()=>abrirBrief(+b.dataset.i);b.onfocus=b.onmouseenter=()=>{if(estado==='inicio'&&NI!==+b.dataset.i){cargarNivel(+b.dataset.i);}};});
 }
-function mostrar(id){['inicio','brief','fin','guia'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;$('pausaCapa').hidden=true;if(id!==null)$('pista').hidden=true;}
+function mostrar(id){['titulo','inicio','brief','fin','guia','opciones','creditos'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;$('pausaCapa').hidden=true;if(id!==null)$('pista').hidden=true;}
 // guía de cómo se juega: sale la primera vez y se puede omitir; después se abre desde el menú
 const guiaVista=()=>{try{return localStorage.getItem('pec-guia')==='1';}catch(e){return false;}};
 let guiaN=0;
@@ -622,6 +663,35 @@ function cerrarGuia(){try{localStorage.setItem('pec-guia','1');}catch(e){}abrirM
 $('guiaSig').onclick=()=>{if(guiaN<pasosGuia().length-1){guiaN++;pintarGuia();}else cerrarGuia();};
 $('guiaOmitir').onclick=cerrarGuia;
 $('verGuia').onclick=abrirGuia;
+// ---------- título, opciones y créditos ----------
+function abrirTitulo(){estado='titulo';$('izq').hidden=true;$('hud').hidden=true;$('reloj').hidden=true;mostrar('titulo');$('tJugar').focus();}
+$('tJugar').onclick=()=>{audioInit();if(!guiaVista())abrirGuia();else abrirMenu();};
+$('tOpciones').onclick=()=>abrirOpciones('titulo');
+$('tCreditos').onclick=()=>{estado='creditos';mostrar('creditos');$('credVolver').focus();};
+$('credVolver').onclick=abrirTitulo;
+$('aTitulo').onclick=abrirTitulo;
+let opcDesde='titulo';
+function pintarOpciones(){
+  $('volEf').value=volEf;$('volEfN').textContent=volEf;$('volAm').value=volAm;$('volAmN').textContent=volAm;
+  $('optSonido').textContent=mudo?'🔇 Sonido apagado':'🔊 Sonido activado';
+  $('optBorrarFila').hidden=opcDesde==='pausa';$('borrarBtn').hidden=false;$('borrarConf').hidden=true;$('opcMsg').textContent='';
+}
+function abrirOpciones(desde){opcDesde=desde;if(desde!=='pausa')estado='opciones';mostrar('opciones');pintarOpciones();$('optVolver').focus();}
+function cerrarOpciones(){
+  if(opcDesde==='pausa'){mostrar(null);$('pausaCapa').hidden=false;$('tactil').hidden=true;$('pSeguir').focus();}
+  else abrirTitulo();
+}
+$('optVolver').onclick=cerrarOpciones;
+$('volEf').oninput=e=>{volEf=+e.target.value;$('volEfN').textContent=volEf;guardarVol();};
+$('volEf').onchange=()=>{audioInit();sfx.media();};
+$('volAm').oninput=e=>{volAm=+e.target.value;$('volAmN').textContent=volAm;guardarVol();};
+$('optSonido').onclick=()=>{ponerMudo(!mudo);pintarOpciones();};
+$('borrarBtn').onclick=()=>{$('borrarBtn').hidden=true;$('borrarConf').hidden=false;};
+$('borrarNo').onclick=pintarOpciones;
+$('borrarSi').onclick=()=>{borrarProgreso();pintarOpciones();$('opcMsg').textContent='Progreso borrado.';};
+$('optPriv').onclick=()=>window.open('privacidad.html','_blank','noopener');
+// borra pedidos entregados, estrellas y récords de todas las dificultades; se conservan volúmenes, dificultad y la guía vista
+function borrarProgreso(){try{Object.keys(localStorage).filter(k=>/^pec-(prog|est|rec)-/.test(k)).forEach(k=>localStorage.removeItem(k));}catch(e){}}
 function abrirMenu(){if(derr.on)cargarNivel(NI,PI);estado='inicio';$('izq').hidden=true;armarMenu();mostrar('inicio');$('hud').hidden=true;$('reloj').hidden=true;audioInit();ambienteNivel(N.id);$('niveles').querySelector(`[data-i="${NI}"]`)?.focus();}
 function abrirBrief(i,pi){
   if(!escenarioAbierto(i)){abrirMenu();return;}
@@ -654,12 +724,13 @@ function salirAlMenu(){
 $('salir').onclick=salirAlMenu;
 $('sonido').onclick=()=>{ponerMudo(!mudo);$('juego').focus();};
 function alternarPausa(){
-  if(estado!=='juego')return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();
+  if(estado!=='juego'||!$('opciones').hidden)return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();
   for(const id of ['pausar','pausarT']){$(id).textContent=pausa?'▶':'⏸';$(id).setAttribute('aria-label',pausa?'Seguir':'Pausa');}
   $('pausaCapa').hidden=!pausa;$('tactil').hidden=pausa;if(pausa)$('pSeguir').focus();
 }
 $('pSeguir').onclick=()=>{alternarPausa();$('juego').focus();};
 $('pReiniciar').onclick=arrancar;
+$('pOpciones').onclick=()=>abrirOpciones('pausa');
 $('pausar').onclick=()=>{alternarPausa();$('juego').focus();};
 $('pausarT').addEventListener('click',alternarPausa);
 // pantalla completa (en iPhone el navegador no la permite: ahí el botón se oculta)
@@ -707,21 +778,27 @@ function terminar(gano,motivo){
 // =====================================================================
 // SONIDO (todo sintetizado con Web Audio)
 // =====================================================================
-let truenoBus=null,AC=null,master,ruidoBuf,mudo=false,ambBus=null,ambGen=0,ambId=null,ambFuentes=[];
+let truenoBus=null,AC=null,master,busEf,busAm,ruidoBuf,mudo=false,ambBus=null,ambGen=0,ambId=null,ambFuentes=[];
 function audioInit(){
   if(AC){AC.resume();return;}
   try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
   master=AC.createGain();master.gain.value=mudo?0:0.7;master.connect(AC.destination);
+  busEf=AC.createGain();busEf.connect(master);busAm=AC.createGain();busAm.connect(master);aplicarVol();
   ruidoBuf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);
   const d=ruidoBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
 }
+// volúmenes (0 a 100) que se guardan: efectos (saltos, pisadas, golpes) y ambiente (ciudad, viento, grillos)
+const leerVol=k=>{try{const v=localStorage.getItem('pec-vol-'+k);return v===null?100:Math.max(0,Math.min(100,+v));}catch(e){return 100;}};
+let volEf=leerVol('ef'),volAm=leerVol('am');
+function aplicarVol(){if(busEf)busEf.gain.value=volEf/100;if(busAm)busAm.gain.value=volAm/100;}
+function guardarVol(){try{localStorage.setItem('pec-vol-ef',volEf);localStorage.setItem('pec-vol-am',volAm);}catch(e){}aplicarVol();}
 function ruido(dur,f,tipo,g,cuando=0,q=1,pan=0,dest){
   if(!AC)return;const t0=AC.currentTime+Math.max(0,cuando);
   const s=AC.createBufferSource();s.buffer=ruidoBuf;s.loop=true;
   const fl=AC.createBiquadFilter();fl.type=tipo;fl.frequency.value=f;fl.Q.value=q;
   const gn=AC.createGain();gn.gain.setValueAtTime(g,t0);gn.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
   s.connect(fl);fl.connect(gn);
-  if(AC.createStereoPanner&&pan){const p=AC.createStereoPanner();p.pan.value=pan;gn.connect(p);p.connect(dest||master);}else gn.connect(dest||master);
+  if(AC.createStereoPanner&&pan){const p=AC.createStereoPanner();p.pan.value=pan;gn.connect(p);p.connect(dest||busEf);}else gn.connect(dest||busEf);
   s.start(t0,Math.random()*1.5);s.stop(t0+dur+0.05);
 }
 function tono(f1,f2,dur,tipo,g,cuando=0,dest,ataque=0){
@@ -730,7 +807,7 @@ function tono(f1,f2,dur,tipo,g,cuando=0,dest,ataque=0){
   const gn=AC.createGain();
   if(ataque){gn.gain.setValueAtTime(0.0001,t0);gn.gain.exponentialRampToValueAtTime(g,t0+ataque);}else gn.gain.setValueAtTime(g,t0);
   gn.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
-  o.connect(gn);gn.connect(dest||master);o.start(t0);o.stop(t0+dur+0.05);return o;
+  o.connect(gn);gn.connect(dest||busEf);o.start(t0);o.stop(t0+dur+0.05);return o;
 }
 const sfx={
   pisada(){ruido(0.06,700+Math.random()*400,'bandpass',0.35,0,2);}, // el mismo sonido de pisada en todas las estaciones y terrenos
@@ -749,11 +826,11 @@ const sfx={
   motor(f0=70,dur=3,vol=0.06){if(!AC)return;const t0=AC.currentTime;const o=AC.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(f0,t0);o.frequency.linearRampToValueAtTime(f0*1.7,t0+0.6);o.frequency.linearRampToValueAtTime(f0*1.3,t0+dur*0.8);
     const lf=AC.createOscillator();lf.frequency.value=22;const lg=AC.createGain();lg.gain.value=f0*0.17;lf.connect(lg);lg.connect(o.frequency);
     const fl=AC.createBiquadFilter();fl.type='lowpass';fl.frequency.value=900;const g=AC.createGain();g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+0.5);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
-    o.connect(fl);fl.connect(g);g.connect(master);o.start(t0);lf.start(t0);o.stop(t0+dur+0.1);lf.stop(t0+dur+0.1);},
+    o.connect(fl);fl.connect(g);g.connect(busEf);o.start(t0);lf.start(t0);o.stop(t0+dur+0.1);lf.stop(t0+dur+0.1);},
   barro(){ruido(0.18,420,'lowpass',0.35);tono(220,110,0.15,'sine',0.08);},
   rafaga(f,dur,dir){if(!AC)return;const t0=AC.currentTime;const s=AC.createBufferSource();s.buffer=ruidoBuf;s.loop=true;const fl=AC.createBiquadFilter();fl.type='bandpass';fl.Q.value=0.8;fl.frequency.setValueAtTime(300,t0);fl.frequency.linearRampToValueAtTime(700+f*600,t0+dur*0.4);fl.frequency.linearRampToValueAtTime(350,t0+dur);
     const g=AC.createGain();g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.08+f*0.25,t0+dur*0.3);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur+0.8);
-    s.connect(fl);fl.connect(g);if(AC.createStereoPanner){const p=AC.createStereoPanner();p.pan.setValueAtTime(-dir*0.7,t0);p.pan.linearRampToValueAtTime(dir*0.7,t0+dur);g.connect(p);p.connect(master);}else g.connect(master);s.start(t0);s.stop(t0+dur+1);},
+    s.connect(fl);fl.connect(g);if(AC.createStereoPanner){const p=AC.createStereoPanner();p.pan.setValueAtTime(-dir*0.7,t0);p.pan.linearRampToValueAtTime(dir*0.7,t0+dur);g.connect(p);p.connect(busEf);}else g.connect(busEf);s.start(t0);s.stop(t0+dur+1);},
   cruje(n){for(let k=0;k<2+n;k++){tono(2600+Math.random()*1800,1800,0.05,'sine',0.05,k*0.03);ruido(0.03,4500,'highpass',0.25,k*0.03,1);}tono(300,140,0.08,'sine',0.06);},
   rompe(){ruido(0.3,3000,'highpass',0.4,0,0.7);for(let k=0;k<10;k++)tono(2200+Math.random()*3500,1500+Math.random()*2000,0.12+Math.random()*0.2,'sine',0.035,Math.random()*0.25);ruido(0.35,600,'lowpass',0.35,0.08);ruido(0.4,1200,'bandpass',0.2,0.12,1);},
   click(){ruido(0.02,3000,'highpass',0.3);tono(1800,1200,0.03,'square',0.03);},
@@ -765,7 +842,7 @@ const sfx={
   trueno(cerca=1,demora=0){
     if(!AC)return;
     if(!truenoBus){
-      const comp=AC.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=6;comp.attack.value=0.003;comp.release.value=0.4;comp.connect(master);
+      const comp=AC.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=6;comp.attack.value=0.003;comp.release.value=0.4;comp.connect(busEf);
       const rev=AC.createConvolver(),len=AC.sampleRate*4,ir=AC.createBuffer(2,len,AC.sampleRate);
       for(let c=0;c<2;c++){const d=ir.getChannelData(c);let lp=0;for(let i=0;i<len;i++){lp=lp*0.6+(Math.random()*2-1)*0.4;d[i]=lp*Math.pow(1-i/len,2.6);}}
       rev.buffer=ir;const revG=AC.createGain();revG.gain.value=0.9;rev.connect(revG);revG.connect(comp);
@@ -811,7 +888,7 @@ const sfx={
     const o=AC.createOscillator();o.type='triangle';for(let k=0;k<dur*2;k++)o.frequency.setValueAtTime(k%2?960:680,t0+k*0.5);
     const g=AC.createGain();g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.035,t0+2);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
     const fl=AC.createBiquadFilter();fl.type='lowpass';fl.frequency.value=1800;
-    o.connect(fl);fl.connect(g);if(AC.createStereoPanner){const p=AC.createStereoPanner();p.pan.value=pan;g.connect(p);p.connect(dest||master);}else g.connect(dest||master);
+    o.connect(fl);fl.connect(g);if(AC.createStereoPanner){const p=AC.createStereoPanner();p.pan.value=pan;g.connect(p);p.connect(dest||busEf);}else g.connect(dest||busEf);
     o.start(t0);o.stop(t0+dur+0.1);},
   vidrios(dest){const pan=Math.random()*1.4-0.7;ruido(0.35,3500,'highpass',0.16,0,0.7,pan,dest);
     for(let k=0;k<9;k++)tono(2800+Math.random()*3500,2600+Math.random()*3000,0.15+Math.random()*0.25,'sine',0.025,0.04+Math.random()*0.35,dest);},
@@ -891,7 +968,7 @@ function ambienteNivel(id){
   if(!AC||ambId===id)return;
   ambGen++;ambId=id;
   if(ambBus){const viejo=ambBus,vf=ambFuentes;viejo.gain.setTargetAtTime(0,AC.currentTime,0.25);setTimeout(()=>{vf.forEach(s=>{try{s.stop();}catch(e){}});viejo.disconnect();},1500);}
-  ambFuentes=[];ambBus=AC.createGain();ambBus.gain.value=0;ambBus.gain.setTargetAtTime(1,AC.currentTime,0.4);ambBus.connect(master);
+  ambFuentes=[];ambBus=AC.createGain();ambBus.gain.value=0;ambBus.gain.setTargetAtTime(1,AC.currentTime,0.4);ambBus.connect(busAm);
   AMB[id](ambBus,ambGen);
 }
 function ponerMudo(v){mudo=v;if(master)master.gain.value=mudo?0:0.7;$('sonido').textContent=mudo?'🔇 Sonido':'🔊 Sonido';$('sonido').setAttribute('aria-pressed',String(mudo));}
@@ -2238,7 +2315,7 @@ function hud(){
 }
 P={x:40,y:GY-22,w:8,h:22,vx:0,vy:0,piso:true,dir:1,inv:0,anim:0,coyote:0,buffer:0,barro:0};
 cargarNivel(0);armarMenu();
-if(!guiaVista())abrirGuia();
+abrirTitulo();
 let ultimo=performance.now(),acum=0;
 function bucle(ahora){
   acum+=Math.min(100,ahora-ultimo);ultimo=ahora;
@@ -2246,7 +2323,7 @@ function bucle(ahora){
     if(!pausa)heliPaso();
     if(flash>0&&!pausa)flash--;if(dolor>0&&!pausa)dolor=Math.max(0,dolor-0.016);
     if(estado==='juego'&&!pausa)paso();
-    else if(estado==='inicio'||estado==='brief'||estado==='guia'){t++;cam=(cam+0.45)%(LARGO-W);}
+    else if(estado==='inicio'||estado==='brief'||estado==='guia'||estado==='titulo'||estado==='opciones'||estado==='creditos'){t++;cam=(cam+0.45)%(LARGO-W);}
     else if(estado==='fin')t++;
     acum-=1000/60;
   }
