@@ -774,6 +774,7 @@ function terminar(gano,motivo){
     const abiertoAhora=hayProx&&escenarioAbierto(NI+1),nuevo=abiertoAhora&&!abiertoAntes;
     $('sig').hidden=!hayProx||(PI===4&&!abiertoAhora);
     if(conProp)setTimeout(()=>sfx.caja(),300);
+    if(N.id==='boca')sfx.gol();
     $('finTitulo').textContent=ultimoDeTodo?'¡Entregaste todos los pedidos del país!':`¡Pedido ${PI+1} entregado!`;
     const ar=v=>v.toLocaleString('es-AR');
     const partes=[['Rapidez',bono,'#f2a65a'],['Pisotones',pisotones*PTS_PISO,'#3fa7d6'],['Propina',ptsProp,'#f2c14e']].filter(x=>x[1]>0);
@@ -828,6 +829,18 @@ function tono(f1,f2,dur,tipo,g,cuando=0,dest,ataque=0){
   gn.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
   o.connect(gn);gn.connect(dest||busEf);o.start(t0);o.stop(t0+dur+0.05);return o;
 }
+// coro de hinchada: n voces desafinadas (diente de sierra) filtradas por los formantes de la vocal; la nota puede subir de f a fFin
+const FORMANTES={a:[800,1200],e:[480,1900],o:[480,850]};
+function vozHinchada(f,vocal,cuando,dur,g,dest,n=5,spread=0.012,fFin=f){
+  if(!AC)return;const t0=AC.currentTime+Math.max(0,cuando),out=AC.createGain();
+  out.gain.setValueAtTime(0.0001,t0);out.gain.exponentialRampToValueAtTime(g,t0+0.04);out.gain.setValueAtTime(g,t0+dur*0.7);out.gain.exponentialRampToValueAtTime(0.0001,t0+dur);out.connect(dest||busEf);
+  const fls=FORMANTES[vocal].map((fr,k)=>{const fl=AC.createBiquadFilter();fl.type='bandpass';fl.frequency.value=fr;fl.Q.value=6;const gn=AC.createGain();gn.gain.value=k?0.5:1;fl.connect(gn);gn.connect(out);return fl;});
+  for(let k=0;k<n;k++){
+    const d=1+(k-(n-1)/2)*spread+(Math.random()-.5)*spread,o=AC.createOscillator();o.type='sawtooth';
+    o.frequency.setValueAtTime(f*d,t0);o.frequency.linearRampToValueAtTime(fFin*d,t0+Math.min(0.4,dur*0.3));
+    const og=AC.createGain();og.gain.value=1/Math.sqrt(n);o.connect(og);fls.forEach(fl=>og.connect(fl));o.start(t0);o.stop(t0+dur+0.05);
+  }
+}
 const sfx={
   pisada(){ruido(0.06,700+Math.random()*400,'bandpass',0.35,0,2);}, // el mismo sonido de pisada en todas las estaciones y terrenos
   salto(){tono(260,620,0.13,'square',0.05);},
@@ -856,6 +869,19 @@ const sfx={
   zumbido(){tono(120,118,0.25,'sawtooth',0.02);ruido(0.04,5000,'highpass',0.12,0.05);ruido(0.04,5000,'highpass',0.12,0.15);},
   pilaBaja(){tono(880,880,0.08,'square',0.04);tono(660,660,0.12,'square',0.04,0.12);},
   estrella(){[1047,1319,1568,2093].forEach((f,k)=>tono(f,f,0.18,'triangle',0.05,k*0.06));},
+  // ¡GOOOOL! de la cancha: rugido de la tribuna, gritos que suben y se sostienen, y bombos; la música ambiente baja mientras suena
+  gol(){
+    if(!AC)return;
+    if(ambBus){ambBus.gain.setTargetAtTime(0.2,AC.currentTime,0.1);setTimeout(()=>{if(ambBus)ambBus.gain.setTargetAtTime(1,AC.currentTime,0.8);},3400);}
+    const t0=AC.currentTime,s=AC.createBufferSource();s.buffer=ruidoBuf;s.loop=true;
+    const fl=AC.createBiquadFilter();fl.type='bandpass';fl.frequency.value=1100;fl.Q.value=0.5;
+    const g=AC.createGain();g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.3,t0+0.35);g.gain.setValueAtTime(0.3,t0+2.3);g.gain.exponentialRampToValueAtTime(0.0001,t0+4);
+    s.connect(fl);fl.connect(g);g.connect(busEf);s.start(t0);s.stop(t0+4.1);
+    ruido(0.1,700,'lowpass',0.4);
+    vozHinchada(165,'o',0.02,2.8,0.2,busEf,12,0.06,235);
+    vozHinchada(330,'o',0.05,2.6,0.09,busEf,6,0.05,470);
+    [0,0.3,3,3.3].forEach(c=>tono(95,42,0.25,'sine',0.25,c));
+  },
   grillo(){const f=4200+Math.random()*600,pan=Math.random()*1.6-0.8;for(let k=0;k<3;k++)ruido(0.035,f,'bandpass',0.12,k*0.06,12,pan);},
   // ----- trueno en capas: chasquido, desgarro, estallido grave y retumbe largo con reverberación -----
   trueno(cerca=1,demora=0){
@@ -971,15 +997,18 @@ const AMB={
     cada(gen,15000,26000,()=>{glacEvento={t0:t,x:60+Math.random()*(W-120)};ruido(3.2,110,'lowpass',0.55,0,1,0,bus);ruido(0.6,300,'lowpass',0.4,0,1,0,bus);ruido(1.6,900,'lowpass',0.35,1.7,1,0,bus);ruido(1.2,2500,'highpass',0.08,1.75,1,0,bus);});
   },
   boca(bus,gen){
+    // cantito de la hinchada: "¡Dale Bo-ca, dale Bo-ca, dale dale dale Bo-ca!" con bombo y redoblante
     ruidoCont(bus,'lowpass',340,0.04);
-    const mus=filtroMusica(bus,1800,1.5),negra=60/118,acordes=[[146.8,174.6,220],[146.8,174.6,220],[110,138.6,196],[110,138.6,196],[116.5,146.8,174.6],[110,138.6,196]];
-    const band=(fs,c,d,g)=>fs.forEach(f=>{const o1=tono(f*2,f*2,d,'sawtooth',g,c,mus,0.03);const o2=tono(f*2*1.006,f*2*1.006,d,'square',g*0.5,c,mus,0.03);if(o1){const l=AC.createOscillator();l.frequency.value=6;const lg=AC.createGain();lg.gain.value=2;l.connect(lg);lg.connect(o1.frequency);l.start(AC.currentTime+c);l.stop(AC.currentTime+c+d+0.1);}});
-    compases(gen,negra*4,(c,n)=>{const ac=acordes[n%6],sinc=n%4===3;
-      tono(ac[0]/2,ac[0]/2,negra*0.6,'triangle',0.13,c,mus);tono(ac[0]/2*1.5,ac[0]/2*1.5,negra*0.6,'triangle',0.1,c+negra*2,mus);
-      if(sinc){[0,1.5,3].forEach(b=>band(ac,c+b*negra,negra*0.7,0.012));}
-      else{[0,1,2,3].forEach(b=>band(ac,c+b*negra,negra*0.45,b%2?0.008:0.013));}});
-    cada(gen,5000,12000,()=>{for(let k=0;k<2;k++)tono(1300,800,0.25,'sawtooth',0.02,k*0.3,bus);});
-    cada(gen,16000,32000,()=>sfx.sirena(bus));
+    const mur=ruidoCont(bus,'bandpass',900,0.04,0.5);lfo(mur.gn.gain,0.2,0.02);
+    const negra=60/112;
+    const fraseA=[[0,'a',294],[0.5,'e',294],[1,'o',247],[1.5,'a',196]];
+    const fraseB=[[0,'a',220],[0.5,'e',220],[1,'a',220],[1.5,'e',220],[2,'a',247],[2.5,'e',247],[3,'o',294],[3.5,'a',196]];
+    const sil=[...fraseA,...fraseA.map(([b,v,f])=>[b+2,v,f]),...fraseB.map(([b,v,f])=>[b+4,v,f])];
+    compases(gen,negra*8,(c)=>{
+      sil.forEach(([b,v,f])=>{vozHinchada(f,v,c+b*negra,negra*0.42,0.14,bus,6,0.014);ruido(0.05,1800,'bandpass',0.05,c+b*negra,1,0,bus);});
+      for(let k=0;k<8;k++)tono(95,42,0.2,'sine',k%2?0.12:0.2,c+k*negra,bus);
+      for(let k=0;k<16;k++)ruido(0.05,4500,'highpass',k%2?0.03:0.015,c+k*negra*0.5,1,0,bus);
+    });
   },
   nunez(bus,gen){
     ruidoCont(bus,'lowpass',320,0.04);
@@ -1679,9 +1708,11 @@ function fondoNunez(){
     for(let k=0;k<3;k++){const sx=((k*140-cam*0.06+t*0.08)%(W+60)+W+60)%(W+60)-30,sy=132+k*3;ctx.fillStyle='#f4ecdf';ctx.beginPath();ctx.moveTo(sx,sy-14);ctx.lineTo(sx,sy);ctx.lineTo(sx+8,sy);ctx.fill();R(sx-3,sy,12,2,'#3a3a4a');}
     for(const [i,x] of slots(cam*0.15,52)){if(rnd(i+1110)<.3)continue;const h=44+Math.floor(rnd(i+1111)*52);R(x,134-h,24,h,rnd(i+1112)<.5?'#8da2c2':'#a9b6cf');for(let yy=134-h+4;yy<130;yy+=6)R(x+3,yy,18,2,'#dbe6f4');}
   },3);
-  for(const [i,x] of slots(cam*0.3,660,1))monumental(x+20);
+  // el Monumental queda al final del recorrido, junto a la casa del cliente
+  {const bx=20+0.4*(LARGO-W-cam);if(bx<W)monumental(bx);}
+  // el orden de las casas cambia en cada pedido (PI) y al perder una vida (VAR)
   const f2=cam*0.5;
-  for(const [i,x] of slots(f2,96)){
+  for(const [i0,x] of slots(f2,96)){const i=i0+PI*131;
     if(rnd(i+1120)<.3){plazaNunez(x,i);continue;}
     const h=52+Math.floor(rnd(i+1121)*40),w=62,y=GY-h,c1=coloresNunez[Math.floor(rnd(i+1122)*6)];
     R(x,y,w,h,c1);ctx.fillStyle='#00000012';for(let k=0;k<w;k+=3)ctx.fillRect(x+k,y,1,h);R(x-1,y-2,w+2,3,'#8a7a6a');
