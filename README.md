@@ -21,10 +21,12 @@ Progreso y dificultad
   Dificultad   Normal (3 vidas), Difícil (2 vidas, reloj al 90%, más enemigos y derrumbe más rápido) y
                Experto (1 vida, reloj al 80%). Se elige en el menú y se guarda en el navegador.
   Estrellas    cada pedido da hasta 3: entregar, ganar la propina y pisar la cantidad de enemigos del reto
-               (contador 👟 en pantalla). Con 8 de las 15 de un escenario se abre el siguiente.
+               (perros incluidos; contador 👟 en pantalla; al pisar sale una estrella). Con 8 de las 15 de un
+               escenario se abre el siguiente. Se ven con iconos al terminar el pedido y al entrar al escenario.
   Puntos       salen de la rapidez (segundos que sobran), de pisar enemigos (100 cada uno) y de la propina.
-  Guía         la primera vez sale una guía corta de cómo se juega (se puede omitir); después, desde "❓ Cómo se juega".
-               Ahí mismo, "📋 Carteles anteriores" vuelve a mostrar los carteles de ayuda que ya pasaron.
+  Guía         la primera vez sale una guía corta de cómo se juega (se puede omitir; hay botón Anterior);
+               después, desde "❓ Cómo se juega".
+  Vidas        al perder una, reaparecés un poco más atrás, sobre piso firme y lejos de pozos, cables, barro y enemigos.
   Peligros     el barro, los charcos, los cables y los enemigos se ubican sin pisarse: no se juntan en el mismo lugar.
   Probar       agregar ?todo a la URL abre todos los escenarios.
 
