@@ -23,6 +23,7 @@ Progreso y dificultad
   Estrellas    cada pedido da hasta 3: entregar, ganar la propina y pisar la cantidad de enemigos del reto
                (perros incluidos; contador 👟 en pantalla; al pisar sale una estrella). Con 8 de las 15 de un
                escenario se abre el siguiente. Se ven con iconos al terminar el pedido y al entrar al escenario.
+               El progreso es por dificultad: pasar un escenario en Normal no abre el siguiente en Difícil ni en Experto.
   Puntos       salen de la rapidez (segundos que sobran), de pisar enemigos (100 cada uno) y de la propina.
   Guía         la primera vez sale una guía corta de cómo se juega (se puede omitir; hay botón Anterior);
                después, desde "❓ Cómo se juega".

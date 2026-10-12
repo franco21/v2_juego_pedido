@@ -356,8 +356,10 @@ const DF=()=>DIFICULTADES[modo];
 // estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente (?todo en la URL abre todos, para probar)
 const EST_REQ=8,TODO=/[?&]todo\b/.test(location.search);
 let retoMeta=1;
-function leerEstrellas(id,pi){try{return +localStorage.getItem(`pec-est-${id}-${pi}`)||0;}catch(e){return 0;}}
-function guardarEstrellas(id,pi,n){try{if(n>leerEstrellas(id,pi))localStorage.setItem(`pec-est-${id}-${pi}`,n);}catch(e){}}
+// el progreso (pedidos entregados y estrellas) es por dificultad: pasar un escenario en Normal no abre el siguiente en Difícil ni en Experto
+const sufModo=()=>modo==='normal'?'':'-'+modo;
+function leerEstrellas(id,pi){try{return +localStorage.getItem(`pec-est-${id}-${pi}${sufModo()}`)||0;}catch(e){return 0;}}
+function guardarEstrellas(id,pi,n){try{if(n>leerEstrellas(id,pi))localStorage.setItem(`pec-est-${id}-${pi}${sufModo()}`,n);}catch(e){}}
 const estrellasEscenario=i=>[0,1,2,3,4].reduce((a,k)=>a+leerEstrellas(NIVELES[i].id,k),0);
 // estrellas del escenario con iconos: 5 pedidos × 3, el pedido actual resaltado
 function barraEstrellas(id,actual){
@@ -581,8 +583,8 @@ addEventListener('keyup',e=>{if(mapa[e.code])tecla[mapa[e.code]]=false;});
 }
 {let m='';for(let k=0;k<60;k++){const a=k/60*Math.PI*2,r1=k%5?48.4:47.6;m+=`<line class="marca" x1="${50+Math.cos(a)*r1}" y1="${50+Math.sin(a)*r1}" x2="${50+Math.cos(a)*49.7}" y2="${50+Math.sin(a)*49.7}"></line>`;}$('marcas').innerHTML=m;}
 function leerRecord(id){try{return +localStorage.getItem('pec-rec-'+id)||0;}catch(e){return 0;}}
-function leerProg(id){try{return +localStorage.getItem('pec-prog-'+id)||0;}catch(e){return 0;}}
-function guardarProg(id,n){try{if(n>leerProg(id))localStorage.setItem('pec-prog-'+id,n);}catch(e){}}
+function leerProg(id){try{return +localStorage.getItem('pec-prog-'+id+sufModo())||0;}catch(e){return 0;}}
+function guardarProg(id,n){try{if(n>leerProg(id))localStorage.setItem('pec-prog-'+id+sufModo(),n);}catch(e){}}
 function armarMenu(){
   $('dificultad').innerHTML=Object.entries(DIFICULTADES).map(([k,d])=>`<button class="dif" data-d="${k}" aria-pressed="${k===modo}">${d.icono} ${d.nombre}</button>`).join('')+`<small>${DF().vidas} ${DF().vidas>1?'vidas':'vida'} · reloj al ${Math.round(DF().tiempo*100)}%</small>`;
   $('dificultad').querySelectorAll('.dif').forEach(b=>b.onclick=()=>{modo=b.dataset.d;try{localStorage.setItem('pec-dif',modo);}catch(e){}armarMenu();});
