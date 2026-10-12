@@ -16,6 +16,8 @@ Mecánicas del recorrido
   Puentes      además del puente fijo y el roto, hay puentes colgantes: cada tablón cede poco después
                de pisarlo.
   Móviles      pozos demasiado anchos para saltar, con una plataforma que va y viene: esperarla, subirse y bajar.
+  Pájaros      los tucanes no salen si hay un túnel por delante, y los que ya venían volando pasan por encima del cerro.
+  Pausa        P o el botón ⏸: menú con "Seguir" y "Reiniciar pedido" (también tecla R).
 
 Progreso y dificultad
   Dificultad   Normal (3 vidas), Difícil (2 vidas, reloj al 90%, más enemigos y derrumbe más rápido) y

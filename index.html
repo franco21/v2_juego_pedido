@@ -228,6 +228,10 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <div class="botones"><button class="btn" id="jugar">Salir a repartir</button><button class="btn sec" id="volver">Elegir otro</button></div>
   </div>
 
+  <div class="capa" id="pausaCapa" hidden>
+    <h2>Pausa</h2>
+    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button></div>
+  </div>
   <div class="capa" id="guia" hidden>
     <h2>Cómo se juega</h2>
     <div class="paso" id="guiaPaso"></div>
@@ -558,6 +562,7 @@ const mapa={KeyC:'charly',ArrowLeft:'izq',KeyA:'izq',ArrowRight:'der',KeyD:'der'
 addEventListener('keydown',e=>{
   if(mapa[e.code]&&estado==='juego'){tecla[mapa[e.code]]=true;e.preventDefault();}
   if(e.code==='KeyP')alternarPausa();
+  if(e.code==='KeyR'&&pausa&&estado==='juego')arrancar();
   if(e.code==='KeyF')pantallaCompleta();
   if(e.code==='KeyM'){ponerMudo(!mudo);}
   if(e.code==='Escape'&&(estado==='juego'||estado==='brief'||estado==='fin')){e.preventDefault();salirAlMenu();}
@@ -593,7 +598,7 @@ function armarMenu(){
     return `<button class="nivel bloq" data-i="${i}" disabled><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>🔒 ${n.nombre}</b><span>Necesitás ${EST_REQ}★ en ${NIVELES[i-1].nombre} (${estrellasEscenario(i-1)}/${EST_REQ})</span></button>`;}).join('');
   $('niveles').querySelectorAll('.nivel:not(.bloq)').forEach(b=>{b.onclick=()=>abrirBrief(+b.dataset.i);b.onfocus=b.onmouseenter=()=>{if(estado==='inicio'&&NI!==+b.dataset.i){cargarNivel(+b.dataset.i);}};});
 }
-function mostrar(id){['inicio','brief','fin','guia'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;if(id!==null)$('pista').hidden=true;}
+function mostrar(id){['inicio','brief','fin','guia'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;$('pausaCapa').hidden=true;if(id!==null)$('pista').hidden=true;}
 // guía de cómo se juega: sale la primera vez y se puede omitir; después se abre desde el menú
 const guiaVista=()=>{try{return localStorage.getItem('pec-guia')==='1';}catch(e){return false;}};
 let guiaN=0;
@@ -635,7 +640,7 @@ function abrirBrief(i,pi){
   mostrar('brief');$('jugar').focus();
 }
 function arrancar(){
-  audioInit();if(AC)AC.resume();nuevaPartida();ambienteNivel(N.id);estado='juego';pausa=false;$('pausar').textContent='⏸';mostrar(null);
+  audioInit();if(AC)AC.resume();nuevaPartida();ambienteNivel(N.id);estado='juego';pausa=false;$('pausar').textContent='⏸';$('pausarT').textContent='⏸';mostrar(null);
   $('hud').hidden=false;$('reloj').hidden=false;$('izq').hidden=false;ptsPrev=-1;if(hayNoche)sfx.click();$('icono').textContent=N.icono;$('numPedido').textContent=`Pedido ${PI+1}/5`;$('estacionHud').textContent=ESTACIONES[EST].icono+' '+ESTACIONES[EST].nombre;hudPrev='';$('juego').focus();
 }
 $('jugar').onclick=arrancar;$('otra').onclick=arrancar;$('volver').onclick=abrirMenu;$('menu').onclick=abrirMenu;
@@ -648,7 +653,13 @@ function salirAlMenu(){
 }
 $('salir').onclick=salirAlMenu;
 $('sonido').onclick=()=>{ponerMudo(!mudo);$('juego').focus();};
-function alternarPausa(){if(estado!=='juego')return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();for(const id of ['pausar','pausarT']){$(id).textContent=pausa?'▶':'⏸';$(id).setAttribute('aria-label',pausa?'Seguir':'Pausa');}}
+function alternarPausa(){
+  if(estado!=='juego')return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();
+  for(const id of ['pausar','pausarT']){$(id).textContent=pausa?'▶':'⏸';$(id).setAttribute('aria-label',pausa?'Seguir':'Pausa');}
+  $('pausaCapa').hidden=!pausa;$('tactil').hidden=pausa;if(pausa)$('pSeguir').focus();
+}
+$('pSeguir').onclick=()=>{alternarPausa();$('juego').focus();};
+$('pReiniciar').onclick=arrancar;
 $('pausar').onclick=()=>{alternarPausa();$('juego').focus();};
 $('pausarT').addEventListener('click',alternarPausa);
 // pantalla completa (en iPhone el navegador no la permite: ahí el botón se oculta)
@@ -1064,7 +1075,9 @@ function paso(){
   P.anim+=Math.abs(P.vx)*0.065;
   // enemigos que aparecen desde la derecha
   const sm=N.skin.moto,dm=SKIN[sm];
-  for(const d of disparos)if(P.x>d&&!motosDisparadas.has(d)){motosDisparadas.add(d);
+  // los pájaros no entran en los túneles: no salen si hay un túnel entre la derecha de la pantalla y el repartidor
+  const tunelAdelante=dm.vuela&&plataformas.some(p=>p.t==='tunel'&&p.x-40<cam+W+60&&p.x+p.w+40>P.x-30);
+  for(const d of disparos)if(P.x>d&&!motosDisparadas.has(d)){motosDisparadas.add(d);if(tunelAdelante)continue;
     enemigos.push({tipo:'moto',skin:sm,x:cam+W+20,y:dm.vuela?GY-22:GY-dm.h,base:dm.vuela?GY-22:GY-dm.h,w:dm.w,h:dm.h,vx:dm.vx,vivo:true});sfx.aparece(sm);}
   for(const e of enemigos){
     if(!e.vivo){e.vy=(e.vy||-3)+0.3;e.y+=e.vy;e.x+=e.vx*0.5;continue;}
@@ -1077,7 +1090,8 @@ function paso(){
       if(cerca&&e.cd<=0){sfx.voz(e.skin,Math.max(-1,Math.min(1,(e.x-P.x)/120)));e.guau=30;e.cd=(e.persigue?60:100)+Math.random()*50;}
     }
     if(e.tipo==='techo')techoPaso(e);
-    if(e.tipo==='moto'){if(e.skin==='tucan')e.y=e.base+Math.sin(t*0.15)*2;if(e.skin==='remolino')e.vx=-1.6+Math.sin(t*0.05)*0.6;}
+    if(e.tipo==='moto'){if(e.skin==='tucan'){const tu=plataformas.find(p=>p.t==='tunel'&&e.x+e.w>p.x-70&&e.x<p.x+p.w+30);e.base+=((tu?tu.y-44:GY-22)-e.base)*0.1;e.y=e.base+Math.sin(t*0.15)*2;} // si ya venía volando, pasa por encima del cerro
+      if(e.skin==='remolino')e.vx=-1.6+Math.sin(t*0.05)*0.6;}
     e.x+=e.vx;
     if(e.tipo==='perro'&&e.persigue){if(e.x<e.smin){e.x=e.smin;e.vx=0;}if(e.x+e.w>e.smax){e.x=e.smax-e.w;e.vx=0;}}
     if(e.tipo!=='moto'&&!e.persigue){if(e.x<e.min){e.x=e.min;e.vx*=-1;}if(e.x+e.w>e.max){e.x=e.max-e.w;e.vx*=-1;}}
@@ -1846,7 +1860,6 @@ function dibujar(){
   if(flash>0){ctx.save();ctx.globalAlpha=Math.min(1,flash/18)*0.85;R(0,0,W,H,'#f4ecdf');ctx.globalAlpha=Math.min(1,flash/14);ctx.font='700 14px Fredoka, sans-serif';ctx.textAlign='center';ctx.fillStyle='#2a2238';ctx.fillText(N.unidad==='cuadras'?'¡Otro camino por el barrio!':'¡Otro camino!',W/2,H/2);ctx.textAlign='left';ctx.restore();}
   dibujarDolor();
   if(sh)ctx.restore();
-  if(pausa){R(0,0,W,H,'#14102488');ctx.font='700 16px Fredoka, sans-serif';ctx.fillStyle='#f4ecdf';ctx.fillText('PAUSA',W/2-24,H/2);}
 }
 
 // =====================================================================
