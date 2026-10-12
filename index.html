@@ -232,7 +232,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <h2>Cómo se juega</h2>
     <div class="paso" id="guiaPaso"></div>
     <div class="puntos" id="guiaPuntos"></div>
-    <div class="botones"><button class="btn sec" id="guiaAnt">‹ Anterior</button><button class="btn" id="guiaSig">Siguiente</button><button class="btn sec" id="guiaOmitir">Omitir</button></div>
+    <div class="botones"><button class="btn sec" id="guiaAnt" aria-label="Anterior">←</button><button class="btn" id="guiaSig" aria-label="Siguiente">→</button><button class="btn sec" id="guiaOmitir">Omitir</button></div>
   </div>
   <div class="capa" id="fin" hidden>
     <h2 id="finTitulo"></h2>
@@ -608,7 +608,7 @@ function pintarGuia(){
   $('guiaPaso').innerHTML=`<span class="ico">${p[0]}</span><b>${p[1]}</b><p>${p[2]}</p>`;
   $('guiaPuntos').innerHTML=ps.map((_,i)=>`<i class="${i===guiaN?'on':''}"></i>`).join('');
   $('guiaAnt').hidden=guiaN===0;
-  $('guiaSig').textContent=guiaN<ps.length-1?'Siguiente':'¡A jugar!';
+  const ult=guiaN===ps.length-1;$('guiaSig').textContent=ult?'¡A jugar!':'→';$('guiaSig').setAttribute('aria-label',ult?'A jugar':'Siguiente');
   $('guiaOmitir').hidden=guiaN===ps.length-1;
 }
 function abrirGuia(){guiaN=0;estado='guia';mostrar('guia');pintarGuia();$('guiaSig').focus();}
