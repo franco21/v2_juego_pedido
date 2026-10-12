@@ -286,29 +286,42 @@ function cfgPedido(){
   return{seed:N.seed+k*101+VAR*7919,largo:1650+k*410,dif:Math.min(2.4,k*0.5+NI*0.08),caja:N.caja,flota:N.flota,
     puentes:k===0?0.5:0.3,colgantes:k===0?0:0.5,roto:k>=2,ruinas:k===0?0.35:0.3,tuneles:k===0?0.7:0.6,techos:k>=3,pEnem:0.35+k*0.15,pSigue:k===0?0:0.35+k*0.1,motos:k>=2,barro:k>=1,charcos:k>=1,
     derr:Math.min(1.4,0.6+k*0.16+NI*0.02),
-    cables:k===0?0.7:0.95,cajas:k===0?0.6:0.8,altos:k===0?0:0.75,
+    cables:k===0?0.7:0.95,cajas:k===0?0.6:0.7,altos:k===0?0:0.5,
     viento:k>=2?(0.55+(k-2)*0.25)*(N.id==='glaciar'||N.id==='quebrada'?1.25:1):0};
 }
-// zonas de cajas y viaductos: el camino no es parejo, hay que trepar para pasar
+// zonas de cajas y viaductos: el camino no es parejo; hay pilas que se trepan y "techos" de cajas sobre soportes que se pueden pasar por abajo o recorrer por arriba
 const ESTRUCT=[[2],[1,2,3],[1,2,3,2,1],[1,2,2,2,1],[1,2,3,4,3,2,1]];
+function caja(x,top,soporte){defBloques.push(soporte?{x,y:GY-top,apoyo:GY}:{x,y:GY-top});}
 function pilaCajas(x,cols){
   cols.forEach((h,i)=>{for(let j=0;j<h;j++)defBloques.push({x:x+i*BLOQUE,y:GY-BLOQUE*(j+1)});});
   const m=Math.max(...cols);if(m>=2)defMedias.push([x+cols.indexOf(m)*BLOQUE+BLOQUE/2,GY-BLOQUE*m-12]);
 }
+// peldaño flotante (se salta desde el piso) que sube a un techo de n cajas; debajo queda paso libre (24 px) con comida
+function galpon(cx,n){
+  caja(cx,40,true);
+  for(let i=0;i<n;i++)caja(cx+(1+i)*BLOQUE,64,i===0||i===n-1);
+  defMedias.push([cx+(1+n/2)*BLOQUE,GY-64-12],[cx+2*BLOQUE,GY-14],[cx+n*BLOQUE,GY-14]);
+}
 function ponerRuta(libre,fin,en,r,cfg){
-  const zona=fin-libre,alto=zona>260&&r()<cfg.altos;
-  let w,arma;
-  if(alto){const bw=90+Math.floor(r()*40);w=4*BLOQUE+bw;
-    arma=cx=>{pilaCajas(cx,[1,2,3,4]);plataformas.push({x:cx+4*BLOQUE,y:GY-4*BLOQUE,w:bw,h:6,t:'puente',ini:true,fin:true});for(let j=0;j<4;j++)defMedias.push([cx+4*BLOQUE+20+j*(bw-40)/3,GY-4*BLOQUE-12]);};}
-  else if(r()<cfg.cajas){const T=ESTRUCT[Math.floor(r()*ESTRUCT.length)];w=T.length*BLOQUE;arma=cx=>pilaCajas(cx,T);}
-  else return;
-  if(zona<w+110)return;
-  const libres=(a,b)=>!charcos.some(c=>c.x<b+10&&c.x+c.w>a-10)&&!barros.some(c=>c.x<b+10&&c.x+c.w>a-10)&&!casasTecho.some(h=>h.x<b+20&&h.x+h.w>a-20)&&!cables.some(c=>c.x-70<b&&c.x+95>a);
-  for(let i=0;i<4;i++){
-    const cx=libre+50+Math.floor(r()*(zona-w-80));
-    if(!libres(cx,cx+w))continue;
-    if(en){const izq=cx-12-en.a,der=en.b-(cx+w+12);if(Math.max(izq,der)<60)continue;if(izq>=der)en.b=cx-12;else en.a=cx+w+12;}
-    arma(cx);return;
+  const zona=fin-libre,alto=zona>260&&r()<cfg.altos,cand=[]; // candidatos [ancho, armar, paso libre por debajo]
+  if(alto){const bw=90+Math.floor(r()*40);
+    cand.push([2*BLOQUE+bw,cx=>{caja(cx,40,true);caja(cx+BLOQUE,64,true);
+      plataformas.push({x:cx+2*BLOQUE,y:GY-4*BLOQUE,w:bw,h:6,t:'puente',ini:true,fin:true});
+      for(let j=0;j<4;j++)defMedias.push([cx+2*BLOQUE+20+j*(bw-40)/3,GY-4*BLOQUE-12]);
+      defMedias.push([cx+2*BLOQUE+bw/3,GY-14],[cx+2*BLOQUE+2*bw/3,GY-14]);},true]);}
+  else if(r()<cfg.cajas){
+    const nmax=Math.min(6,Math.floor((zona-90)/BLOQUE)-1);
+    if(nmax>=3&&r()<0.45)for(let n=nmax;n>=3;n--)cand.push([(1+n)*BLOQUE,cx=>galpon(cx,n),true]);
+    else{const T=ESTRUCT[Math.floor(r()*ESTRUCT.length)];cand.push([T.length*BLOQUE,cx=>pilaCajas(cx,T),false]);}}
+  const libres=(a,b)=>!charcos.some(c=>c.x<b+10&&c.x+c.w>a-10)&&!barros.some(c=>c.x<b+10&&c.x+c.w>a-10)&&!casasTecho.some(h=>h.x<b+20&&h.x+h.w>a-20);
+  for(const [w,arma,bajo] of cand){
+    if(zona<w+90)continue;
+    for(let i=0;i<4;i++){
+      const cx=libre+50+Math.floor(r()*(zona-w-80));
+      if(!libres(cx,cx+w))continue;
+      if(en&&!bajo){const izq=cx-12-en.a,der=en.b-(cx+w+12);if(Math.max(izq,der)<60)continue;if(izq>=der)en.b=cx-12;else en.a=cx+w+12;}
+      arma(cx);return;
+    }
   }
 }
 function generar(cfg){
@@ -327,7 +340,7 @@ function generar(cfg){
         plataformas.push({x:tx,y:GY-alto,w:tw,h:alto-44,t:'tunel',sem:Math.floor(r()*1000)});
         for(let j=0;j<4;j++)defMedias.push([tx+30+j*(tw-60)/3,GY-14]);
         for(let j=0;j<5;j++)defMedias.push([tx+24+j*(tw-48)/4,GY-alto-12]);
-        for(let j=0;j<4;j++)defBloques.push({x:tx-4*BLOQUE+j*BLOQUE,y:GY-Math.round(BLOQUE+j*(alto-BLOQUE)/3),apoyo:GY});
+        for(let j=0;j<3;j++)caja(tx-3*BLOQUE+j*BLOQUE,Math.round(40+j*(alto-40)/2),true);
         libre=tx+tw+20;}
       if(!ultimo&&!tunel&&r()<0.8){
         const bw=48+Math.floor(r()*24),bh=24+Math.floor(r()*10),bx=x+40+Math.floor(r()*60);
@@ -343,9 +356,9 @@ function generar(cfg){
         const zona=fin-libre;
         if(cfg.charcos&&r()<0.4){const cw=36+Math.floor(r()*14),cx=libre+Math.floor(r()*Math.max(1,zona/2-cw));charcos.push({x:cx,w:cw});}
         if(cfg.techos&&!tunel&&zona>100&&r()<0.6){const cx=libre+Math.floor(r()*(zona-70));casasTecho.push({x:cx,w:64});defEnem.push({tipo:'techo',a:cx+4,b:cx+60});}
-        if(cfg.cables&&zona>150)for(let n=0;n<(zona>250?2:1);n++){if(r()>=cfg.cables)continue;const cx=libre+60+Math.floor(r()*Math.max(1,zona-130));if(casasTecho.some(h=>cx>h.x-90&&cx<h.x+h.w+90)||cables.some(c=>Math.abs(c.x-cx)<150))continue;cables.push({x:cx,A:0.85+r()*0.2,w:Math.PI*2/(210-PI*16-Math.floor(r()*40)),f:r()*6.28,L:88});}
         if(cfg.barro&&r()<0.45){const bw=30+Math.floor(r()*18),bx=libre+zona/2+Math.floor(r()*Math.max(1,zona/2-bw));barros.push({x:bx,w:bw});}
         ponerRuta(libre,fin,en,r,cfg);
+        if(cfg.cables&&zona>150)for(let n=0;n<(zona>250?2:1);n++){if(r()>=cfg.cables)continue;for(let q=0;q<6;q++){const cx=libre+60+Math.floor(r()*Math.max(1,zona-130));if(casasTecho.some(h=>cx>h.x-90&&cx<h.x+h.w+90)||cables.some(c=>Math.abs(c.x-cx)<150)||defBloques.some(b=>b.x>cx-70&&b.x<cx+95)||plataformas.some(p=>p.t==='puente'&&p.x<cx+95&&p.x+p.w>cx-70))continue;cables.push({x:cx,A:0.85+r()*0.2,w:Math.PI*2/(210-PI*16-Math.floor(r()*40)),f:r()*6.28,L:88});break;}}
       }
     }
     if(ultimo)break;
@@ -401,7 +414,7 @@ function nuevaPartida(){
   cargarNivel(NI,PI);
   P={x:40,y:GY-22,w:8,h:22,vx:0,vy:0,piso:false,dir:1,inv:0,anim:0,coyote:0,buffer:0};
   restante=TOT;vidas=3;resetCharly();rayos=[];quemaduras=[];destello=0;sacudida=0;proxRayo=0;prepararNoche();viento={v:0,obj:0,timer:600+Math.random()*400,activo:false};P.barro=0;
-  objetivo=Math.round(TOT*0.55);propinaMonto=Math.round((500+PI*300+NI*150)/50)*50;msgTimer=900;msgN=0;avisoPropina=false;pistasDadas=new Set();ocultarChat();$('pista').hidden=true;
+  objetivo=Math.round(TOT*0.55);propinaMonto=Math.round((500+PI*300+NI*150)/50)*50;msgN=0;prisaDicha=false;pistasDadas=new Set();ocultarChat();$('pista').hidden=true;
   cuentaMedias=0;pisotones=0;huesazos=0;motosDisparadas=new Set();penal=0;dolor=0;
   crearEnemigos(-1e9);derrInit(P.x-300,PI===0?420:300);
 }
@@ -919,28 +932,21 @@ function vientoPaso(){
   viento.v+=(viento.obj-viento.v)*0.02;
 }
 // ---------- mensajes del cliente, propina y pistas del primer pedido ----------
-let objetivo=0,propinaMonto=0,msgTimer=0,msgN=0,avisoPropina=false,pistasDadas=new Set(),chatT=null,pistaT=null;
+let objetivo=0,propinaMonto=0,msgN=0,prisaDicha=false,pistasDadas=new Set(),chatT=null,pistaT=null;
 function ocultarChat(){$('chat').hidden=true;}
 function mensaje(txt){
   $('chatQuien').textContent='💬 '+N.clientes[PI]+' · cliente';$('chatTxt').textContent=txt;
   const c=$('chat');c.hidden=true;void c.offsetWidth;c.hidden=false;sfx.notif();
   clearTimeout(chatT);chatT=setTimeout(ocultarChat,4800);
 }
-function pista(txt){const p=$('pista');p.textContent=txt;p.hidden=false;clearTimeout(pistaT);pistaT=setTimeout(()=>p.hidden=true,4200);}
-const PRISA=[
-  ['¿Ya saliste con mi pedido?','Te veo en el mapa 👀','Tengo un hambre…','¿Venís bien?'],
-  ['¿Falta mucho?','Dale que se enfría 😩','¿Estás cerca?','Acá te espero en la puerta'],
-  ['¡¿Dónde estás?!','Si llega frío lo cancelo 😤','Apurate porfa 🙏','Ya me estoy comiendo las uñas'],
-];
+// las pistas de qué hacer salen solo en el primer pedido de cada escenario
+function pista(txt){if(PI!==0)return;const p=$('pista');p.textContent=txt;p.hidden=false;clearTimeout(pistaT);pistaT=setTimeout(()=>p.hidden=true,4200);}
+const PRISA=['¡¿Dónde estás?!','Si llega frío lo cancelo 😤','Apurate porfa 🙏','Ya me estoy comiendo las uñas'];
+// el cliente escribe poco: el saludo con la propina, un apuro (a veces) sobre el final y el aviso de que se perdió la propina
 function mensajesPaso(){
   if(t===90)mensaje(`¡Hola! Si llegás en menos de ${fmt(objetivo/60).slice(0,-2)} te dejo $${propinaMonto.toLocaleString('es-AR')} de propina 🙌`);
-  if(!avisoPropina&&objetivo>900&&t===objetivo-600){avisoPropina=true;mensaje('¡Te quedan 10 segundos para ganarte la propina! 💸');msgTimer=400;}
   if(t===objetivo+1)mensaje('Bueno, ya fue la propina… pero traelo igual 😅');
-  if(t>300&&--msgTimer<=0){
-    const fr=restante/TOT,nivel=fr>0.5?0:fr>0.25?1:2,pool=PRISA[nivel];
-    mensaje(pool[(msgN++ +PI)%pool.length]);
-    msgTimer=(nivel===2?1300:nivel===1?2200:3200)*(0.8+Math.random()*0.4);
-  }
+  if(!prisaDicha&&restante/TOT<0.2){prisaDicha=true;if(Math.random()<0.4)mensaje(PRISA[(msgN++ +PI)%PRISA.length]);}
 }
 function pistasPaso(){
   if(PI!==0)return;
@@ -1745,7 +1751,7 @@ function nochePaso(){
   if(!hayNoche)return;
   const oscura=noche.franjas.some(([a,b])=>t>=a&&t<b);
   const antes=noche.nivel;
-  noche.nivel+=((oscura?1:0)-noche.nivel)*0.012;
+  noche.nivel+=((oscura?1:0)-noche.nivel)*(oscura?0.06:0.012);
   if(noche.nivel>0.5){
     bat=Math.max(0,bat-100/(20*60));
     if(bat<20&&!avisoPila){avisoPila=true;sfx.pilaBaja();}
@@ -1767,7 +1773,7 @@ function dibujarNoche(){
   if(!hayNoche||noche.nivel<0.02)return;
   const n=noche.nivel;
   nctx.setTransform(2,0,0,2,0,0);nctx.globalCompositeOperation='source-over';nctx.globalAlpha=1;nctx.clearRect(0,0,W,H);
-  {const go=nctx.createLinearGradient(0,0,0,H);const ne=n*(1-destello*0.85),A=N.tormenta?[0.75,0.97,0.99,0.99]:[0.4,0.88,0.95,0.96];go.addColorStop(0,`rgba(8,12,34,${A[0]*ne})`);go.addColorStop(0.45,`rgba(8,12,34,${A[1]*ne})`);go.addColorStop(0.8,`rgba(6,8,26,${A[2]*ne})`);go.addColorStop(1,`rgba(6,8,26,${A[3]*ne})`);nctx.fillStyle=go;nctx.fillRect(0,0,W,H);}
+  {const go=nctx.createLinearGradient(0,0,0,H);const ne=n*(1-destello*0.85),A=N.tormenta?[0.82,0.985,0.995,0.995]:[0.62,0.94,0.975,0.98];go.addColorStop(0,`rgba(8,12,34,${A[0]*ne})`);go.addColorStop(0.45,`rgba(8,12,34,${A[1]*ne})`);go.addColorStop(0.8,`rgba(6,8,26,${A[2]*ne})`);go.addColorStop(1,`rgba(6,8,26,${A[3]*ne})`);nctx.fillStyle=go;nctx.fillRect(0,0,W,H);}
   nctx.globalCompositeOperation='destination-out';
   const px=P.x-cam+5,py=P.y+5;
   // resplandor chico alrededor del repartidor
