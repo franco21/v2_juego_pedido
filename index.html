@@ -350,9 +350,9 @@ const NIVELES=[
   seed:7741,pedidos:['6 alfajores de calafate · Refugio frente al glaciar','Chocolate caliente para 4 · Pasarelas','Cordero patagónico · Casa de té','Trucha ahumada · Mirador Principal','Cena para el grupo de trekking · Base del glaciar'],clientes:['Guía Ezequiel','Ana','Don Klaus','Malena','Grupo de trekking'],caja:'hielo',flota:'tabla',clima:'nieve',extra:10},
  {id:'boca',nombre:'La Boca, Caminito',lugar:'Ciudad de Buenos Aires',
   ticket:'PEDIDO #0621 · 1 fugazzeta y 4 porciones de fainá<br>Destino: Conventillo en Caminito',
-  texto:'Chapas de colores y adoquines, con la Bombonera de fondo. Cruzá el Riachuelo por el puente de hierro. Juntá las estrellas azul y oro; ojo con los motochorros.',
+  texto:'Chapas de colores y adoquines, con la Bombonera de fondo. Cruzá el Riachuelo por el puente de hierro. Juntá las copas; ojo con los motochorros.',
   frio:'La fugazzeta llegó fría. En La Boca eso no se perdona.',
-  item:'xeneize',icono:'⭐',unidad:'cuadras',div:190,rio:true,
+  item:'copa',icono:'🏆',unidad:'cuadras',div:190,rio:true,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
   cielo:['#3d8fd6','#7cbbe8','#c9e5f5','#f2e6c9'],
   suelo:{top:'#7d7a76',top2:'#5a5753',tierra:'#4a3b30',speck:'#5d4a3c',junta:'#5f5c58',pozo:'#141414',agua:'#3a4a3a',aguaTop:'#5f6f55',adoquin:true},
@@ -1592,9 +1592,11 @@ function fondoBoca(){
     R(0,134,W,24,'#41594a');
     ctx.strokeStyle='#ffffffaa';ctx.lineWidth=1.2;for(let k=0;k<4;k++){const x=((k*97+t*0.4)%(W+40))-20,y=40+k*12+Math.sin(t*0.05+k)*4;ctx.beginPath();ctx.moveTo(x-4,y-2);ctx.quadraticCurveTo(x-2,y,x,y);ctx.quadraticCurveTo(x+2,y,x+4,y-2);ctx.stroke();}
   },3);
-  for(const [i,x] of slots(cam*0.3,620,1))bombonera(x+30);
+  // la Bombonera queda al final del recorrido, junto a la casa del cliente
+  {const bx=40+0.4*(LARGO-W-cam);if(bx<W)bombonera(bx);}
+  // el orden de las casas cambia en cada pedido (PI) y al perder una vida (VAR)
   const f2=cam*0.5;
-  for(const [i,x] of slots(f2,104)){
+  for(const [i0,x] of slots(f2,104)){const i=i0+PI*131;
     if(rnd(i+905)<.35){baldio(x,i,true);continue;}
     const h=50+Math.floor(rnd(i+900)*26),w=62,y=GY-h,c1=coloresBoca[Math.floor(rnd(i+901)*7)],c2=coloresBoca[Math.floor(rnd(i+902)*7)];
     R(x,y,w,h,c1);ctx.fillStyle='#00000022';for(let k=0;k<w;k+=3)ctx.fillRect(x+k,y,1,h);
@@ -1999,7 +2001,9 @@ function dibujarItem(m){
   case 'uva':ctx.fillStyle='#5a2a7a';[[0,-2],[-2,0],[2,0],[0,1],[-1,3],[1,3],[0,5]].forEach(([a,b])=>{ctx.beginPath();ctx.arc(x+a,y+b-1,1.5,0,7);ctx.fill();});ctx.fillStyle='#4f8a3a';ctx.fillRect(x-1,y-6,3,2);break;
   case 'alfajor':R(x-4,y-2,9,5,'#5a3420');R(x-4,y,9,1,'#f4ecdf');R(x-3,y-2,7,1,'#7a4a2a');break;
   case 'tortafrita':ctx.fillStyle='#d9a24a';ctx.beginPath();ctx.ellipse(x,y,5,3.6,0,0,7);ctx.fill();ctx.fillStyle='#b07a2a';ctx.fillRect(x-1,y-1,1,1);ctx.fillRect(x+2,y+1,1,1);ctx.fillStyle='#fff6e0';ctx.fillRect(x-3,y-2,1,1);ctx.fillRect(x+1,y-2,1,1);ctx.fillRect(x+3,y,1,1);break;
-  case 'xeneize':estrellaAzulOro(x,y);break;
+  case 'copa':ctx.fillStyle='#f2c200';ctx.beginPath();ctx.moveTo(x-4,y-5);ctx.lineTo(x+4,y-5);ctx.lineTo(x+2,y+1);ctx.lineTo(x-2,y+1);ctx.closePath();ctx.fill();R(x-4,y-5,8,1,'#fff2a0');
+    ctx.strokeStyle='#d9a400';ctx.lineWidth=0.9;ctx.beginPath();ctx.arc(x-4,y-3,1.8,Math.PI*0.5,Math.PI*1.5);ctx.stroke();ctx.beginPath();ctx.arc(x+4,y-3,1.8,Math.PI*1.5,Math.PI*0.5);ctx.stroke();
+    R(x-1,y+1,2,3,'#d9a400');R(x-3,y+4,6,2,'#1a3e8c');R(x-2,y+4,4,1,'#f2c200');R(x-3,y-4,1,3,'#fff6c0');break;
   case 'mate':ctx.fillStyle='#9a6a2e';ctx.beginPath();ctx.ellipse(x,y+1.5,4.2,4.5,0,0,7);ctx.fill();R(x-3,y-2.5,6,2,'#4f8a3a');R(x-3,y-3,6,1,'#7fb069');R(x-4,y+1,8,1,'#c8a050');R(x-1,y+3,1,1,'#c89a5a');R(x-3,y+4,6,1,'#5a3a1a');
     ctx.strokeStyle='#d8dce2';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(x+1,y-2);ctx.lineTo(x+4,y-7);ctx.stroke();R(x+3,y-8,3,1,'#d8dce2');break;
   case 'banda':ctx.fillStyle='#f4f4f6';ctx.beginPath();ctx.arc(x,y,5.5,0,7);ctx.fill();ctx.save();ctx.beginPath();ctx.arc(x,y,5.5,0,7);ctx.clip();ctx.fillStyle='#d4122e';ctx.beginPath();ctx.moveTo(x-6,y-6);ctx.lineTo(x-2,y-6);ctx.lineTo(x+6,y+6);ctx.lineTo(x+2,y+6);ctx.closePath();ctx.fill();ctx.restore();
