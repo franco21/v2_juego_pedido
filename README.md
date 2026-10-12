@@ -7,11 +7,11 @@ Es un sitio estático: no necesita compilar nada.
   vercel.json      configuración de Vercel
 
 Menús
-  Título       Jugar, Opciones y Créditos. "Jugar" abre la guía la primera vez y después la selección de escenarios.
+  Título       Jugar y Opciones. "Jugar" abre la guía la primera vez y después la selección de escenarios.
   Opciones     volumen de efectos y de ambiente (se guardan), sonido on/off, enlace a la privacidad y
                "Borrar progreso" (con confirmación; borra pedidos, estrellas y récords, no los volúmenes).
                También se abre desde el menú de pausa.
-  Esc          en la selección de escenarios vuelve al título; en Opciones y Créditos, también.
+  Esc          en la selección de escenarios vuelve al título; en Opciones, también.
 
 Mecánicas del recorrido
   Derrumbe     la tierra cede detrás del repartidor y lo persigue (más rápido en cada pedido).

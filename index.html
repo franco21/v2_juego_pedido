@@ -139,7 +139,6 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .opc input[type=range]{width:100%;accent-color:var(--sol);height:24px}
 .opc b{color:var(--sol);text-align:right}
 .opcMsg{min-height:1.2em;font-size:clamp(10px,1.5vw,13px);color:var(--sol)}
-.cred{align-items:flex-start;gap:6px;font-size:clamp(11px,1.7vw,16px)}
 @media (max-height:560px){.menuV{gap:6px}.opc{gap:4px}.opc input[type=range]{height:18px}#titulo h1{font-size:clamp(22px,6vw,38px)}}
 .tactil{display:none;position:absolute;left:0;right:0;bottom:0;padding:0 clamp(8px,2.2vmin,22px) clamp(8px,2.2vmin,22px);justify-content:space-between;align-items:flex-end;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;z-index:6}
 .tactil .mov,.tactil .acc{display:flex;gap:clamp(8px,2.4vmin,20px);align-items:flex-end}
@@ -221,7 +220,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
     <h1>Pedido en Camino</h1>
     <p class="sub">Un repartidor, un pedido y el reloj corriendo.</p>
-    <div class="menuV"><button class="btn" id="tJugar">▶ Jugar</button><button class="btn sec" id="tOpciones">⚙ Opciones</button><button class="btn sec" id="tCreditos">★ Créditos</button></div>
+    <div class="menuV"><button class="btn" id="tJugar">▶ Jugar</button><button class="btn sec" id="tOpciones">⚙ Opciones</button></div>
   </div>
   <div class="capa" id="inicio">
     <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
@@ -257,17 +256,6 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
       <div class="opcMsg" id="opcMsg" role="status"></div>
     </div>
     <div class="botones"><button class="btn" id="optVolver">‹ Volver</button></div>
-  </div>
-  <div class="capa" id="creditos" hidden>
-    <h2>Créditos</h2>
-    <ul class="datos cred">
-      <li>🎮 Idea, diseño y juego: <b>Franco</b></li>
-      <li>🤖 Programación asistida por <b>Claude</b> (Anthropic)</li>
-      <li>🇦🇷 Siete escenarios argentinos, del Conurbano a la Patagonia</li>
-      <li>🔊 Sonidos y ambiente generados con Web Audio</li>
-      <li>🔤 Tipografías Fredoka y Chivo (SIL Open Font License)</li>
-    </ul>
-    <div class="botones"><button class="btn" id="credVolver">‹ Volver</button></div>
   </div>
   <div class="capa" id="guia" hidden>
     <h2>Cómo se juega</h2>
@@ -604,7 +592,7 @@ addEventListener('keydown',e=>{
   if(e.code==='KeyM'){ponerMudo(!mudo);}
   if(e.code==='Escape'){
     if(!$('opciones').hidden){e.preventDefault();cerrarOpciones();return;}
-    if(estado==='creditos'||estado==='inicio'){e.preventDefault();abrirTitulo();return;}
+    if(estado==='inicio'){e.preventDefault();abrirTitulo();return;}
   }
   if(e.code==='Escape'&&(estado==='juego'||estado==='brief'||estado==='fin')){e.preventDefault();salirAlMenu();}
   if(e.code==='Enter'&&estado==='brief'){e.preventDefault();arrancar();}
@@ -639,7 +627,7 @@ function armarMenu(){
     return `<button class="nivel bloq" data-i="${i}" disabled><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>🔒 ${n.nombre}</b><span>Necesitás ${EST_REQ}★ en ${NIVELES[i-1].nombre} (${estrellasEscenario(i-1)}/${EST_REQ})</span></button>`;}).join('');
   $('niveles').querySelectorAll('.nivel:not(.bloq)').forEach(b=>{b.onclick=()=>abrirBrief(+b.dataset.i);b.onfocus=b.onmouseenter=()=>{if(estado==='inicio'&&NI!==+b.dataset.i){cargarNivel(+b.dataset.i);}};});
 }
-function mostrar(id){['titulo','inicio','brief','fin','guia','opciones','creditos'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;$('pausaCapa').hidden=true;if(id!==null)$('pista').hidden=true;}
+function mostrar(id){['titulo','inicio','brief','fin','guia','opciones'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;$('pausaCapa').hidden=true;if(id!==null)$('pista').hidden=true;}
 // guía de cómo se juega: sale la primera vez y se puede omitir; después se abre desde el menú
 const guiaVista=()=>{try{return localStorage.getItem('pec-guia')==='1';}catch(e){return false;}};
 let guiaN=0;
@@ -663,12 +651,10 @@ function cerrarGuia(){try{localStorage.setItem('pec-guia','1');}catch(e){}abrirM
 $('guiaSig').onclick=()=>{if(guiaN<pasosGuia().length-1){guiaN++;pintarGuia();}else cerrarGuia();};
 $('guiaOmitir').onclick=cerrarGuia;
 $('verGuia').onclick=abrirGuia;
-// ---------- título, opciones y créditos ----------
+// ---------- título y opciones ----------
 function abrirTitulo(){estado='titulo';$('izq').hidden=true;$('hud').hidden=true;$('reloj').hidden=true;mostrar('titulo');$('tJugar').focus();}
 $('tJugar').onclick=()=>{audioInit();if(!guiaVista())abrirGuia();else abrirMenu();};
 $('tOpciones').onclick=()=>abrirOpciones('titulo');
-$('tCreditos').onclick=()=>{estado='creditos';mostrar('creditos');$('credVolver').focus();};
-$('credVolver').onclick=abrirTitulo;
 $('aTitulo').onclick=abrirTitulo;
 let opcDesde='titulo';
 function pintarOpciones(){
@@ -2323,7 +2309,7 @@ function bucle(ahora){
     if(!pausa)heliPaso();
     if(flash>0&&!pausa)flash--;if(dolor>0&&!pausa)dolor=Math.max(0,dolor-0.016);
     if(estado==='juego'&&!pausa)paso();
-    else if(estado==='inicio'||estado==='brief'||estado==='guia'||estado==='titulo'||estado==='opciones'||estado==='creditos'){t++;cam=(cam+0.45)%(LARGO-W);}
+    else if(estado==='inicio'||estado==='brief'||estado==='guia'||estado==='titulo'||estado==='opciones'){t++;cam=(cam+0.45)%(LARGO-W);}
     else if(estado==='fin')t++;
     acum-=1000/60;
   }
