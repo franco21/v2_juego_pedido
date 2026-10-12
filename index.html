@@ -121,6 +121,7 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .estrellas{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-family:var(--display);font-size:clamp(10px,1.5vw,14px)}
 .estrellas span{border:2px solid #3a3352;background:#0b0a12d9;color:var(--chapa);padding:2px 8px}
 .estrellas span.on{color:#f2c14e;border-color:#f2c14e}
+.totalEst{align-self:center;border:2px solid #f2c14e;background:#0b0a12d9;color:#f2c14e;font-family:var(--display);padding:2px 16px;font-size:clamp(14px,2.4vw,20px);box-shadow:2px 2px 0 #0008}
 .tactil{display:none;position:absolute;left:0;right:0;bottom:0;padding:0 clamp(8px,2.2vmin,22px) clamp(8px,2.2vmin,22px);justify-content:space-between;align-items:flex-end;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;z-index:6}
 .tactil .mov,.tactil .acc{display:flex;gap:clamp(8px,2.4vmin,20px);align-items:flex-end}
 .tactil .mov{pointer-events:auto;touch-action:none;padding:10px 10px 0 0}
@@ -625,7 +626,7 @@ cv.addEventListener('pointerdown',()=>{if(pausa&&estado==='juego')alternarPausa(
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&estado==='juego'&&!pausa)alternarPausa();});
 matchMedia('(orientation:portrait)').addEventListener?.('change',e=>{if(e.matches&&esTouch()&&estado==='juego'&&!pausa)alternarPausa();});
 function terminar(gano,motivo){
-  estado='fin';$('hud').hidden=true;$('reloj').hidden=true;$('izq').hidden=true;$('resumen').hidden=!gano;mostrar('fin');$('pista').hidden=true;
+  estado='fin';sacudida=0;temblor=0;dolor=0;destello=0;$('hud').hidden=true;$('reloj').hidden=true;$('izq').hidden=true;$('resumen').hidden=!gano;mostrar('fin');$('pista').hidden=true;
   for(const k in tecla)tecla[k]=false;
   const ultimoDeTodo=NI===NIVELES.length-1&&PI===4;
   $('sig').hidden=true;$('sig').textContent=PI<4?'Siguiente pedido':'Siguiente escenario';
@@ -642,12 +643,12 @@ function terminar(gano,motivo){
     const ar=v=>v.toLocaleString('es-AR');
     const partes=[['Rapidez',bono,'#f2a65a'],['Pisotones',pisotones*PTS_PISO,'#3fa7d6'],['Propina',ptsProp,'#f2c14e']].filter(x=>x[1]>0);
     const sp=partes.reduce((a,x)=>a+x[1],0)||1;
-    $('resumen').innerHTML=`<div class="estrellas"><span class="on">★ Entregado</span><span class="${conProp?'on':''}">★ Propina</span><span class="${retoOk?'on':''}">★ Pisaste ${Math.min(pisotones,retoMeta)}/${retoMeta}</span></div><div class="fila">
+    $('resumen').innerHTML=`<div class="totalEst">★ <b>${estrellasEscenario(NI)}/15</b> estrellas</div><div class="estrellas"><span class="on">★ Entregado</span><span class="${conProp?'on':''}">★ Propina</span><span class="${retoOk?'on':''}">★ Pisaste ${Math.min(pisotones,retoMeta)}/${retoMeta}</span></div><div class="fila">
       <div class="tarjeta" id="rProp"><span class="lbl">💸 Propina de ${N.clientes[PI]}</span><span class="grande" style="color:${conProp?'#f2c14e':'var(--chapa)'}${conProp?'':';font-size:clamp(11px,1.6vw,14px)'}">${conProp?'$'+ar(prop):'Sin propina'}</span><span class="sub">${conProp?'+'+ar(ptsProp)+' puntos':'había que llegar en '+fmt(objetivo/60).slice(0,-2)}</span></div>
       <div class="tarjeta"><span class="lbl">⭐ Puntos</span><span class="grande" style="color:var(--sol)">${ar(total)}</span><span class="sub">${total>record?'¡Nuevo récord!':'Récord: '+ar(record)}</span></div></div>
       <div class="desglose" role="img" aria-label="Desglose de puntos">${partes.map(([n,v,c])=>`<i style="width:${(v/sp*100).toFixed(1)}%;background:${c}" title="${n}: ${ar(v)}"></i>`).join('')}</div>
       <div class="leyenda">${partes.map(([n,v,c])=>`<span style="--c:${c}">${n} ${ar(v)}</span>`).join('')}</div>`;
-    const lin=[`⏱ Llegaste en <b>${fmt(t/60)}</b>`,`⏳ Te sobraron <b>${fmt(seg)}</b>`,`★ <b>${estrellasEscenario(NI)}/15</b> estrellas en este escenario`];
+    const lin=[`⏱ Llegaste en <b>${fmt(t/60)}</b>`,`⏳ Te sobraron <b>${fmt(seg)}</b>`];
     if(nuevo)lin.push('🔓 <b>¡Escenario nuevo desbloqueado!</b>');else if(hayProx&&!abiertoAhora)lin.push(`🔒 Para abrir el siguiente necesitás <b>${EST_REQ}★</b> (te faltan ${EST_REQ-estrellasEscenario(NI)})`);
     $('finTexto').innerHTML=lin.map(x=>`<li>${x}</li>`).join('');
     ($('sig').hidden?$('menu'):$('sig')).focus();
@@ -1774,7 +1775,7 @@ function dibujarFinal(){
   R(x-30,GY-50,22,12,'#c8553d');ctx.font='700 7px Fredoka, sans-serif';ctx.fillStyle='#f4ecdf';ctx.fillText('ACÁ',x-28.5,GY-41);R(x-20,GY-38,2,38,'#6b5a4e');
 }
 function dibujar(){
-  const E=ESC[N.id],tem=estado==='juego'?temblor:0,sh=sacudida>0||tem>0.05,am=(sacudida>0?sacudida*0.4:0)+tem;
+  const E=ESC[N.id],enJuego=estado==='juego',tem=enJuego?temblor:0,sac=enJuego?sacudida:0,sh=sac>0||tem>0.05,am=(sac>0?sac*0.4:0)+tem;
   if(sh){ctx.save();ctx.translate((Math.random()-.5)*am,(Math.random()-.5)*am);}
   E.fondo();bruma();if(E.cerca)E.cerca();
   dibujarSuelo();dibujarDerrumbe();dibujarQuemaduras();
