@@ -32,10 +32,10 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rend
 .hud{position:absolute;inset:0 0 auto 0;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:8px 12px;font-family:var(--display);font-size:clamp(11px,1.8vw,18px);text-shadow:2px 2px 0 #000;pointer-events:none}
 .hud .item{display:flex;align-items:center;gap:6px}
 .hud .der{margin-left:auto}
-.reloj{position:absolute;right:12px;top:clamp(36px,7vw,56px);width:clamp(96px,17vw,184px);aspect-ratio:1;max-width:100%;border-radius:50%;background:radial-gradient(circle at 50% 40%,#1d1830,#0b0a12);border:3px solid #3a3352;box-shadow:4px 4px 0 #0008;pointer-events:none}
+.reloj{position:absolute;right:12px;top:clamp(36px,7vw,56px);width:clamp(84px,13vw,144px);aspect-ratio:1;max-width:100%;border-radius:50%;background:radial-gradient(circle at 50% 40%,#1d1830,#0b0a12);border:2px solid #3a3352;box-shadow:3px 3px 0 #0008;pointer-events:none}
 .reloj svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
-.reloj .pista{fill:none;stroke:#2c2540;stroke-width:7}
-.reloj .arco{fill:none;stroke:var(--sol);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .2s linear}
+.reloj .pista{fill:none;stroke:#2c2540;stroke-width:4}
+.reloj .arco{fill:none;stroke:var(--sol);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .2s linear}
 .reloj .marca{stroke:#5a4f70;stroke-width:1.6}
 .reloj .cara{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;text-align:center}
 .reloj .lbl{font-family:var(--display);font-size:clamp(7px,1.15vw,12px);color:var(--chapa);text-transform:uppercase;letter-spacing:.06em}
@@ -66,10 +66,11 @@ button.btn.sec{background:#2e2748}
 button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .izq{position:absolute;left:12px;top:clamp(36px,6.5vw,54px);display:flex;flex-direction:column;align-items:flex-start;gap:6px;pointer-events:none}
 .fila{display:flex;gap:6px}
-.tarjeta{display:flex;flex-direction:column;gap:2px;min-width:clamp(78px,14vw,150px);background:#0b0a12d9;border:2px solid #3a3352;padding:4px 10px 6px;box-shadow:3px 3px 0 #0008;font-family:var(--display);color:var(--cal)}
-.tarjeta .lbl{font-size:clamp(8px,1.2vw,12px);color:var(--chapa);text-transform:uppercase;letter-spacing:.06em}
+.izq .fila{align-items:flex-start}
+.tarjeta{display:flex;flex-direction:column;gap:1px;min-width:0;background:#0b0a12d9;border:2px solid #3a3352;padding:2px 7px 3px;box-shadow:2px 2px 0 #0008;font-family:var(--display);color:var(--cal)}
+.tarjeta .lbl{font-size:clamp(7px,1vw,10px);color:var(--chapa);text-transform:uppercase;letter-spacing:.06em}
 .tarjeta .grande{font-size:clamp(17px,3.3vw,34px);font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
-.tarjeta .sub{font-size:clamp(8px,1.15vw,12px);color:var(--chapa)}
+.tarjeta .sub{font-size:clamp(7px,1vw,10px);color:var(--chapa)}
 .tarjeta .barra{display:block;height:5px;background:#ffffff1a;overflow:hidden}
 .tarjeta .barra i{display:block;height:100%;width:100%;background:#f2c14e;transition:width .25s linear}
 #tProp .grande{color:#f2c14e;text-shadow:0 0 10px #f2c14e55}
@@ -97,9 +98,6 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .bateria #batTxt{min-width:3.2ch;font-variant-numeric:tabular-nums;font-weight:700}
 .bateria.apagada{opacity:.55}
 .bateria.baja{border-color:#ff4a3d;animation:late .5s steps(2) infinite}
-.chat{position:absolute;left:12px;bottom:12px;max-width:min(62%,360px);background:#f4ecdf;color:#2a2238;border-radius:12px 12px 12px 2px;padding:8px 12px;box-shadow:4px 4px 0 #0007;font-family:var(--body);font-size:clamp(11px,1.6vw,15px);line-height:1.35;pointer-events:none;transform-origin:left bottom;animation:entra .25s ease-out}
-.chat b{display:block;font-family:var(--display);font-size:.85em;color:#2f6b4f;margin-bottom:2px}
-@keyframes entra{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
 .pista{position:absolute;left:50%;top:26%;transform:translateX(-50%);max-width:min(70%,460px);background:#2a2340ee;border:2px solid var(--sol);color:var(--cal);font-family:var(--display);font-size:clamp(12px,1.9vw,18px);padding:6px 14px;text-align:center;pointer-events:none;box-shadow:3px 3px 0 #0008;text-wrap:balance}
 .pedidos{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .ped{font-family:var(--display);min-width:44px;background:#2a2340;color:var(--cal);border:2px solid #4a4066;padding:4px 10px;cursor:pointer;font-size:clamp(11px,1.5vw,15px)}
@@ -114,7 +112,7 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 @media (max-width:420px){.tactil button{width:52px;height:52px;font-size:19px}}
 .ayuda{font-size:12px;color:var(--chapa);margin:0}
 @media (pointer:coarse){.ayuda{display:none}}
-@media (prefers-reduced-motion:reduce){.reloj.apurado .dig,.chat,.bateria.baja,#tPts.sube .grande,#tPts.baja .grande{animation:none}}
+@media (prefers-reduced-motion:reduce){.reloj.apurado .dig,.bateria.baja,#tPts.sube .grande,#tPts.baja .grande{animation:none}}
 </style>
 
 </head>
@@ -133,14 +131,14 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
   </div>
 
   <div class="reloj" id="reloj" hidden>
-    <svg viewBox="0 0 100 100" aria-hidden="true"><g id="marcas"></g><circle class="pista" cx="50" cy="50" r="42"></circle><circle class="arco" id="arco" cx="50" cy="50" r="42" stroke-dasharray="263.9" stroke-dashoffset="0"></circle></svg>
+    <svg viewBox="0 0 100 100" aria-hidden="true"><g id="marcas"></g><circle class="pista" cx="50" cy="50" r="45"></circle><circle class="arco" id="arco" cx="50" cy="50" r="45" stroke-dasharray="282.7" stroke-dashoffset="0"></circle></svg>
     <div class="cara"><span class="lbl">Entregá en</span><span class="dig" id="tiempo">2:30.0</span><span class="lbl" id="bono">Bono 15.000</span></div>
   </div>
 
   <div class="izq" id="izq" hidden>
   <div class="fila">
     <div class="tarjeta" id="tProp"><span class="lbl">💸 Propina</span><span class="grande" id="propMonto">$0</span><span class="barra"><i id="propBarra"></i></span><span class="sub" id="propSub"></span></div>
-    <div class="tarjeta" id="tPts"><span class="lbl">⭐ Puntos</span><span class="grande" id="ptsNum">0</span><span class="sub" id="ptsSub">comida y enemigos</span></div>
+    <div class="tarjeta" id="tPts"><span class="lbl">⭐ Puntos</span><span class="grande" id="ptsNum">0</span></div>
   </div>
   <div class="bateria" id="bateria" hidden aria-label="Batería de la linterna">
     <span class="lbl">🔦 Linterna</span>
@@ -149,7 +147,6 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
     <svg class="spark" viewBox="0 0 80 20" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="14" x2="80" y2="14" stroke="#ff4a3d" stroke-width=".6" stroke-dasharray="2 2"></line><polyline id="batLinea" points="" fill="none" stroke="#7fb069" stroke-width="1.4" stroke-linejoin="round"></polyline></svg>
   </div>
   </div>
-  <div class="chat" id="chat" hidden aria-live="polite"><b id="chatQuien"></b><span id="chatTxt"></span></div>
   <div class="pista" id="pista" hidden aria-live="polite"></div>
 
   <div class="capa" id="inicio">
@@ -414,7 +411,7 @@ function nuevaPartida(){
   cargarNivel(NI,PI);
   P={x:40,y:GY-22,w:8,h:22,vx:0,vy:0,piso:false,dir:1,inv:0,anim:0,coyote:0,buffer:0};
   restante=TOT;vidas=3;resetCharly();rayos=[];quemaduras=[];destello=0;sacudida=0;proxRayo=0;prepararNoche();viento={v:0,obj:0,timer:600+Math.random()*400,activo:false};P.barro=0;
-  objetivo=Math.round(TOT*0.55);propinaMonto=Math.round((500+PI*300+NI*150)/50)*50;msgN=0;prisaDicha=false;pistasDadas=new Set();ocultarChat();$('pista').hidden=true;
+  objetivo=Math.round(TOT*0.55);propinaMonto=Math.round((500+PI*300+NI*150)/50)*50;pistasDadas=new Set();$('pista').hidden=true;
   cuentaMedias=0;pisotones=0;huesazos=0;motosDisparadas=new Set();penal=0;dolor=0;
   crearEnemigos(-1e9);derrInit(P.x-300,PI===0?420:300);
 }
@@ -462,7 +459,7 @@ document.querySelectorAll('#tactil button').forEach(b=>{
   const off=e=>{e.preventDefault();tecla[k]=false;b.classList.remove('on');};
   b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off);
 });
-{let m='';for(let k=0;k<60;k++){const a=k/60*Math.PI*2,r1=k%5?48:46.5;m+=`<line class="marca" x1="${50+Math.cos(a)*r1}" y1="${50+Math.sin(a)*r1}" x2="${50+Math.cos(a)*49.5}" y2="${50+Math.sin(a)*49.5}"></line>`;}$('marcas').innerHTML=m;}
+{let m='';for(let k=0;k<60;k++){const a=k/60*Math.PI*2,r1=k%5?48.4:47.6;m+=`<line class="marca" x1="${50+Math.cos(a)*r1}" y1="${50+Math.sin(a)*r1}" x2="${50+Math.cos(a)*49.7}" y2="${50+Math.sin(a)*49.7}"></line>`;}$('marcas').innerHTML=m;}
 function leerRecord(id){try{return +localStorage.getItem('pec-rec-'+id)||0;}catch(e){return 0;}}
 function leerProg(id){try{return +localStorage.getItem('pec-prog-'+id)||0;}catch(e){return 0;}}
 function guardarProg(id,n){try{if(n>leerProg(id))localStorage.setItem('pec-prog-'+id,n);}catch(e){}}
@@ -494,14 +491,14 @@ $('jugar').onclick=arrancar;$('otra').onclick=arrancar;$('volver').onclick=abrir
 $('sig').onclick=()=>PI<4?abrirBrief(NI,PI+1):abrirBrief(NI+1,0);
 function salirAlMenu(){
   pausa=false;if(AC)AC.resume();for(const k in tecla)tecla[k]=false;
-  clearTimeout(chatT);clearTimeout(pistaT);ocultarChat();$('pista').hidden=true;
+  clearTimeout(pistaT);$('pista').hidden=true;
   resetCharly();
   abrirMenu();
 }
 $('salir').onclick=salirAlMenu;
 $('sonido').onclick=()=>{ponerMudo(!mudo);$('juego').focus();};
 function terminar(gano,motivo){
-  estado='fin';$('hud').hidden=true;$('reloj').hidden=true;$('izq').hidden=true;$('resumen').hidden=!gano;mostrar('fin');ocultarChat();$('pista').hidden=true;clearTimeout(chatT);
+  estado='fin';$('hud').hidden=true;$('reloj').hidden=true;$('izq').hidden=true;$('resumen').hidden=!gano;mostrar('fin');$('pista').hidden=true;
   for(const k in tecla)tecla[k]=false;
   const ultimoDeTodo=NI===NIVELES.length-1&&PI===4;
   $('sig').hidden=!(gano&&!ultimoDeTodo);$('sig').textContent=PI<4?'Siguiente pedido':'Siguiente escenario';
@@ -626,7 +623,6 @@ const sfx={
   ay(){tono(520,980,0.12,'triangle',0.07);tono(980,380,0.25,'triangle',0.06,0.12);},
   tira(){ruido(0.22,1100,'bandpass',0.14,0,1.2);},
   rompeMaceta(){ruido(0.16,1700,'bandpass',0.45,0,1.2);ruido(0.1,500,'lowpass',0.35);for(let k=0;k<4;k++)tono(1200+Math.random()*1500,900,0.06,'triangle',0.03,0.02+k*0.03);},
-  notif(){tono(1175,1175,0.09,'sine',0.06);tono(1568,1568,0.14,'sine',0.06,0.1);},
   caja(){tono(784,784,0.08,'square',0.04);tono(1047,1047,0.08,'square',0.04,0.09);tono(1568,1568,0.25,'square',0.04,0.18);},
   retumbe(v=1){ruido(0.5,70+Math.random()*60,'lowpass',0.45*v,0,0.9);tono(48+Math.random()*10,34,0.45,'sine',0.14*v);},
   tablon(){ruido(0.07,1500,'bandpass',0.3,0,2);tono(240,110,0.1,'square',0.035);},
@@ -911,7 +907,7 @@ function paso(){
   for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=p.g!==undefined?p.g:p.txt?-0.02:0.15;p.v--;}
   parts=parts.filter(p=>p.v>0);
   cam=Math.max(cam,Math.min(P.x-W*0.4,LARGO-W));
-  mensajesPaso();pistasPaso();avisosCamino();nochePaso();charlyPaso();proysPaso();rayoPaso();
+  pistasPaso();avisosCamino();nochePaso();charlyPaso();proysPaso();rayoPaso();
   tablonesPaso();cablesPaso();caePaso();
   if(derrPaso())return;
   if(P.x>FIN)terminar(true);
@@ -931,23 +927,10 @@ function vientoPaso(){
   }
   viento.v+=(viento.obj-viento.v)*0.02;
 }
-// ---------- mensajes del cliente, propina y pistas del primer pedido ----------
-let objetivo=0,propinaMonto=0,msgN=0,prisaDicha=false,pistasDadas=new Set(),chatT=null,pistaT=null;
-function ocultarChat(){$('chat').hidden=true;}
-function mensaje(txt){
-  $('chatQuien').textContent='💬 '+N.clientes[PI]+' · cliente';$('chatTxt').textContent=txt;
-  const c=$('chat');c.hidden=true;void c.offsetWidth;c.hidden=false;sfx.notif();
-  clearTimeout(chatT);chatT=setTimeout(ocultarChat,4800);
-}
+// ---------- propina y pistas del primer pedido ----------
+let objetivo=0,propinaMonto=0,pistasDadas=new Set(),pistaT=null;
 // las pistas de qué hacer salen solo en el primer pedido de cada escenario
 function pista(txt){if(PI!==0)return;const p=$('pista');p.textContent=txt;p.hidden=false;clearTimeout(pistaT);pistaT=setTimeout(()=>p.hidden=true,4200);}
-const PRISA=['¡¿Dónde estás?!','Si llega frío lo cancelo 😤','Apurate porfa 🙏','Ya me estoy comiendo las uñas'];
-// el cliente escribe poco: el saludo con la propina, un apuro (a veces) sobre el final y el aviso de que se perdió la propina
-function mensajesPaso(){
-  if(t===90)mensaje(`¡Hola! Si llegás en menos de ${fmt(objetivo/60).slice(0,-2)} te dejo $${propinaMonto.toLocaleString('es-AR')} de propina 🙌`);
-  if(t===objetivo+1)mensaje('Bueno, ya fue la propina… pero traelo igual 😅');
-  if(!prisaDicha&&restante/TOT<0.2){prisaDicha=true;if(Math.random()<0.4)mensaje(PRISA[(msgN++ +PI)%PRISA.length]);}
-}
 function pistasPaso(){
   if(PI!==0)return;
   const pp=(id,txt)=>{if(!pistasDadas.has(id)){pistasDadas.add(id);pista(txt);}};
@@ -2029,7 +2012,7 @@ function hud(){
   const pts=Math.max(0,cuentaMedias*10+pisotones*PTS_PISO+huesazos*PTS_HUESO-penal);
   if(pts!==ptsPrev){if(ptsPrev>=0){const c=$('tPts'),cl=pts>ptsPrev?'sube':'baja';c.classList.remove('sube','baja');void c.offsetWidth;c.classList.add(cl);}ptsPrev=pts;$('ptsNum').textContent=pts.toLocaleString('es-AR');}
   $('tiempo').textContent=fmt(restante/60);
-  $('arco').setAttribute('stroke-dashoffset',(263.9*(1-Math.min(1,restante/TOT))).toFixed(1));
+  $('arco').setAttribute('stroke-dashoffset',(282.7*(1-Math.min(1,restante/TOT))).toFixed(1));
   $('bono').textContent='Bono '+Math.round(restante/60*100).toLocaleString('es-AR');
   $('reloj').classList.toggle('apurado',restante<10*60);
   const falta=Math.max(0,Math.ceil((FIN-P.x)/N.div)),fTxt=N.unidad==='metros'?`${Math.ceil(falta/10)*10} m`:`${falta} cuadras`;
