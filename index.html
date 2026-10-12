@@ -244,7 +244,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
 
   <div class="capa" id="pausaCapa" hidden>
     <h2>Pausa</h2>
-    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pOpciones">⚙ Opciones</button></div>
+    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pOpciones">⚙ Opciones</button><button class="btn sec" id="pMenu">⌂ Menú principal</button></div>
   </div>
   <div class="capa" id="opciones" hidden>
     <h2>Opciones</h2>
@@ -308,7 +308,7 @@ const NIVELES=[
   ticket:'PEDIDO #0412 · 12 chipá y un tereré bien frío<br>Destino: Puesto de guardaparques, Garganta del Diablo',
   texto:'Pasarelas y río abajo. Coatíes y monos te acosan; los tucanes vuelan bajito.',
   frio:'Los chipá se pusieron duros y el tereré se calentó.',
-  item:'chipa',icono:'🥯',unidad:'metros',div:4,
+  item:'banana',icono:'🍌',unidad:'metros',div:4,
   skin:{perro:'coati',chorro:'mono',moto:'tucan'},
   cielo:['#4fa3d8','#8fd0e8','#c8ecef','#e6f6ee'],
   suelo:{top:'#5f9e3f',top2:'#3f7a2b',tierra:'#a4472b',speck:'#c0603a',junta:'#4f8a35',pozo:'#0d2c30',agua:'#3f8f9a',aguaTop:'#d6f4f2',espuma:true},
@@ -341,7 +341,7 @@ const NIVELES=[
   ticket:'PEDIDO #0577 · 6 alfajores de calafate y chocolate caliente<br>Destino: Refugio frente al glaciar',
   texto:'Nieve, viento y hielo que patina. Zorros, ladrones y bolas de nieve.',
   frio:'El chocolate se congeló antes de llegar.',
-  item:'alfajor',icono:'🍫',unidad:'metros',div:4,
+  item:'cubo',icono:'🧊',unidad:'metros',div:4,
   skin:{perro:'zorroc',chorro:'ladronG',moto:'bola'},
   cielo:['#7fb6e0','#a9d2ee','#dceef8','#f2f8fc'],
   suelo:{top:'#f4f8fb',top2:'#cfdbe4',tierra:'#5d6672',speck:'#7a8590',junta:'#e2ecf3',pozo:'#0d2b3a',agua:'#3fb0c0',aguaTop:'#e6fbff',espuma:true},
@@ -734,13 +734,15 @@ function arrancar(){
 }
 $('jugar').onclick=arrancar;$('otra').onclick=arrancar;$('volver').onclick=abrirMenu;$('menu').onclick=abrirMenu;
 $('sig').onclick=()=>PI<4?abrirBrief(NI,PI+1):abrirBrief(NI+1,0);
-function salirAlMenu(){
+function limpiarPartida(){
   pausa=false;if(AC)AC.resume();for(const k in tecla)tecla[k]=false;
   clearTimeout(pistaT);$('pista').hidden=true;
   resetCharly();
-  abrirMenu();
 }
+function salirAlMenu(){limpiarPartida();abrirMenu();}
+function salirAlTitulo(){limpiarPartida();if(derr.on)cargarNivel(NI,PI);abrirTitulo();}
 $('salir').onclick=salirAlMenu;
+$('pMenu').onclick=salirAlTitulo;
 $('sonido').onclick=()=>{ponerMudo(!mudo);$('juego').focus();};
 function alternarPausa(){
   if(estado!=='juego'||!$('opciones').hidden)return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();
@@ -1541,6 +1543,22 @@ function montanas(par,base,col,nieve,sem){
     ctx.fillStyle=nieve;ctx.beginPath();ctx.moveTo(px,top);ctx.lineTo(px+med*0.27,top+alto*0.3);ctx.lineTo(px+med*0.1,top+alto*0.22);ctx.lineTo(px-med*0.12,top+alto*0.3);ctx.lineTo(px-med*0.22,top+alto*0.28);ctx.closePath();ctx.fill();
   }
 }
+// decoración de bodega: barricas apiladas, estantes con botellas de vino y mesas de degustación (y = piso)
+function barricaFondo(x,y){
+  R(x+2,y-14,14,14,'#7a4a2a');R(x,y-11,18,8,'#7a4a2a');
+  R(x,y-10,18,2,'#3a3a3a');R(x,y-5,18,2,'#3a3a3a');R(x+2,y-14,14,1,'#a8744a');R(x+8,y-14,2,14,'#8a5a32');
+}
+function pilaBarricas(x,y){barricaFondo(x,y);barricaFondo(x+18,y);barricaFondo(x+9,y-14);}
+function botellaFondo(x,y,c){R(x,y-9,4,9,c);R(x+1,y-14,2,5,c);R(x+1,y-15,2,1,'#c9a27a');R(x,y-6,4,3,'#f4ecdf');R(x,y-9,1,7,'#ffffff40');}
+function estanteBotellas(x,y){
+  R(x,y-20,30,20,'#6a4a2a');R(x+1,y-19,28,18,'#3a2a1a');
+  for(let r=0;r<3;r++)for(let k=0;k<4;k++){ctx.fillStyle=(r+k)%3?'#2a4a2a':'#5a1a2a';ctx.beginPath();ctx.arc(x+5+k*7,y-15+r*6,2.5,0,7);ctx.fill();R(x+4+k*7,y-16+r*6,1,1,'#ffffff55');}
+  R(x,y-20,30,2,'#8a6a3a');
+}
+function mesaBarrica(x,y){
+  R(x,y-16,14,16,'#7a4a2a');R(x,y-13,14,2,'#3a3a3a');R(x,y-5,14,2,'#3a3a3a');R(x+6,y-16,2,16,'#8a5a32');R(x-2,y-18,18,2,'#a8744a');
+  botellaFondo(x+1,y-18,'#2a4a2a');botellaFondo(x+6,y-18,'#5a1a2a');R(x+12,y-22,3,4,'#e8f2f4');R(x+12,y-19,3,1,'#c8a0b0');
+}
 function fondoMendoza(){
   cielo();
   borroso(()=>{
@@ -1557,8 +1575,9 @@ function fondoMendoza(){
   for(const [i,x] of slots(f2,120)){
     if(rnd(i+720)<.45){const bx=x+20,w=70,h=40;R(bx,GY-h,w,h,'#f1e9da');ctx.fillStyle='#b4532e';ctx.beginPath();ctx.moveTo(bx-4,GY-h);ctx.lineTo(bx+w/2,GY-h-14);ctx.lineTo(bx+w+4,GY-h);ctx.fill();
       R(bx+w/2-7,GY-18,14,18,'#5a3b22');ctx.fillStyle='#5a3b22';ctx.beginPath();ctx.arc(bx+w/2,GY-18,7,Math.PI,0);ctx.fill();
-      cartel(bx+4,GY-h+4,w-8,cartelesMendoza[((i%6)+6)%6],[['#5a1a2a','#f4ecdf','#e8c46a'],['#f4ecdf','#5a1a2a','#7a6a42']][Math.floor(rnd(i+721)*2)]);}
-    else{for(let k=0;k<3;k++){const ax=x+30+k*16,h=70+rnd(i*3+k+730)*20;R(ax,GY-h*0.3,2,h*0.3,'#6a5034');ctx.fillStyle=k%2?'#3f6a32':'#4a7a3a';ctx.beginPath();ctx.ellipse(ax+1,GY-h*0.6,5,h*0.35,0,0,7);ctx.fill();}}
+      cartel(bx+4,GY-h+4,w-8,cartelesMendoza[((i%6)+6)%6],[['#5a1a2a','#f4ecdf','#e8c46a'],['#f4ecdf','#5a1a2a','#7a6a42']][Math.floor(rnd(i+721)*2)]);
+      pilaBarricas(bx-8,GY);estanteBotellas(bx+w-24,GY);botellaFondo(bx+w+10,GY,'#2a4a2a');}
+    else{for(let k=0;k<3;k++){const ax=x+30+k*16,h=70+rnd(i*3+k+730)*20;R(ax,GY-h*0.3,2,h*0.3,'#6a5034');ctx.fillStyle=k%2?'#3f6a32':'#4a7a3a';ctx.beginPath();ctx.ellipse(ax+1,GY-h*0.6,5,h*0.35,0,0,7);ctx.fill();}if(rnd(i+735)<.6)mesaBarrica(x+86,GY);}
   }
 }
 function primerMendoza(){
@@ -1864,14 +1883,16 @@ const TUNELES={conurbano:['#8d8a86','#b0aca6','#5f5c58','PASO BAJO NIVEL',true],
   iguazu:['#5b5244','#4f8a3e','#3a3428','TÚNEL DE LA SELVA',false],quebrada:['#9a6a4a','#c99c62','#6a4430','TÚNEL DE PIEDRA',false],mendoza:['#7a6a5a','#9b8a5a','#4a3a2a','TÚNEL DEL CANAL',false],glaciar:['#9fd0e8','#f4f8fb','#6fa8c7','TÚNEL DE HIELO',false],
   nunez:['#8d8a86','#b0aca6','#5f5c58','PASO BAJO NIVEL',true],sanrafael:['#a8663a','#d8a060','#6a3a20','TÚNEL DEL ATUEL',false]};
 // ---------- cajas, maderas, derrumbe y piezas que caen ----------
-// San Rafael: en lugar de cajas, potes de vidrio con dulce de leche (tapa de tela a cuadros y etiqueta)
+// San Rafael: en lugar de cajas, potes de vidrio con dulce de leche (tapa lisa y etiqueta con la inicial DL)
 function poteDulce(x,y,s){
-  R(x+2,y,s-4,3,'#b8352a');for(let k=3;k<s-5;k+=3)R(x+k,y,1,3,'#f4ecdf');
+  R(x+2,y,s-4,3,'#b8352a');R(x+2,y,s-4,1,'#d8564a');
   R(x+3,y+3,s-6,2,'#d8d0c0');
   R(x+1,y+5,s-2,s-6,'#9a5a1e');R(x+2,y+s-1,s-4,1,'#9a5a1e');
   R(x+2,y+6,s-4,s-8,'#c07a30');R(x+2,y+6,2,s-9,'#e6b87a');R(x+s-4,y+7,2,s-10,'#8a4a1a');
-  R(x+3,y+8,s-6,5,'#f4ecdf');R(x+3,y+8,s-6,1,'#c8553d');R(x+3,y+12,s-6,1,'#c8553d');
-  R(x+s/2-1,y+9,2,2,'#8a4a1a');R(x+s/2,y+11,1,1,'#8a4a1a');
+  R(x+3,y+7,s-6,7,'#f4ecdf');
+  const lx=x+Math.floor((s-7)/2);
+  R(lx,y+8,1,5,'#8a3a1a');R(lx+1,y+8,1,1,'#8a3a1a');R(lx+1,y+12,1,1,'#8a3a1a');R(lx+2,y+9,1,3,'#8a3a1a'); // D
+  R(lx+4,y+8,1,5,'#8a3a1a');R(lx+4,y+12,3,1,'#8a3a1a'); // L
 }
 function cajaGfx(x,y,s){
   if(N.id==='sanrafael'){poteDulce(x,y,s);return;}
@@ -2027,10 +2048,10 @@ function dibujarItem(m){
   const x=m.x-cam,y=m.y+Math.sin((t+m.x)*0.08)*1.5;if(x<-8||x>W+8)return;
   switch(N.item){
   case 'medialuna':ctx.fillStyle='#d68a2e';ctx.beginPath();ctx.arc(x,y,4.5,Math.PI*.15,Math.PI*1.85);ctx.arc(x+2.5,y,3,Math.PI*1.7,Math.PI*.3,true);ctx.fill();ctx.fillStyle='#f6d27a';ctx.fillRect(Math.round(x-3),Math.round(y-2),2,1);break;
-  case 'chipa':ctx.fillStyle='#e0b050';ctx.beginPath();ctx.arc(x,y,4,0,7);ctx.fill();ctx.fillStyle='#f6d88a';ctx.beginPath();ctx.arc(x-1,y-1,2,0,7);ctx.fill();ctx.fillStyle='#b07a2a';ctx.fillRect(x+1,y+1,1,1);ctx.fillRect(x-2,y+2,1,1);break;
+  case 'banana':ctx.lineCap='round';ctx.strokeStyle='#c9a21a';ctx.lineWidth=4;ctx.beginPath();ctx.arc(x,y-3,6,Math.PI*0.17,Math.PI*0.83);ctx.stroke();ctx.strokeStyle='#f6dc4a';ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(x,y-3,6,Math.PI*0.17,Math.PI*0.83);ctx.stroke();ctx.lineCap='butt';R(x-6,y-2,2,2,'#6a5a1a');R(x+5,y-1,1,1,'#3a2a0a');break;
   case 'empanada':ctx.fillStyle='#d89a4a';ctx.beginPath();ctx.arc(x,y+1,5,Math.PI,0);ctx.fill();ctx.fillStyle='#a8682a';for(let k=-4;k<=4;k+=2)ctx.fillRect(x+k,y-Math.sqrt(25-k*k)+1,1,1);break;
   case 'uva':ctx.fillStyle='#5a2a7a';[[0,-2],[-2,0],[2,0],[0,1],[-1,3],[1,3],[0,5]].forEach(([a,b])=>{ctx.beginPath();ctx.arc(x+a,y+b-1,1.5,0,7);ctx.fill();});ctx.fillStyle='#4f8a3a';ctx.fillRect(x-1,y-6,3,2);break;
-  case 'alfajor':R(x-4,y-2,9,5,'#5a3420');R(x-4,y,9,1,'#f4ecdf');R(x-3,y-2,7,1,'#7a4a2a');break;
+  case 'cubo':R(x-4,y-4,8,8,'#7ab8d4');R(x-3,y-3,6,6,'#cdeefa');R(x-3,y-3,3,1,'#ffffff');R(x-3,y-2,1,2,'#ffffff');R(x+1,y+1,2,2,'#9fd8ee');break;
   case 'tortafrita':ctx.fillStyle='#d9a24a';ctx.beginPath();ctx.ellipse(x,y,5,3.6,0,0,7);ctx.fill();ctx.fillStyle='#b07a2a';ctx.fillRect(x-1,y-1,1,1);ctx.fillRect(x+2,y+1,1,1);ctx.fillStyle='#fff6e0';ctx.fillRect(x-3,y-2,1,1);ctx.fillRect(x+1,y-2,1,1);ctx.fillRect(x+3,y,1,1);break;
   case 'copa':ctx.fillStyle='#f2c200';ctx.beginPath();ctx.moveTo(x-4,y-5);ctx.lineTo(x+4,y-5);ctx.lineTo(x+2,y+1);ctx.lineTo(x-2,y+1);ctx.closePath();ctx.fill();R(x-4,y-5,8,1,'#fff2a0');
     ctx.strokeStyle='#d9a400';ctx.lineWidth=0.9;ctx.beginPath();ctx.arc(x-4,y-3,1.8,Math.PI*0.5,Math.PI*1.5);ctx.stroke();ctx.beginPath();ctx.arc(x+4,y-3,1.8,Math.PI*1.5,Math.PI*0.5);ctx.stroke();
