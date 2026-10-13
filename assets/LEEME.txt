@@ -1,0 +1,45 @@
+IMÁGENES Y SONIDOS PROPIOS
+==========================
+
+El juego dibuja todo con código y genera todos los sonidos. Si acá hay un archivo con el
+nombre de una pieza, el juego usa ese archivo en lugar del dibujo o sonido original. Lo que
+no tenga archivo sigue funcionando como siempre.
+
+Cómo se usa
+  1. Abrí el juego con  ?assets  al final de la dirección (por ejemplo
+     https://juego-pedido.vercel.app/?assets). Ahí está la lista completa de piezas con sus
+     nombres y medidas exactas, y cuáles ya tienen archivo propio (✔).
+  2. En Chrome o Edge de PC, el botón "Guardar plantillas PNG" guarda el dibujo actual del
+     juego (jugador, premios, enemigos y cajas) en la carpeta que elijas: elegí esta carpeta
+     (assets). Sirven de punto de partida para editarlos. No pisa archivos que ya existan.
+  3. Reemplazá o agregá archivos con esos nombres, por ejemplo:
+        assets/items/copa.png            el premio de La Boca
+        assets/enemigos/perro.png        el perro enemigo
+        assets/cajas/sanrafael.png       el pote de dulce de leche
+        assets/fondos/boca-lejos.png     el fondo de La Boca
+        assets/sonidos/gol.ogg           el grito de gol
+        assets/ambiente/boca.ogg         la música ambiente de La Boca
+  4. Hacé doble clic en  actualizar-assets.bat  (o corré  node tools/assets.mjs ).
+     Eso actualiza assets/manifest.json, la lista de archivos que lee el juego.
+  5. Subí el juego (commit, push y vercel --prod).
+
+Reglas de las imágenes (PNG, también WebP/JPG/GIF)
+  - El juego se ve ampliado 4 veces: cada píxel del juego son 4×4 píxeles de pantalla.
+    Con las medidas de la tabla (que son 4 veces el tamaño en el juego) quedan nítidas.
+    Con otra resolución se achican o agrandan suavizadas, siempre que mantengas la misma
+    proporción (ancho/alto).
+  - Jugador y enemigos: las poses van en fila, una al lado de la otra, todas del mismo
+    tamaño. Mirando a la derecha: el juego las da vuelta solo cuando van hacia la izquierda.
+  - Fondos: tienen que enganchar por los costados (el borde derecho continúa con el
+    izquierdo) y tocar el piso en el borde de abajo. "-lejos" se mueve despacio; "-cerca"
+    (opcional, con transparencia) se mueve más rápido. Si ponés uno de los dos, ese escenario
+    deja de dibujar el fondo original.
+  - Los árboles, casas y edificios de adelante son parte del fondo: al reemplazarlo, los
+    reemplazás también.
+
+Reglas de los sonidos (OGG, MP3, WAV, M4A)
+  - Efectos (carpeta sonidos): cortos, uno por nombre. Suenan cada vez que pasa la acción.
+  - Música ambiente (carpeta ambiente): se repite sin cortes mientras estás en ese escenario.
+    Para que no se note el corte, que el final del archivo continúe con el principio.
+  - Los volúmenes de Opciones (efectos y ambiente) valen también para tus archivos.
+  - El gol baja la música ambiente mientras suena.

@@ -5,6 +5,15 @@ Es un sitio estático: no necesita compilar nada.
   privacidad.html  política de privacidad (se publica en /privacidad; es la que pide Play Store)
   favicon.svg      ícono de la pestaña
   vercel.json      configuración de Vercel
+  assets/          imágenes y sonidos propios que reemplazan a los generados por el juego (ver LEEME.txt)
+  tools/assets.mjs genera assets/manifest.json; actualizar-assets.bat lo corre con doble clic
+
+Imágenes y sonidos propios
+  Si en assets/ hay un archivo con el nombre de una pieza (items/copa.png, enemigos/perro.png, cajas/sanrafael.png,
+  fondos/boca-lejos.png, jugador.png, sonidos/gol.ogg, ambiente/boca.ogg...), el juego lo usa en lugar del dibujo o
+  sonido original; el resto sigue igual. Abrir el juego con ?assets muestra todas las piezas con nombre y medida,
+  cuáles usan archivo propio y un botón (Chrome/Edge de PC) que guarda el dibujo actual como plantillas PNG.
+  Después de agregar o cambiar archivos hay que correr actualizar-assets.bat y volver a subir.
 
 Menús
   Título       Jugar y Opciones. "Jugar" abre la guía la primera vez y después la selección de escenarios.

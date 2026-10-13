@@ -350,7 +350,7 @@ const NIVELES=[
   seed:7741,pedidos:['6 alfajores de calafate · Refugio frente al glaciar','Chocolate caliente para 4 · Pasarelas','Cordero patagónico · Casa de té','Trucha ahumada · Mirador Principal','Cena para el grupo de trekking · Base del glaciar'],clientes:['Guía Ezequiel','Ana','Don Klaus','Malena','Grupo de trekking'],caja:'hielo',flota:'tabla',clima:'nieve',extra:10},
  {id:'boca',nombre:'La Boca, Caminito',lugar:'Ciudad de Buenos Aires',
   ticket:'PEDIDO #0621 · 1 fugazzeta y 4 porciones de fainá<br>Destino: Conventillo en Caminito',
-  texto:'Chapas de colores y adoquines, con la Bombonera de fondo. Cruzá el Riachuelo por el puente de hierro. Juntá las copas; ojo con los motochorros.',
+  texto:'Chapas de colores y adoquines, con el estadio Paredes azul y oro de fondo. Cruzá el Riachuelo por el puente de hierro. Juntá las copas; ojo con los motochorros.',
   frio:'La fugazzeta llegó fría. En La Boca eso no se perdona.',
   item:'copa',icono:'🏆',unidad:'cuadras',div:190,rio:true,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
@@ -359,9 +359,9 @@ const NIVELES=[
   charco:{tipo:'lento',c1:'#4f6f86',c2:'#8fb3c9'},
   destino:{pared:'#f2c14e',techo:'#c0392b',puerta:'#1d4e89',rotulo:'CAMINITO',chapa:true},
   seed:8833,pedidos:['1 fugazzeta y 4 de fainá · Conventillo en Caminito','Sorrentinos con tuco · Cantina Don Nicola','Choripán para 6 · Afuera de la cancha','Pizza de muzza y moscato · Pasaje Caminito','Banquete para el show de tango · Vuelta de Rocha'],clientes:['Tita','El Pibe','Doña Carmela','Gardelito','La Milonguera'],caja:'conte',flota:'chapa',clima:null},
- {id:'nunez',nombre:'Núñez, el Monumental',lugar:'Ciudad de Buenos Aires',
+ {id:'nunez',nombre:'Núñez, Pasarrella',lugar:'Ciudad de Buenos Aires',
   ticket:'PEDIDO #0688 · 1 docena de empanadas y gaseosa<br>Destino: Departamento en Av. del Libertador',
-  texto:'Veredas anchas, plátanos y el Monumental de fondo. Juntá las bandas rojas y blancas; ojo con los motochorros.',
+  texto:'Veredas anchas, plátanos y el estadio Pasarrella de fondo. Juntá las bandas rojas y blancas; ojo con los motochorros.',
   frio:'Las empanadas llegaron frías y el partido ya había empezado.',
   item:'banda',icono:'🔴',unidad:'cuadras',div:190,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
@@ -369,7 +369,7 @@ const NIVELES=[
   suelo:{top:'#a9a59c',top2:'#7a766e',tierra:'#5a4a3c',speck:'#6e5a46',junta:'#8a867d',pozo:'#16121a',agua:'#4a6a7a',aguaTop:'#8fb0bd'},
   charco:{tipo:'lento',c1:'#5f8aa0',c2:'#a8cddc'},
   destino:{pared:'#efe6d4',techo:'#b53a3a',puerta:'#8a2a2a',rotulo:'DPTO 4B',reja:true},
-  seed:9241,pedidos:['1 docena de empanadas · Departamento en Av. del Libertador','Choripán y gaseosa · Plaza frente al Monumental','Pizza de muzza y fainá · Calle Vedia','Helado para 6 · Parque Norte','Asado para el banderazo · Estadio Monumental'],clientes:['Doña Elvira','Julián','Marta','Los pibes de la escuelita','La barra del banderazo'],caja:['kiosco','conte','bondi'],flota:'chapa',clima:null},
+  seed:9241,pedidos:['1 docena de empanadas · Departamento en Av. del Libertador','Choripán y gaseosa · Plaza frente a Pasarrella','Pizza de muzza y fainá · Calle Vedia','Helado para 6 · Parque Norte','Asado para el banderazo · Estadio Pasarrella'],clientes:['Doña Elvira','Julián','Marta','Los pibes de la escuelita','La barra del banderazo'],caja:['kiosco','conte','bondi'],flota:'chapa',clima:null},
  {id:'sanrafael',nombre:'San Rafael, Mendoza',lugar:'San Rafael, Mendoza',
   ticket:'PEDIDO #0734 · Dulce de leche casero y mate<br>Destino: Finca en San Rafael',
   texto:'Álamos y viñas con el dique Valle Grande, Arenas del Nihuil y el arco de fondo. Juntá mates y trepá los potes de dulce de leche.',
@@ -808,7 +808,10 @@ function audioInit(){
   busEf=AC.createGain();busEf.connect(master);busAm=AC.createGain();busAm.connect(master);aplicarVol();
   ruidoBuf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);
   const d=ruidoBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  ASSETS.decodificar();
 }
+// baja la música ambiente mientras suena un efecto largo (el gol) y la devuelve después
+function bajarAmbiente(seg){if(ambBus){ambBus.gain.setTargetAtTime(0.2,AC.currentTime,0.1);setTimeout(()=>{if(ambBus)ambBus.gain.setTargetAtTime(1,AC.currentTime,0.8);},(seg+0.6)*1000);}}
 // volúmenes (0 a 100) que se guardan: efectos (saltos, pisadas, golpes) y ambiente (ciudad, viento, grillos)
 const leerVol=k=>{try{const v=localStorage.getItem('pec-vol-'+k);return v===null?100:Math.max(0,Math.min(100,+v));}catch(e){return 100;}};
 let volEf=leerVol('ef'),volAm=leerVol('am');
@@ -874,7 +877,7 @@ const sfx={
   // ¡GOOOOL! de la cancha: rugido de la tribuna, gritos que suben y se sostienen, y bombos; la música ambiente baja mientras suena
   gol(){
     if(!AC)return;
-    if(ambBus){ambBus.gain.setTargetAtTime(0.2,AC.currentTime,0.1);setTimeout(()=>{if(ambBus)ambBus.gain.setTargetAtTime(1,AC.currentTime,0.8);},3400);}
+    bajarAmbiente(2.8);
     const t0=AC.currentTime,s=AC.createBufferSource();s.buffer=ruidoBuf;s.loop=true;
     const fl=AC.createBiquadFilter();fl.type='bandpass';fl.frequency.value=1100;fl.Q.value=0.5;
     const g=AC.createGain();g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.3,t0+0.35);g.gain.setValueAtTime(0.3,t0+2.3);g.gain.exponentialRampToValueAtTime(0.0001,t0+4);
@@ -1640,7 +1643,7 @@ function fondoBoca(){
     R(0,134,W,24,'#41594a');
     ctx.strokeStyle='#ffffffaa';ctx.lineWidth=1.2;for(let k=0;k<4;k++){const x=((k*97+t*0.4)%(W+40))-20,y=40+k*12+Math.sin(t*0.05+k)*4;ctx.beginPath();ctx.moveTo(x-4,y-2);ctx.quadraticCurveTo(x-2,y,x,y);ctx.quadraticCurveTo(x+2,y,x+4,y-2);ctx.stroke();}
   },3);
-  // la Bombonera queda al final del recorrido, junto a la casa del cliente
+  // el estadio azul y oro queda al final del recorrido, junto a la casa del cliente
   {const bx=40+0.4*(LARGO-W-cam);if(bx<W)bombonera(bx);}
   // el orden de las casas cambia en cada pedido (PI) y al perder una vida (VAR)
   const f2=cam*0.5;
@@ -1658,7 +1661,7 @@ function fondoBoca(){
 function faroles(){
   for(const [i,x0] of slots(cam,190,1)){const x=x0+80;R(x,GY-70,2,70,'#2a2a30');R(x-4,GY-74,10,6,'#2a2a30');R(x-3,GY-72,8,4,'#ffe9a0');R(x-6,GY-2,14,2,'#2a2a30');}
 }
-// la Bombonera: tribuna alta con la hinchada azul y oro, fachada azul con la franja amarilla y las torres de luces
+// el estadio azul y oro: tribuna alta con la hinchada azul y oro, fachada azul con la franja amarilla y las torres de luces
 function bombonera(x){
   const y=GY-98,w=180;
   for(const tx of [x+8,x+w-12]){R(tx+3,y-12,2,42,'#6a6a78');R(tx-3,y-18,14,8,'#2a2a34');for(let k=0;k<4;k++)R(tx-2+k*3,y-17,2,2,'#fff6c8');}
@@ -1669,8 +1672,10 @@ function bombonera(x){
   R(x,y+46,w,52,'#1a4a9c');for(let k=0;k<w;k+=12)R(x+k,y+46,1,52,'#153d82');
   R(x-2,y+42,4,56,'#0e2f6e');R(x+w-2,y+42,4,56,'#0e2f6e');R(x-2,y+44,w+4,2,'#0e2f6e');
   R(x,y+62,w,10,'#f2c200');
-  ctx.textAlign='center';ctx.font='700 6px Fredoka, sans-serif';ctx.fillStyle='#f2c200';ctx.fillText('BOCA JUNIORS',x+w/2,y+57);
-  ctx.font='700 8px Fredoka, sans-serif';ctx.fillStyle='#0e2f6e';ctx.fillText('LA BOMBONERA',x+w/2,y+70);ctx.textAlign='left';
+  ctx.textAlign='center';ctx.font='700 6px Fredoka, sans-serif';ctx.fillStyle='#f2c200';ctx.fillText('CLUB DEL PUERTO',x+w/2,y+57);
+  ctx.font='700 8px Fredoka, sans-serif';ctx.fillStyle='#0e2f6e';ctx.fillText('PAREDES',x+w/2,y+70);ctx.textAlign='left';
+  R(x+w/2-34,y-8,68,11,'#0e2f6e');R(x+w/2-34,y-8,68,1,'#f2c200');R(x+w/2-34,y+2,68,1,'#f2c200');
+  ctx.textAlign='center';ctx.font='700 8px Fredoka, sans-serif';ctx.fillStyle='#f2c200';ctx.fillText('PAREDES',x+w/2,y+0.5);ctx.textAlign='left';
   for(let k=8;k<w-14;k+=22){R(x+k,y+80,12,18,'#0b1c40');R(x+k+1,y+78,10,2,'#0b1c40');}
 }
 // el Riachuelo: puente de hierro sobre el agua verdosa, con una lancha amarrada y el cartel del río
@@ -1696,7 +1701,7 @@ function puenteRiachuelo(p,x,y){
 // =====================================================================
 const cartelesNunez=[['CAFÉ','LA ESQUINA'],['FARMACIA','DEL PARQUE'],['PIZZERÍA','LA COSTANERA'],['LIBRERÍA','NÚÑEZ'],['BAR','EL ENCUENTRO'],['PARRILLA','LOS TRES AMIGOS'],['HELADERÍA','VEDIA'],['KIOSCO','24 HS']];
 const coloresNunez=['#efe6d4','#e3d3b8','#d9e4ea','#e8cfc0','#cfd8c4','#f4efe4'];
-// el Monumental: tribuna alta blanca y roja, fachada con la banda y las torres de luces
+// estadio Pasarrella: tribuna alta blanca y roja, fachada con la banda y las torres de luces
 function monumental(x){
   const y=GY-90,w=220,cx=x+w/2;
   for(const tx of [x+8,x+54,x+w-58,x+w-12]){R(tx+3,y-10,2,36,'#6a6a78');R(tx-3,y-16,14,8,'#2a2a34');for(let k=0;k<4;k++)R(tx-2+k*3,y-15,2,2,'#fff6c8');}
@@ -1709,7 +1714,9 @@ function monumental(x){
   for(let k=8;k<w-10;k+=18){if(Math.abs(x+k+5-cx)<48)continue;R(x+k,y+68,10,22,'#3a3a48');R(x+k+1,y+66,8,2,'#3a3a48');}
   R(cx-28,y+46,56,22,'#ffffff');ctx.fillStyle='#e0102e';ctx.beginPath();ctx.moveTo(cx-28,y+46);ctx.lineTo(cx-12,y+46);ctx.lineTo(cx+28,y+68);ctx.lineTo(cx+12,y+68);ctx.fill();
   R(cx-28,y+46,56,1,'#c8102e');R(cx-28,y+67,56,1,'#c8102e');
-  R(cx-44,y+72,88,12,'#c8102e');ctx.textAlign='center';ctx.font='700 8px Fredoka, sans-serif';ctx.fillStyle='#ffffff';ctx.fillText('MONUMENTAL',cx,y+81);ctx.textAlign='left';
+  R(cx-44,y+72,88,12,'#c8102e');ctx.textAlign='center';ctx.font='700 8px Fredoka, sans-serif';ctx.fillStyle='#ffffff';ctx.fillText('PASARRELLA',cx,y+81);ctx.textAlign='left';
+  R(cx-42,y-6,84,11,'#c8102e');R(cx-42,y-6,84,1,'#ffffff');R(cx-42,y+4,84,1,'#ffffff');
+  ctx.textAlign='center';ctx.font='700 8px Fredoka, sans-serif';ctx.fillStyle='#ffffff';ctx.fillText('PASARRELLA',cx,y+2.5);ctx.textAlign='left';
 }
 // plazoleta con plátanos y algún jacarandá en flor
 function plazaNunez(x,i){
@@ -1727,7 +1734,7 @@ function fondoNunez(){
     for(let k=0;k<3;k++){const sx=((k*140-cam*0.06+t*0.08)%(W+60)+W+60)%(W+60)-30,sy=132+k*3;ctx.fillStyle='#f4ecdf';ctx.beginPath();ctx.moveTo(sx,sy-14);ctx.lineTo(sx,sy);ctx.lineTo(sx+8,sy);ctx.fill();R(sx-3,sy,12,2,'#3a3a4a');}
     for(const [i,x] of slots(cam*0.15,52)){if(rnd(i+1110)<.3)continue;const h=44+Math.floor(rnd(i+1111)*52);R(x,134-h,24,h,rnd(i+1112)<.5?'#8da2c2':'#a9b6cf');for(let yy=134-h+4;yy<130;yy+=6)R(x+3,yy,18,2,'#dbe6f4');}
   },3);
-  // el Monumental queda al final del recorrido, junto a la casa del cliente
+  // el estadio Pasarrella queda al final del recorrido, junto a la casa del cliente
   {const bx=20+0.4*(LARGO-W-cam);if(bx<W)monumental(bx);}
   // el orden de las casas cambia en cada pedido (PI) y al perder una vida (VAR)
   const f2=cam*0.5;
@@ -1895,6 +1902,7 @@ function poteDulce(x,y,s){
   R(lx+4,y+8,1,5,'#8a3a1a');R(lx+4,y+12,3,1,'#8a3a1a'); // L
 }
 function cajaGfx(x,y,s){
+  if(ASSETS.caja(N.id,x,y,s))return;
   if(N.id==='sanrafael'){poteDulce(x,y,s);return;}
   R(x,y,s,s,'#6a4422');R(x+1,y+1,s-2,s-2,'#b8844a');
   for(let k=4;k<s-1;k+=4)R(x+1,y+k,s-2,1,'#9a6a38');
@@ -2046,6 +2054,7 @@ function estrellaAzulOro(x,y){
 }
 function dibujarItem(m){
   const x=m.x-cam,y=m.y+Math.sin((t+m.x)*0.08)*1.5;if(x<-8||x>W+8)return;
+  if(ASSETS.item(N.item,x,y))return;
   switch(N.item){
   case 'medialuna':ctx.fillStyle='#d68a2e';ctx.beginPath();ctx.arc(x,y,4.5,Math.PI*.15,Math.PI*1.85);ctx.arc(x+2.5,y,3,Math.PI*1.7,Math.PI*.3,true);ctx.fill();ctx.fillStyle='#f6d27a';ctx.fillRect(Math.round(x-3),Math.round(y-2),2,1);break;
   case 'banana':ctx.lineCap='round';ctx.strokeStyle='#c9a21a';ctx.lineWidth=4;ctx.beginPath();ctx.arc(x,y-3,6,Math.PI*0.17,Math.PI*0.83);ctx.stroke();ctx.strokeStyle='#f6dc4a';ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(x,y-3,6,Math.PI*0.17,Math.PI*0.83);ctx.stroke();ctx.lineCap='butt';R(x-6,y-2,2,2,'#6a5a1a');R(x+5,y-1,1,1,'#3a2a0a');break;
@@ -2071,6 +2080,7 @@ function dibujarJugador(){
   if(P.inv>0&&(t>>2)%2)return;
   // repartidor flaco y alto (8×22) con la 65 en la remera
   const x=Math.round(P.x-cam),y=Math.round(P.y),d=P.dir,pierna=P.piso?Math.floor(P.anim)%2:1;
+  if(ASSETS.jugador(x,y,d,pierna))return;
   const piel='#e1a77d',remera='#3f9a4a',pant='#3b3550';
   const mx=d>0?x-6:x+7;
   // perrito asomado en la mochila, con orejas grandes que rebotan al correr y al saltar
@@ -2123,6 +2133,7 @@ function ladronDe(x,y,d,a,sombrero){
 function dibujarEnemigo(e){
   const x=Math.round(e.x-cam),y=Math.round(e.y);if(x<-40||x>W+40)return;
   const d=e.vx>0?1:-1,a=(t>>(e.persigue?2:3))%2;
+  if(ASSETS.enemigo(e.skin,x,y,d,a))return;
   switch(e.skin){
   case 'perro':cuadrupedo(x,y,d,a,'#8a6a45','#5a432c');break;
   case 'coati':cuadrupedo(x,y+1,d,a,'#a0683a','#5a3a20',()=>{const tx=d>0?x:x+14;for(let k=0;k<5;k++)R(tx+(a&&k>2?1:0),y-k*2,2,2,k%2?'#3a2414':'#c08a5a');});R(d>0?x+15:x-2,y+4,3,2,'#5a3a20');R(d>0?x+12:x+1,y+2,2,1,'#f0e0c8');break;
@@ -2175,7 +2186,7 @@ function estrellaPisoton(p){
 function dibujar(){
   const E=ESC[N.id],enJuego=estado==='juego',tem=enJuego?temblor:0,sac=enJuego?sacudida:0,sh=sac>0||tem>0.05,am=(sac>0?sac*0.4:0)+tem;
   if(sh){ctx.save();ctx.translate((Math.random()-.5)*am,(Math.random()-.5)*am);}
-  E.fondo();bruma();if(E.cerca)E.cerca();
+  ASSETS.fondo(E);bruma();if(E.cerca)E.cerca();
   dibujarSuelo();dibujarDerrumbe();dibujarQuemaduras();
   casasTecho.forEach(dibujarCasaTecho);
   plataformas.forEach(dibujarPlat);bloques.forEach(dibujarBloque);dibujarCae();dibujarFinal();
@@ -2572,9 +2583,167 @@ function hud(){
   $('medias').textContent=cuentaMedias;
   $('falta').textContent=fTxt;
 }
+// =====================================================================
+// ASSETS: imágenes y sonidos propios (carpeta assets/)
+// =====================================================================
+// Todo el arte se dibuja con código y todos los sonidos se generan; si en assets/ hay un archivo con el nombre de una pieza, se usa el archivo.
+// assets/manifest.json lo genera tools/assets.mjs. Nombres y tamaños: assets/LEEME.txt o abrir el juego con ?assets en la URL.
+const ASSETS=(()=>{
+  const A={plantilla:false};
+  const IMG=/\.(png|webp|jpe?g|gif)$/i,SND=/\.(ogg|mp3|wav|m4a|webm)$/i;
+  const img={},crudo={},buf={},sinUso=[];
+  let listo=Promise.resolve();
+  const clave=p=>p.replace(/\.[^.]+$/,'');
+  // las imágenes propias se dibujan suavizadas: sirven a cualquier resolución (con las medidas de la plantilla quedan nítidas, 4 px por píxel del juego)
+  const dib=(im,sx,sy,sw,sh,dx,dy,dw,dh)=>{ctx.imageSmoothingEnabled=true;ctx.drawImage(im,sx,sy,sw,sh,dx,dy,dw,dh);ctx.imageSmoothingEnabled=false;};
+  const espejo=(cx,d,fn)=>{if(d>=0){fn();return;}ctx.save();ctx.translate(cx,0);ctx.scale(-1,1);ctx.translate(-cx,0);fn();ctx.restore();};
+  const marcos=(im,aw,ah)=>Math.max(1,Math.round((im.naturalWidth/im.naturalHeight)/(aw/ah)));
+  // ---- piezas que se pueden reemplazar: [grupo, nombre, medidas] ----
+  const ranuras=()=>{
+    const r=[['Jugador','jugador','tira de 4 cuadros de 64×112 px en fila (quieto, correr, correr, salto), mirando a la derecha, con mochila y Charly'],['Jugador','jugador-sin-perro','igual que jugador, para cuando Charly salió a tirar el hueso (opcional)']];
+    [...new Set(NIVELES.map(n=>n.item).filter(Boolean))].forEach(i=>r.push(['Premios','items/'+i,'64×64 px (se ve de 16×16 píxeles del juego)']));
+    Object.entries(SKIN).forEach(([k,b])=>r.push(['Enemigos','enemigos/'+k,`1 o 2 cuadros en fila de ${(b.w+8)*4}×${(b.h+8)*4} px cada uno, mirando a la derecha`]));
+    NIVELES.forEach(n=>{
+      r.push(['Cajas','cajas/'+n.id,'64×64 px: las cajas apiladas de '+n.nombre]);
+      r.push(['Fondos','fondos/'+n.id+'-lejos','1536×736 px, que enganche por los costados; capa lenta de '+n.nombre]);
+      r.push(['Fondos','fondos/'+n.id+'-cerca','igual, capa más rápida y con transparencia (opcional) de '+n.nombre]);
+      r.push(['Música ambiente','ambiente/'+n.id,'ogg o mp3 que se repite sin cortes ('+n.nombre+')']);
+    });
+    Object.keys(sfx).filter(k=>typeof sfx[k]==='function'&&!['voz','aparece'].includes(k)).forEach(k=>r.push(['Efectos de sonido','sonidos/'+k,'ogg, mp3 o wav corto']));
+    return r;
+  };
+  // ---- dibujo ----
+  A.item=(id,x,y)=>{
+    const im=!A.plantilla&&img['items/'+id];if(!im)return false;
+    let w=im.naturalWidth/S,h=im.naturalHeight/S;const k=Math.min(1,24/Math.max(w,h));w*=k;h*=k;
+    dib(im,0,0,im.naturalWidth,im.naturalHeight,x-w/2,y-h/2,w,h);return true;
+  };
+  A.enemigo=(skin,x,y,d,a)=>{
+    const im=!A.plantilla&&img['enemigos/'+skin];if(!im)return false;
+    const b=SKIN[skin],bw=b.w+8,bh=b.h+8,n=marcos(im,bw,bh),fw=im.naturalWidth/n,f=n===1?0:n===2?a:Math.floor(t/8)%n;
+    espejo(x+b.w/2,d,()=>dib(im,f*fw,0,fw,im.naturalHeight,x-4,y-4,bw,bh));return true;
+  };
+  A.caja=(id,x,y,s)=>{
+    const im=!A.plantilla&&img['cajas/'+id];if(!im)return false;
+    dib(im,0,0,im.naturalWidth,im.naturalHeight,x,y,s,s);return true;
+  };
+  A.jugador=(x,y,d,pierna)=>{
+    const im=!A.plantilla&&((charly.fuera&&img['jugador-sin-perro'])||img['jugador']);if(!im)return false;
+    const n=marcos(im,16,28),fw=im.naturalWidth/n,f=!P.piso?Math.min(3,n-1):(Math.abs(P.vx)>0.4?Math.min(n-1,1+pierna):0);
+    espejo(x+4,d,()=>dib(im,f*fw,0,fw,im.naturalHeight,x-6,y-6,16,28));return true;
+  };
+  A.fondo=E=>{
+    const l=!A.plantilla&&img['fondos/'+N.id+'-lejos'],c=!A.plantilla&&img['fondos/'+N.id+'-cerca'];
+    if(!l&&!c){E.fondo();return;}
+    cielo();
+    for(const [im,f] of [[l,0.3],[c,0.6]]){
+      if(!im)continue;
+      const tw=im.naturalWidth*GY/im.naturalHeight,off=-(((Math.round(cam*f*S)/S)%tw)+tw)%tw;
+      for(let xx=off;xx<W;xx+=tw)dib(im,0,0,im.naturalWidth,im.naturalHeight,xx,0,tw,GY);
+    }
+  };
+  // ---- sonido: los efectos y la música ambiente propios reemplazan a los generados ----
+  A.decodificar=()=>{
+    if(!AC)return listo;
+    const pend=Object.keys(crudo).filter(k=>!buf[k]);
+    listo=Promise.all(pend.map(k=>AC.decodeAudioData(crudo[k].slice(0)).then(b=>{buf[k]=b;}).catch(()=>{sinUso.push(k+' (no se pudo decodificar)');})));
+    return listo;
+  };
+  function instalarSonidos(){
+    for(const n of Object.keys(sfx)){
+      const k='sonidos/'+n;if(typeof sfx[n]!=='function'||!crudo[k])continue;
+      const orig=sfx[n];
+      sfx[n]=function(...a){
+        const b=buf[k];if(!b||!AC)return orig.apply(sfx,a);
+        if(n==='gol')bajarAmbiente(b.duration);
+        const s=AC.createBufferSource();s.buffer=b;s.connect(busEf);s.start();
+      };
+    }
+    for(const id of Object.keys(AMB)){
+      const k='ambiente/'+id;if(!crudo[k])continue;
+      const orig=AMB[id];
+      AMB[id]=(bus,gen)=>{
+        const poner=()=>{if(gen!==ambGen)return;const s=AC.createBufferSource();s.buffer=buf[k];s.loop=true;s.connect(bus);s.start();ambFuentes.push(s);};
+        if(buf[k])poner();else listo.then(()=>{if(buf[k])poner();else if(gen===ambGen)orig(bus,gen);});
+      };
+    }
+  }
+  // ---- carga: assets/manifest.json lista los archivos que hay (lo genera tools/assets.mjs) ----
+  A.iniciar=async()=>{
+    let lista;
+    try{const r=await fetch('assets/manifest.json',{cache:'no-cache'});if(!r.ok)return;const m=await r.json();lista=Array.isArray(m.archivos)?m.archivos:[];}catch(e){return;}
+    const validas=new Set(ranuras().map(x=>x[1]));
+    await Promise.all(lista.map(async p=>{
+      const k=clave(p),esImg=IMG.test(p),esSnd=SND.test(p);
+      if(!validas.has(k)||(!esImg&&!esSnd)){sinUso.push(p);return;}
+      if(esImg){await new Promise(res=>{const im=new Image();im.onload=()=>{img[k]=im;res();};im.onerror=()=>{sinUso.push(p+' (no se pudo leer)');res();};im.src='assets/'+p;});}
+      else if(!crudo[k]){try{const r=await fetch('assets/'+p);if(!r.ok)throw 0;crudo[k]=await r.arrayBuffer();}catch(e){sinUso.push(p+' (no se pudo leer)');}}
+    }));
+    instalarSonidos();
+    A.decodificar();
+  };
+  // ---- plantillas: el dibujo actual del juego como PNG, para editarlo ----
+  function plantillas(){
+    const salida=[],sv={N,P,charly,t,cam,ctx};
+    const lienzo=(w,h)=>{const c=document.createElement('canvas');c.width=w*S;c.height=h*S;const g=c.getContext('2d');g.setTransform(S,0,0,S,0,0);g.imageSmoothingEnabled=false;return [c,g];};
+    A.plantilla=true;
+    try{
+      t=0;cam=0;charly={...charly,fuera:false,tiro:0};
+      {const [c,g]=lienzo(64,28);ctx=g;N=NIVELES[0];
+        [[true,0,0,0],[true,2,1,0],[true,2,0,0],[false,0,0,-2]].forEach(([piso,vx,anim,vy],f)=>{ctx.save();ctx.translate(f*16,0);ctx.beginPath();ctx.rect(0,0,16,28);ctx.clip();P={x:6,y:6,w:8,h:22,vx,vy,piso,dir:1,inv:0,anim,barro:0,coyote:0,buffer:0};dibujarJugador();ctx.restore();});
+        salida.push(['','jugador.png',c]);}
+      cam=-8;
+      for(const it of new Set(NIVELES.map(n=>n.item).filter(Boolean))){const [c,g]=lienzo(16,16);ctx=g;N=NIVELES.find(n=>n.item===it);dibujarItem({x:0,y:8});salida.push(['items',it+'.png',c]);}
+      cam=0;
+      for(const [sk,b] of Object.entries(SKIN)){
+        const bw=b.w+8,bh=b.h+8,[c,g]=lienzo(bw*2,bh);ctx=g;N=NIVELES[0];
+        for(let f=0;f<2;f++){ctx.save();ctx.translate(f*bw,0);ctx.beginPath();ctx.rect(0,0,bw,bh);ctx.clip();t=f*8;dibujarEnemigo({x:4,y:4,vx:1,skin:sk,persigue:false,vivo:true});ctx.restore();}
+        salida.push(['enemigos',sk+'.png',c]);
+      }
+      t=0;
+      for(const n of NIVELES){const [c,g]=lienzo(16,16);ctx=g;N=n;cajaGfx(0,0,16);salida.push(['cajas',n.id+'.png',c]);}
+    }finally{N=sv.N;P=sv.P;charly=sv.charly;t=sv.t;cam=sv.cam;ctx=sv.ctx;A.plantilla=false;}
+    return salida;
+  }
+  A.plantillas=plantillas;
+  // guarda las plantillas en la carpeta que se elija (la de assets/); no pisa archivos que ya existan
+  A.exportar=async()=>{
+    const dir=await window.showDirectoryPicker({mode:'readwrite'});
+    let nuevos=0,omitidos=0;
+    for(const [carp,nombre,c] of plantillas()){
+      const d=carp?await dir.getDirectoryHandle(carp,{create:true}):dir;
+      let existe=true;try{await d.getFileHandle(nombre);}catch(e){existe=false;}
+      if(existe){omitidos++;continue;}
+      const blob=await new Promise(r=>c.toBlob(r,'image/png')),w=await(await d.getFileHandle(nombre,{create:true})).createWritable();
+      await w.write(blob);await w.close();nuevos++;
+    }
+    return {nuevos,omitidos};
+  };
+  // ---- ?assets: lista de piezas, cuáles tienen archivo propio y botón para guardar las plantillas ----
+  A.panel=()=>{
+    const rs=ranuras(),usado=k=>!!(img[k]||buf[k]||crudo[k]);
+    const d=document.createElement('div');
+    d.style.cssText='position:fixed;inset:0;z-index:99;background:#14101ff2;color:#f4ecdf;font:13px/1.45 system-ui,sans-serif;overflow:auto;padding:16px 20px';
+    const grupos=[...new Set(rs.map(x=>x[0]))];
+    d.innerHTML=`<h2 style="margin:0 0 6px">Imágenes y sonidos propios</h2>
+      <p style="max-width:75ch">Poné tus archivos en la carpeta <b>assets/</b> con el nombre de la tabla (por ejemplo <code>assets/items/copa.png</code> o <code>assets/sonidos/gol.ogg</code>), corré <code>actualizar-assets.bat</code> (o <code>node tools/assets.mjs</code>) y subí el juego. Lo que no tenga archivo sigue con el dibujo o el sonido original. <b>✔</b> = se está usando tu archivo.</p>
+      <p><button id="paExp">Guardar plantillas PNG con el dibujo actual…</button> <button id="paCerrar">Cerrar</button> <span id="paMsg" style="margin-left:8px"></span></p>`
+      +grupos.map(g=>`<h3 style="margin:14px 0 4px;color:#f2a65a">${g}</h3><table style="border-collapse:collapse;font-size:12px">${rs.filter(x=>x[0]===g).map(([,k,m])=>`<tr><td style="padding:1px 10px 1px 0;color:#7fb069">${usado(k)?'✔':'·'}</td><td style="padding:1px 14px 1px 0"><code>${k}</code></td><td style="opacity:.7">${m}</td></tr>`).join('')}</table>`).join('')
+      +(sinUso.length?`<h3 style="margin:14px 0 4px;color:#e04b5b">Archivos que no se usan (revisá el nombre)</h3><ul>${sinUso.map(x=>`<li><code>${x}</code></li>`).join('')}</ul>`:'');
+    document.body.appendChild(d);
+    const msg=t=>{d.querySelector('#paMsg').textContent=t;};
+    d.querySelector('#paCerrar').onclick=()=>d.remove();
+    d.querySelector('#paExp').onclick=()=>{
+      if(!window.showDirectoryPicker){msg('Este botón anda en Chrome o Edge de PC.');return;}
+      A.exportar().then(r=>msg(`Listo: ${r.nuevos} archivos nuevos${r.omitidos?`, ${r.omitidos} ya existían y no se tocaron`:''}.`)).catch(e=>{if(e&&e.name!=='AbortError')msg('No se pudo guardar: '+(e.message||e));});
+    };
+  };
+  return A;
+})();
 P={x:40,y:GY-22,w:8,h:22,vx:0,vy:0,piso:true,dir:1,inv:0,anim:0,coyote:0,buffer:0,barro:0};
 cargarNivel(0);armarMenu();
 abrirTitulo();
+ASSETS.iniciar().then(()=>{if(/[?&]assets\b/.test(location.search))ASSETS.panel();});
 let ultimo=performance.now(),acum=0;
 function bucle(ahora){
   acum+=Math.min(100,ahora-ultimo);ultimo=ahora;
