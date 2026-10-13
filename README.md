@@ -12,7 +12,8 @@ Imágenes y sonidos propios
   Si en assets/ hay un archivo con el nombre de una pieza (items/copa.png, enemigos/perro.png, cajas/sanrafael.png,
   fondos/boca-lejos.png, jugador.png, sonidos/gol.ogg, ambiente/boca.ogg...), el juego lo usa en lugar del dibujo o
   sonido original; el resto sigue igual. Abrir el juego con ?assets muestra todas las piezas con nombre y medida,
-  cuáles usan archivo propio y un botón (Chrome/Edge de PC) que guarda el dibujo actual como plantillas PNG.
+  cuáles usan archivo propio y botones (Chrome/Edge de PC) que guardan el dibujo actual como plantillas PNG y graban
+  los sonidos y músicas actuales como WAV (unos 3 minutos, 12 s por música ambiente).
   Después de agregar o cambiar archivos hay que correr actualizar-assets.bat y volver a subir.
 
 Menús

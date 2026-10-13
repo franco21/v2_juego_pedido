@@ -14,6 +14,11 @@ Cómo se usa
      (assets). Sirven de punto de partida para editarlos. No pisa archivos que ya existan.
      Los fondos salen como una sola pantalla: para usarlos como fondo hay que hacer que el
      borde derecho enganche con el izquierdo (si no, se nota el corte).
+     El botón "Grabar sonidos y música actuales" graba en vivo (unos 3 minutos, sin tocar nada)
+     lo que genera el juego y guarda un WAV mono por cada música ambiente (12 s) y cada efecto,
+     también sin pisar los que ya existan. La música no sale en bucle perfecto: hay que
+     emparejar el final con el principio en un editor de audio. Son archivos grandes (unos
+     10 MB las 9 músicas): pasalos a OGG o MP3 antes de subirlos.
   3. Reemplazá o agregá archivos con esos nombres, por ejemplo:
         assets/items/copa.png            el premio de La Boca
         assets/enemigos/perro.png        el perro enemigo

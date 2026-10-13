@@ -2654,7 +2654,7 @@ const ASSETS=(()=>{
       const k='sonidos/'+n;if(typeof sfx[n]!=='function'||!crudo[k])continue;
       const orig=sfx[n];
       sfx[n]=function(...a){
-        const b=buf[k];if(!b||!AC)return orig.apply(sfx,a);
+        const b=buf[k];if(A.plantilla||!b||!AC)return orig.apply(sfx,a);
         if(n==='gol')bajarAmbiente(b.duration);
         const s=AC.createBufferSource();s.buffer=b;s.connect(busEf);s.start();
       };
@@ -2663,6 +2663,7 @@ const ASSETS=(()=>{
       const k='ambiente/'+id;if(!crudo[k])continue;
       const orig=AMB[id];
       AMB[id]=(bus,gen)=>{
+        if(A.plantilla){orig(bus,gen);return;}
         const poner=()=>{if(gen!==ambGen)return;const s=AC.createBufferSource();s.buffer=buf[k];s.loop=true;s.connect(bus);s.start();ambFuentes.push(s);};
         if(buf[k])poner();else listo.then(()=>{if(buf[k])poner();else if(gen===ambGen)orig(bus,gen);});
       };
@@ -2722,6 +2723,51 @@ const ASSETS=(()=>{
     }
     return {nuevos,omitidos};
   };
+  // ---- plantillas de sonido: graba en vivo lo que genera el juego y lo guarda como WAV mono ----
+  const espera=ms=>new Promise(r=>setTimeout(r,ms));
+  const aWav=(f32,sr)=>{
+    const b=new ArrayBuffer(44+f32.length*2),v=new DataView(b),s=(o,x)=>{for(let i=0;i<x.length;i++)v.setUint8(o+i,x.charCodeAt(i));};
+    s(0,'RIFF');v.setUint32(4,36+f32.length*2,true);s(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);s(36,'data');v.setUint32(40,f32.length*2,true);
+    for(let i=0;i<f32.length;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,f32[i]))*32767,true);
+    return new Blob([b],{type:'audio/wav'});
+  };
+  const DUR={gol:4.6,trueno:6,motor:3.6,rafaga:3.5,sirena:6.5,llama:1.2},ARGS={rafaga:[0.5,2,1],cruje:[2]};
+  // graba ms milisegundos de lo que sale por los buses de efectos y ambiente (antes de bajar el volumen general)
+  async function grabar(ms,disparar){
+    const trozos=[],pr=AC.createScriptProcessor(4096,2,1),cero=AC.createGain();cero.gain.value=0;
+    pr.onaudioprocess=e=>{const a=e.inputBuffer.getChannelData(0),b=e.inputBuffer.getChannelData(1),o=new Float32Array(a.length);for(let i=0;i<a.length;i++)o[i]=(a[i]+b[i])/2;trozos.push(o);};
+    busEf.connect(pr);busAm.connect(pr);pr.connect(cero);cero.connect(AC.destination);
+    disparar();await espera(ms);
+    busEf.disconnect(pr);busAm.disconnect(pr);pr.disconnect();cero.disconnect();pr.onaudioprocess=null;
+    const f=new Float32Array(trozos.reduce((a,c)=>a+c.length,0));let p=0;for(const c of trozos){f.set(c,p);p+=c.length;}
+    return aWav(f,AC.sampleRate);
+  }
+  // guarda en la carpeta que se elija (la de assets/) un WAV por cada música ambiente (12 s) y cada efecto; no pisa archivos que ya existan
+  A.exportarSonidos=async(avance,cancelado)=>{
+    const dir=await window.showDirectoryPicker({mode:'readwrite'});
+    audioInit();await AC.resume();
+    const sv={mudo,ef:busEf.gain.value,am:busAm.gain.value};
+    const existe=async(carp,nombre)=>{try{await(await dir.getDirectoryHandle(carp)).getFileHandle(nombre);return true;}catch(e){return false;}};
+    const guardar=async(carp,nombre,blob)=>{const d=await dir.getDirectoryHandle(carp,{create:true}),w=await(await d.getFileHandle(nombre,{create:true})).createWritable();await w.write(blob);await w.close();};
+    const silencio=()=>{ambGen++;ambId=null;ambFuentes.forEach(s=>{try{s.stop();}catch(e){}});ambFuentes=[];if(ambBus){ambBus.disconnect();ambBus=null;}};
+    const tareas=[...NIVELES.map(n=>['ambiente',n.id]),...Object.keys(sfx).filter(k=>typeof sfx[k]==='function'&&!['voz','aparece'].includes(k)).map(k=>['sonidos',k])];
+    let nuevos=0,omitidos=0,i=0;
+    A.plantilla=true;ponerMudo(false);busEf.gain.value=1;busAm.gain.value=1;
+    try{
+      for(const [carp,k] of tareas){
+        if(cancelado())break;
+        avance(`Grabando ${++i}/${tareas.length}: ${carp}/${k} (no toques nada)…`);
+        if(await existe(carp,k+'.wav')){omitidos++;continue;}
+        silencio();await espera(300);
+        const blob=carp==='ambiente'
+          ?await grabar(12000,()=>{ambienteNivel(k);ambBus.gain.cancelScheduledValues(AC.currentTime);ambBus.gain.value=1;})
+          :await grabar((DUR[k]||1.5)*1000+300,()=>sfx[k](...(ARGS[k]||[])));
+        silencio();
+        await guardar(carp,k+'.wav',blob);nuevos++;
+      }
+    }finally{silencio();A.plantilla=false;ponerMudo(sv.mudo);busEf.gain.value=sv.ef;busAm.gain.value=sv.am;aplicarVol();}
+    return {nuevos,omitidos};
+  };
   // ---- ?assets: lista de piezas, cuáles tienen archivo propio y botón para guardar las plantillas ----
   A.panel=()=>{
     const rs=ranuras(),usado=k=>!!(img[k]||buf[k]||crudo[k]);
@@ -2730,7 +2776,7 @@ const ASSETS=(()=>{
     const grupos=[...new Set(rs.map(x=>x[0]))];
     d.innerHTML=`<h2 style="margin:0 0 6px">Imágenes y sonidos propios</h2>
       <p style="max-width:75ch">Poné tus archivos en la carpeta <b>assets/</b> con el nombre de la tabla (por ejemplo <code>assets/items/copa.png</code> o <code>assets/sonidos/gol.ogg</code>), corré <code>actualizar-assets.bat</code> (o <code>node tools/assets.mjs</code>) y subí el juego. Lo que no tenga archivo sigue con el dibujo o el sonido original. <b>✔</b> = se está usando tu archivo.</p>
-      <p><button id="paExp">Guardar plantillas PNG con el dibujo actual…</button> <button id="paCerrar">Cerrar</button> <span id="paMsg" style="margin-left:8px"></span></p>`
+      <p><button id="paExp">Guardar plantillas PNG con el dibujo actual…</button> <button id="paSnd">Grabar sonidos y música actuales (WAV, unos 3 minutos)…</button> <button id="paStop" hidden>Detener</button> <button id="paCerrar">Cerrar</button> <span id="paMsg" style="margin-left:8px"></span></p>`
       +grupos.map(g=>`<h3 style="margin:14px 0 4px;color:#f2a65a">${g}</h3><table style="border-collapse:collapse;font-size:12px">${rs.filter(x=>x[0]===g).map(([,k,m])=>`<tr><td style="padding:1px 10px 1px 0;color:#7fb069">${usado(k)?'✔':'·'}</td><td style="padding:1px 14px 1px 0"><code>${k}</code></td><td style="opacity:.7">${m}</td></tr>`).join('')}</table>`).join('')
       +(sinUso.length?`<h3 style="margin:14px 0 4px;color:#e04b5b">Archivos que no se usan (revisá el nombre)</h3><ul>${sinUso.map(x=>`<li><code>${x}</code></li>`).join('')}</ul>`:'');
     document.body.appendChild(d);
@@ -2740,6 +2786,14 @@ const ASSETS=(()=>{
       if(!window.showDirectoryPicker){msg('Este botón anda en Chrome o Edge de PC.');return;}
       A.exportar().then(r=>msg(`Listo: ${r.nuevos} archivos nuevos${r.omitidos?`, ${r.omitidos} ya existían y no se tocaron`:''}.`)).catch(e=>{if(e&&e.name!=='AbortError')msg('No se pudo guardar: '+(e.message||e));});
     };
+    let cancelar=false;
+    d.querySelector('#paSnd').onclick=()=>{
+      if(!window.showDirectoryPicker){msg('Este botón anda en Chrome o Edge de PC.');return;}
+      const b=d.querySelector('#paSnd'),s=d.querySelector('#paStop');
+      cancelar=false;b.disabled=true;s.hidden=false;
+      A.exportarSonidos(msg,()=>cancelar).then(r=>msg(`Listo: ${r.nuevos} sonidos nuevos${r.omitidos?`, ${r.omitidos} ya existían y no se tocaron`:''}.`)).catch(e=>{msg(e&&e.name!=='AbortError'?'No se pudo grabar: '+(e.message||e):'');}).finally(()=>{b.disabled=false;s.hidden=true;});
+    };
+    d.querySelector('#paStop').onclick=()=>{cancelar=true;};
   };
   return A;
 })();
