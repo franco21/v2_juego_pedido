@@ -2605,7 +2605,7 @@ const ASSETS=(()=>{
     Object.entries(SKIN).forEach(([k,b])=>r.push(['Enemigos','enemigos/'+k,`1 o 2 cuadros en fila de ${(b.w+8)*4}×${(b.h+8)*4} px cada uno, mirando a la derecha`]));
     NIVELES.forEach(n=>{
       r.push(['Cajas','cajas/'+n.id,'64×64 px: las cajas apiladas de '+n.nombre]);
-      r.push(['Fondos','fondos/'+n.id+'-lejos','1536×736 px, que enganche por los costados; capa lenta de '+n.nombre]);
+      r.push(['Fondos','fondos/'+n.id+'-lejos','1536×736 px, tiene que enganchar por los costados; capa lenta de '+n.nombre+' (la plantilla es una sola pantalla: hay que igualar el borde derecho con el izquierdo)']);
       r.push(['Fondos','fondos/'+n.id+'-cerca','igual, capa más rápida y con transparencia (opcional) de '+n.nombre]);
       r.push(['Música ambiente','ambiente/'+n.id,'ogg o mp3 que se repite sin cortes ('+n.nombre+')']);
     });
@@ -2684,7 +2684,7 @@ const ASSETS=(()=>{
   };
   // ---- plantillas: el dibujo actual del juego como PNG, para editarlo ----
   function plantillas(){
-    const salida=[],sv={N,P,charly,t,cam,ctx};
+    const salida=[],sv={N,P,charly,t,cam,ctx,hayNoche};
     const lienzo=(w,h)=>{const c=document.createElement('canvas');c.width=w*S;c.height=h*S;const g=c.getContext('2d');g.setTransform(S,0,0,S,0,0);g.imageSmoothingEnabled=false;return [c,g];};
     A.plantilla=true;
     try{
@@ -2702,7 +2702,10 @@ const ASSETS=(()=>{
       }
       t=0;
       for(const n of NIVELES){const [c,g]=lienzo(16,16);ctx=g;N=n;cajaGfx(0,0,16);salida.push(['cajas',n.id+'.png',c]);}
-    }finally{N=sv.N;P=sv.P;charly=sv.charly;t=sv.t;cam=sv.cam;ctx=sv.ctx;A.plantilla=false;}
+      // fondos: una pantalla de día (en La Boca y Núñez, la del final, con el estadio)
+      hayNoche=false;
+      for(const n of NIVELES){const [c,g]=lienzo(W,GY);ctx=g;N=n;cam=(n.id==='boca'||n.id==='nunez')?LARGO-W:0;ESC[n.id].fondo();bruma();salida.push(['fondos',n.id+'-lejos.png',c]);}
+    }finally{N=sv.N;P=sv.P;charly=sv.charly;t=sv.t;cam=sv.cam;ctx=sv.ctx;hayNoche=sv.hayNoche;A.plantilla=false;}
     return salida;
   }
   A.plantillas=plantillas;

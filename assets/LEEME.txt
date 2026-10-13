@@ -10,8 +10,10 @@ Cómo se usa
      https://juego-pedido.vercel.app/?assets). Ahí está la lista completa de piezas con sus
      nombres y medidas exactas, y cuáles ya tienen archivo propio (✔).
   2. En Chrome o Edge de PC, el botón "Guardar plantillas PNG" guarda el dibujo actual del
-     juego (jugador, premios, enemigos y cajas) en la carpeta que elijas: elegí esta carpeta
+     juego (jugador, premios, enemigos, cajas y fondos) en la carpeta que elijas: elegí esta carpeta
      (assets). Sirven de punto de partida para editarlos. No pisa archivos que ya existan.
+     Los fondos salen como una sola pantalla: para usarlos como fondo hay que hacer que el
+     borde derecho enganche con el izquierdo (si no, se nota el corte).
   3. Reemplazá o agregá archivos con esos nombres, por ejemplo:
         assets/items/copa.png            el premio de La Boca
         assets/enemigos/perro.png        el perro enemigo
