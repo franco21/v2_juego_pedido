@@ -175,6 +175,8 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
 @media (prefers-reduced-motion:reduce){.reloj.apurado .dig,.bateria.baja,#tPts.sube .grande,#tPts.baja .grande{animation:none}}
 </style>
 
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <div class="juego" id="juego" tabindex="0" aria-label="Juego Pedido en Camino">
@@ -1352,6 +1354,19 @@ function letrero(x,txt,est){ // cartel sobre poste, para parques
   const w=Math.max(46,txt[1].length*3.6+8);R(x+6,GY-30,2,30,'#4a3220');R(x+w-8,GY-30,2,30,'#4a3220');cartel(x,GY-46,w,txt,est);
 }
 
+// casas del fondo que se pueden reemplazar con un archivo propio: assets/casas/<escenario>-<nombre>.png
+// n: nombre de cada casa (el del cartel); w×h: plantilla en píxeles del juego (×4 en el PNG); cx: centro de la casa respecto de la x que le da el fondo
+// la imagen se apoya en el piso, se centra en cx y mantiene su tamaño (4 px por píxel del juego); fn(x,i,k) dibuja la casa k original
+const CASAS={
+  conurbano:{w:72,h:84,cx:32,fn:casaConurbano,n:['kiosco-de-carlitos','videoclub','maxi-el-verdulero','apolo-cyber','gomeria-el-tano','carga-tu-sube','rotiseria-lo-de-chola','almacen-don-tito','peluqueria-nahuel-style','cerrajeria-el-rulo','ferreteria-el-gallego','remis-la-rotonda','polleria-los-hermanos','chapa-y-pintura-raul','carniceria-el-toro','variedades-mary','centro-polivalente-de-arte','panaderia-patricio']},
+  quebrada:{w:64,h:70,cx:26,fn:casaQuebrada,n:['pena-la-carpa','empanadas-saltenas','artesanias-dona-rosa','almacen-el-cardon','hospedaje-los-colores','tejidos-de-llama','comedor-la-pachamama','iglesia']},
+  mendoza:{w:100,h:58,cx:58,fn:casaMendoza,n:['bodega-los-alamos','finca-don-pedro','vinos-de-lujan-de-cuyo','fiesta-de-la-vendimia','aceites-la-reina','degustacion-malbec']},
+  boca:{w:66,h:78,cx:31,fn:casaBoca,n:['pasaje-caminito','cantina-don-nicola','tango-show','pizzeria-la-vueltita','atelier-arte-de-la-boca','club-social-los-pibes','fileteado-el-porteno','conventillo-1910']},
+  nunez:{w:66,h:96,cx:31,fn:casaNunez,n:['cafe-la-esquina','farmacia-del-parque','pizzeria-la-costanera','libreria-nunez','bar-el-encuentro','parrilla-los-tres-amigos','heladeria-vedia','kiosco-24-hs']},
+  sanrafael:{w:84,h:58,cx:55,fn:casaSanRafael,n:['bodega-los-alamos','dulce-de-leche-casero','yerba-y-mate-el-arriero','rafting-canon-del-atuel','olivos-y-aceites','finca-la-acequia']}
+};
+CASAS.apagon=CASAS.conurbano; // el apagón es el mismo barrio, de noche: tiene sus propios archivos
+
 // =====================================================================
 // ESCENARIO 1: CONURBANO
 // =====================================================================
@@ -1361,7 +1376,9 @@ const cartelesConurbano=[['KIOSCO','DE CARLITOS'],['','VIDEOCLUB'],['MAXI','EL V
 const especiales={9:['CENTRO POLIVALENTE','DE ARTE','arte'],22:['PANADERÍA','PATRICIO','media']};
 const estilosCartel=[['#f4ecdf','#a52a22','#2a2238'],['#f2c14e','#2a2238','#7a2f22'],['#1d4e89','#f4ecdf','#f2c14e'],['#2f6b4f','#f4ecdf','#f2c14e'],['#c8553d','#f4ecdf','#2a2238']];
 const kioscos=['CARLITOS','EL PELA','LA TURCA','DON JUAN','EL CHINO'];
-function cartelDe(i){if(especiales[i])return especiales[i];const n=cartelesConurbano.length;return cartelesConurbano[((i%n)+n)%n];}
+// casa de cartel k: los carteles fijos de cartelesConurbano y después los especiales, en el orden de CASAS.conurbano.n
+const cartelesCasasConu=[...cartelesConurbano,...Object.values(especiales)];
+const kConurbano=i=>especiales[i]?cartelesConurbano.length+Object.keys(especiales).indexOf(String(i)):((i%cartelesConurbano.length)+cartelesConurbano.length)%cartelesConurbano.length;
 
 const helis=[{x:140,y:34,vx:0,vy:0,tx:220,ty:30,cambio:0,lx:150,ltx:200,lv:0,s:1,ymin:14,ymax:50},
              {x:300,y:40,vx:0,vy:0,tx:80,ty:40,cambio:0,lx:280,ltx:200,lv:0,s:0.5,ymin:30,ymax:70}];
@@ -1404,17 +1421,21 @@ function fondoConurbano(){
   },3);
   for(const [i,x] of slots(f2,96)){
     if(!especiales[i]&&rnd(i+60)<.4){baldio(x,i);continue;}
-    const h=34+Math.floor(rnd(i)*36),w=56+Math.floor(rnd(i+9)*10),y=GY-h;
-    const sinRevoque=rnd(i+3)<.45;
-    R(x,y,w,h,sinRevoque?ladrillos[((i%4)+4)%4]:revoques[Math.floor(rnd(i+5)*revoques.length)]);
-    if(sinRevoque){ctx.fillStyle='#00000022';for(let yy=y+3;yy<GY;yy+=4)ctx.fillRect(x,yy,w,1);}
-    R(x,y,w,2,'#5b4a52');
-    const conCartel=especiales[i]||(h>=42&&rnd(i+11)<.8),vy=conCartel?y+22:y+8;
-    if(GY-vy>30){R(x+8,vy,14,11,'#2e2a3a');ctx.fillStyle='#6d6a73';for(let k=0;k<4;k++)ctx.fillRect(x+9+k*4,vy,1,11);if(N.tormenta&&(estado!=='juego'||t>RAYO_T)){if(rnd(i+1)<.18)R(x+14,vy+5,2,3,(t>>3)%5?'#f4a04a':'#f4c86a');}else if(rnd(i+1)<.5)R(x+10,vy+2,10,3,'#f4c86a88');}
-    R(x+w-18,GY-20,10,20,'#4a3b35');
-    if(rnd(i+7)<.55){R(x+w-20,y-12,12,11,'#22202a');R(x+w-21,y-13,14,2,'#33313c');}
-    if(conCartel)cartel(x+3,y+4,w-6,cartelDe(i),estilosCartel[Math.floor(rnd(i+17)*5)]);
+    casaConurbano(x,i,kConurbano(i));
   }
+}
+function casaConurbano(x,i,k){
+  if(ASSETS.casa(N.id,k,x))return;
+  const h=34+Math.floor(rnd(i)*36),w=56+Math.floor(rnd(i+9)*10),y=GY-h;
+  const sinRevoque=rnd(i+3)<.45;
+  R(x,y,w,h,sinRevoque?ladrillos[((i%4)+4)%4]:revoques[Math.floor(rnd(i+5)*revoques.length)]);
+  if(sinRevoque){ctx.fillStyle='#00000022';for(let yy=y+3;yy<GY;yy+=4)ctx.fillRect(x,yy,w,1);}
+  R(x,y,w,2,'#5b4a52');
+  const conCartel=ASSETS.plantilla||k>=cartelesConurbano.length||(h>=42&&rnd(i+11)<.8),vy=conCartel?y+22:y+8;
+  if(GY-vy>30){R(x+8,vy,14,11,'#2e2a3a');ctx.fillStyle='#6d6a73';for(let k=0;k<4;k++)ctx.fillRect(x+9+k*4,vy,1,11);if(N.tormenta&&(estado!=='juego'||t>RAYO_T)){if(rnd(i+1)<.18)R(x+14,vy+5,2,3,(t>>3)%5?'#f4a04a':'#f4c86a');}else if(rnd(i+1)<.5)R(x+10,vy+2,10,3,'#f4c86a88');}
+  R(x+w-18,GY-20,10,20,'#4a3b35');
+  if(rnd(i+7)<.55){R(x+w-20,y-12,12,11,'#22202a');R(x+w-21,y-13,14,2,'#33313c');}
+  if(conCartel)cartel(x+3,y+4,w-6,cartelesCasasConu[k],estilosCartel[Math.floor(rnd(i+17)*5)]);
 }
 // espacio libre entre casas: un árbol, un paredón bajo o un terreno con alambrado
 function baldio(x,i,boca){
@@ -1517,15 +1538,21 @@ function fondoQuebrada(){
   const f2=cam*0.5;
   for(const [i,x] of slots(f2,70)){
     const tipo=rnd(i+610);
-    if(tipo<.55){const h=30+Math.floor(rnd(i+611)*14),w=54,y=GY-h;
-      R(x,y,w,h,['#c9a27a','#d4b088','#bf9670'][Math.floor(rnd(i+612)*3)]);R(x-2,y-3,w+4,4,'#d8c27a');R(x-2,y-3,w+4,1,'#b8a060');
-      ctx.fillStyle='#00000018';for(let yy=y+6;yy<GY;yy+=6)ctx.fillRect(x,yy,w,1);
-      R(x+w-16,GY-18,10,18,['#2f5f8a','#8a4a2a','#3f7a4a'][Math.floor(rnd(i+613)*3)]);
-      if(h>=36)cartel(x+3,y+3,w-22,cartelesQuebrada[((i%7)+7)%7],[['#f4ecdf','#8e2a3a','#2f5f8a'],['#2f5f8a','#f4ecdf','#e8c46a'],['#8e2a3a','#f4ecdf','#e8c46a']][Math.floor(rnd(i+614)*3)]);
-    }else if(tipo<.8){const h=38+rnd(i+615)*26;ctx.fillStyle='#4f7a3a';R(x+20,GY-h,6,h,'#4f7a3a');R(x+21,GY-h,1,h,'#6a9a4e');
+    if(tipo<.55)casaQuebrada(x,i,((i%7)+7)%7);
+    else if(tipo<.8){const h=38+rnd(i+615)*26;ctx.fillStyle='#4f7a3a';R(x+20,GY-h,6,h,'#4f7a3a');R(x+21,GY-h,1,h,'#6a9a4e');
       R(x+12,GY-h+14,8,4,'#4f7a3a');R(x+12,GY-h+6,4,10,'#4f7a3a');R(x+26,GY-h+20,8,4,'#4f7a3a');R(x+30,GY-h+10,4,12,'#4f7a3a');}
-    else{R(x+8,GY-40,34,40,'#f2ece0');R(x+16,GY-58,18,20,'#f2ece0');R(x+18,GY-52,14,8,'#3a2a20');R(x+23,GY-50,4,5,'#c9a24a');R(x+22,GY-62,6,4,'#f2ece0');R(x+24,GY-66,2,5,'#6a4a2a');R(x+20,GY-16,10,16,'#6a4a2a');}
+    else casaQuebrada(x,i,cartelesQuebrada.length);
   }
+}
+// casa de cartel k (0 a 6) o la iglesia blanca (7)
+function casaQuebrada(x,i,k){
+  if(ASSETS.casa(N.id,k,x))return;
+  if(k<cartelesQuebrada.length){const h=30+Math.floor(rnd(i+611)*14),w=54,y=GY-h;
+    R(x,y,w,h,['#c9a27a','#d4b088','#bf9670'][Math.floor(rnd(i+612)*3)]);R(x-2,y-3,w+4,4,'#d8c27a');R(x-2,y-3,w+4,1,'#b8a060');
+    ctx.fillStyle='#00000018';for(let yy=y+6;yy<GY;yy+=6)ctx.fillRect(x,yy,w,1);
+    R(x+w-16,GY-18,10,18,['#2f5f8a','#8a4a2a','#3f7a4a'][Math.floor(rnd(i+613)*3)]);
+    if(h>=36||ASSETS.plantilla)cartel(x+3,y+3,w-22,cartelesQuebrada[k],[['#f4ecdf','#8e2a3a','#2f5f8a'],['#2f5f8a','#f4ecdf','#e8c46a'],['#8e2a3a','#f4ecdf','#e8c46a']][Math.floor(rnd(i+614)*3)]);}
+  else{R(x+8,GY-40,34,40,'#f2ece0');R(x+16,GY-58,18,20,'#f2ece0');R(x+18,GY-52,14,8,'#3a2a20');R(x+23,GY-50,4,5,'#c9a24a');R(x+22,GY-62,6,4,'#f2ece0');R(x+24,GY-66,2,5,'#6a4a2a');R(x+20,GY-16,10,16,'#6a4a2a');}
 }
 function primerQuebrada(){
   const f=cam*1.6;
@@ -1576,12 +1603,17 @@ function fondoMendoza(){
   ctx.strokeStyle='#5a4a30';ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(0,GY-22);ctx.lineTo(W,GY-22);ctx.stroke();
   for(const [i,x] of slots(f2,9,4)){ctx.fillStyle=rnd(i+710)<.5?'#4f8a3a':'#3f7a30';ctx.beginPath();ctx.ellipse(x,GY-21,6,5,0,0,7);ctx.fill();if(rnd(i+711)<.35){ctx.fillStyle='#5a2a6a';ctx.beginPath();ctx.arc(x+2,GY-16,1.5,0,7);ctx.arc(x+3,GY-14,1.2,0,7);ctx.arc(x+1,GY-14,1.2,0,7);ctx.fill();}}
   for(const [i,x] of slots(f2,120)){
-    if(rnd(i+720)<.45){const bx=x+20,w=70,h=40;R(bx,GY-h,w,h,'#f1e9da');ctx.fillStyle='#b4532e';ctx.beginPath();ctx.moveTo(bx-4,GY-h);ctx.lineTo(bx+w/2,GY-h-14);ctx.lineTo(bx+w+4,GY-h);ctx.fill();
-      R(bx+w/2-7,GY-18,14,18,'#5a3b22');ctx.fillStyle='#5a3b22';ctx.beginPath();ctx.arc(bx+w/2,GY-18,7,Math.PI,0);ctx.fill();
-      cartel(bx+4,GY-h+4,w-8,cartelesMendoza[((i%6)+6)%6],[['#5a1a2a','#f4ecdf','#e8c46a'],['#f4ecdf','#5a1a2a','#7a6a42']][Math.floor(rnd(i+721)*2)]);
-      pilaBarricas(bx-8,GY);estanteBotellas(bx+w-24,GY);botellaFondo(bx+w+10,GY,'#2a4a2a');}
+    if(rnd(i+720)<.45)casaMendoza(x,i,((i%6)+6)%6);
     else{for(let k=0;k<3;k++){const ax=x+30+k*16,h=70+rnd(i*3+k+730)*20;R(ax,GY-h*0.3,2,h*0.3,'#6a5034');ctx.fillStyle=k%2?'#3f6a32':'#4a7a3a';ctx.beginPath();ctx.ellipse(ax+1,GY-h*0.6,5,h*0.35,0,0,7);ctx.fill();}if(rnd(i+735)<.6)mesaBarrica(x+86,GY);}
   }
+}
+// bodega k con su pila de barricas, el estante y la botella
+function casaMendoza(x,i,k){
+  if(ASSETS.casa(N.id,k,x))return;
+  const bx=x+20,w=70,h=40;R(bx,GY-h,w,h,'#f1e9da');ctx.fillStyle='#b4532e';ctx.beginPath();ctx.moveTo(bx-4,GY-h);ctx.lineTo(bx+w/2,GY-h-14);ctx.lineTo(bx+w+4,GY-h);ctx.fill();
+  R(bx+w/2-7,GY-18,14,18,'#5a3b22');ctx.fillStyle='#5a3b22';ctx.beginPath();ctx.arc(bx+w/2,GY-18,7,Math.PI,0);ctx.fill();
+  cartel(bx+4,GY-h+4,w-8,cartelesMendoza[k],[['#5a1a2a','#f4ecdf','#e8c46a'],['#f4ecdf','#5a1a2a','#7a6a42']][Math.floor(rnd(i+721)*2)]);
+  pilaBarricas(bx-8,GY);estanteBotellas(bx+w-24,GY);botellaFondo(bx+w+10,GY,'#2a4a2a');
 }
 function primerMendoza(){
   const f=cam*1.6;
@@ -1649,14 +1681,19 @@ function fondoBoca(){
   const f2=cam*0.5;
   for(const [i0,x] of slots(f2,104)){const i=i0+PI*131;
     if(rnd(i+905)<.35){baldio(x,i,true);continue;}
-    const h=50+Math.floor(rnd(i+900)*26),w=62,y=GY-h,c1=coloresBoca[Math.floor(rnd(i+901)*7)],c2=coloresBoca[Math.floor(rnd(i+902)*7)];
-    R(x,y,w,h,c1);ctx.fillStyle='#00000022';for(let k=0;k<w;k+=3)ctx.fillRect(x+k,y,1,h);
-    R(x,y+h/2,w,2,'#2a2a2a');R(x+4,y+h/2-8,w-8,1,'#2a2a2a');for(let k=6;k<w-4;k+=5)R(x+k,y+h/2-8,1,8,'#2a2a2a');
-    R(x+8,y+h/2+6,10,14,c2);R(x+9,y+h/2+7,8,12,'#2a2238');R(x+w-20,GY-20,12,20,c2);
-    R(x-2,y-3,w+4,3,coloresBoca[(Math.floor(rnd(i+903)*7))]);
-    cartel(x+3,y+4,w-6,cartelesBoca[((i%8)+8)%8],[['#111','#f2c14e','#e04b5b'],['#f4ecdf','#1d4e89','#c0392b'],['#1d4e89','#f4ecdf','#f2c14e']][Math.floor(rnd(i+904)*3)]);
-    if(i%3===0){R(x+w-4,y+20,2,10,'#2a2a2a');R(x+w-6,y+20,10,2,'#2a2a2a');}
+    casaBoca(x,i,((i%8)+8)%8);
   }
+}
+// casa de La Boca k: el cartel dice cuál es (cartelesBoca[k])
+function casaBoca(x,i,k){
+  if(ASSETS.casa(N.id,k,x))return;
+  const h=50+Math.floor(rnd(i+900)*26),w=62,y=GY-h,c1=coloresBoca[Math.floor(rnd(i+901)*7)],c2=coloresBoca[Math.floor(rnd(i+902)*7)];
+  R(x,y,w,h,c1);ctx.fillStyle='#00000022';for(let k=0;k<w;k+=3)ctx.fillRect(x+k,y,1,h);
+  R(x,y+h/2,w,2,'#2a2a2a');R(x+4,y+h/2-8,w-8,1,'#2a2a2a');for(let k=6;k<w-4;k+=5)R(x+k,y+h/2-8,1,8,'#2a2a2a');
+  R(x+8,y+h/2+6,10,14,c2);R(x+9,y+h/2+7,8,12,'#2a2238');R(x+w-20,GY-20,12,20,c2);
+  R(x-2,y-3,w+4,3,coloresBoca[(Math.floor(rnd(i+903)*7))]);
+  cartel(x+3,y+4,w-6,cartelesBoca[k],[['#111','#f2c14e','#e04b5b'],['#f4ecdf','#1d4e89','#c0392b'],['#1d4e89','#f4ecdf','#f2c14e']][Math.floor(rnd(i+904)*3)]);
+  if(i%3===0){R(x+w-4,y+20,2,10,'#2a2a2a');R(x+w-6,y+20,10,2,'#2a2a2a');}
 }
 function faroles(){
   for(const [i,x0] of slots(cam,190,1)){const x=x0+80;R(x,GY-70,2,70,'#2a2a30');R(x-4,GY-74,10,6,'#2a2a30');R(x-3,GY-72,8,4,'#ffe9a0');R(x-6,GY-2,14,2,'#2a2a30');}
@@ -1740,14 +1777,19 @@ function fondoNunez(){
   const f2=cam*0.5;
   for(const [i0,x] of slots(f2,96)){const i=i0+PI*131;
     if(rnd(i+1120)<.3){plazaNunez(x,i);continue;}
-    const h=52+Math.floor(rnd(i+1121)*40),w=62,y=GY-h,c1=coloresNunez[Math.floor(rnd(i+1122)*6)];
-    R(x,y,w,h,c1);ctx.fillStyle='#00000012';for(let k=0;k<w;k+=3)ctx.fillRect(x+k,y,1,h);R(x-1,y-2,w+2,3,'#8a7a6a');
-    for(let yy=y+8;yy<GY-50;yy+=14)for(let k=6;k<w-12;k+=18){R(x+k,yy,10,8,'#3a4a5e');R(x+k-1,yy+8,12,2,'#6a6a72');}
-    R(x+4,GY-24,w-26,16,'#2e3a4a');R(x+4,GY-24,w-26,16,'#f4c86a44');
-    for(let k=0;k<w-20;k+=6)R(x+2+k,GY-30,6,5,(k/6|0)%2?'#f4ecdf':'#c8102e');
-    R(x+w-18,GY-24,10,24,'#4a3b35');
-    cartel(x+3,GY-46,w-6,cartelesNunez[((i%8)+8)%8],[['#f4ecdf','#a52a22','#2a2238'],['#1d4e89','#f4ecdf','#f2c14e'],['#2f6b4f','#f4ecdf','#f2c14e']][Math.floor(rnd(i+1123)*3)]);
+    casaNunez(x,i,((i%8)+8)%8);
   }
+}
+// edificio de Núñez k: el cartel dice cuál es (cartelesNunez[k])
+function casaNunez(x,i,k){
+  if(ASSETS.casa(N.id,k,x))return;
+  const h=52+Math.floor(rnd(i+1121)*40),w=62,y=GY-h,c1=coloresNunez[Math.floor(rnd(i+1122)*6)];
+  R(x,y,w,h,c1);ctx.fillStyle='#00000012';for(let k=0;k<w;k+=3)ctx.fillRect(x+k,y,1,h);R(x-1,y-2,w+2,3,'#8a7a6a');
+  for(let yy=y+8;yy<GY-50;yy+=14)for(let k=6;k<w-12;k+=18){R(x+k,yy,10,8,'#3a4a5e');R(x+k-1,yy+8,12,2,'#6a6a72');}
+  R(x+4,GY-24,w-26,16,'#2e3a4a');R(x+4,GY-24,w-26,16,'#f4c86a44');
+  for(let k=0;k<w-20;k+=6)R(x+2+k,GY-30,6,5,(k/6|0)%2?'#f4ecdf':'#c8102e');
+  R(x+w-18,GY-24,10,24,'#4a3b35');
+  cartel(x+3,GY-46,w-6,cartelesNunez[k],[['#f4ecdf','#a52a22','#2a2238'],['#1d4e89','#f4ecdf','#f2c14e'],['#2f6b4f','#f4ecdf','#f2c14e']][Math.floor(rnd(i+1123)*3)]);
 }
 
 // =====================================================================
@@ -1804,12 +1846,17 @@ function fondoSanRafael(){
   for(const [i,x] of slots(f2,9,4)){ctx.fillStyle=rnd(i+1210)<.5?'#4f8a3a':'#3f7a30';ctx.beginPath();ctx.ellipse(x,GY-21,6,5,0,0,7);ctx.fill();if(rnd(i+1211)<.35){ctx.fillStyle='#5a2a6a';ctx.beginPath();ctx.arc(x+2,GY-16,1.5,0,7);ctx.arc(x+3,GY-14,1.2,0,7);ctx.arc(x+1,GY-14,1.2,0,7);ctx.fill();}}
   for(let r=0;r<3;r++)for(const [px,fn,txt] of hitos){const x=px+r*990-fh;if(!txt||x>W||x<-200)continue;letrero(x+70,txt,['#5a3b22','#f6e7b0','#e8c46a']);}
   for(const [i,x] of slots(f2,120)){
-    if(rnd(i+1220)<.4){const bx=x+20,w=70,h=40;R(bx,GY-h,w,h,'#f1e9da');ctx.fillStyle='#b4532e';ctx.beginPath();ctx.moveTo(bx-4,GY-h);ctx.lineTo(bx+w/2,GY-h-14);ctx.lineTo(bx+w+4,GY-h);ctx.fill();
-      R(bx+w/2-7,GY-18,14,18,'#5a3b22');ctx.fillStyle='#5a3b22';ctx.beginPath();ctx.arc(bx+w/2,GY-18,7,Math.PI,0);ctx.fill();
-      cartel(bx+4,GY-h+4,w-8,cartelesSanRafael[((i%6)+6)%6],[['#5a1a2a','#f4ecdf','#e8c46a'],['#f4ecdf','#5a1a2a','#7a6a42'],['#2f6b4f','#f4ecdf','#f2c14e']][Math.floor(rnd(i+1221)*3)]);}
+    if(rnd(i+1220)<.4)casaSanRafael(x,i,((i%6)+6)%6);
     else if(rnd(i+1222)<.5){for(let k=0;k<3;k++){const ax=x+30+k*16,h=70+rnd(i*3+k+1230)*20;R(ax,GY-h*0.3,2,h*0.3,'#6a5034');ctx.fillStyle=k%2?'#3f6a32':'#4a7a3a';ctx.beginPath();ctx.ellipse(ax+1,GY-h*0.6,5,h*0.35,0,0,7);ctx.fill();}}
     else{for(let k=0;k<2;k++){const ox=x+34+k*34;R(ox,GY-14,3,14,'#5a4632');ctx.fillStyle='#7a8a62';ctx.beginPath();ctx.ellipse(ox+1.5,GY-20,14,10,0,0,7);ctx.fill();ctx.fillStyle='#9aa87a';ctx.beginPath();ctx.ellipse(ox-2,GY-23,6,4,0,0,7);ctx.fill();}}
   }
+}
+// casa de San Rafael k: el cartel dice cuál es (cartelesSanRafael[k])
+function casaSanRafael(x,i,k){
+  if(ASSETS.casa(N.id,k,x))return;
+  const bx=x+20,w=70,h=40;R(bx,GY-h,w,h,'#f1e9da');ctx.fillStyle='#b4532e';ctx.beginPath();ctx.moveTo(bx-4,GY-h);ctx.lineTo(bx+w/2,GY-h-14);ctx.lineTo(bx+w+4,GY-h);ctx.fill();
+  R(bx+w/2-7,GY-18,14,18,'#5a3b22');ctx.fillStyle='#5a3b22';ctx.beginPath();ctx.arc(bx+w/2,GY-18,7,Math.PI,0);ctx.fill();
+  cartel(bx+4,GY-h+4,w-8,cartelesSanRafael[k],[['#5a1a2a','#f4ecdf','#e8c46a'],['#f4ecdf','#5a1a2a','#7a6a42'],['#2f6b4f','#f4ecdf','#f2c14e']][Math.floor(rnd(i+1221)*3)]);
 }
 
 // ---------- tabla de dibujo por escenario ----------
@@ -2609,6 +2656,7 @@ const ASSETS=(()=>{
       r.push(['Fondos','fondos/'+n.id+'-cerca','igual, capa más rápida y con transparencia (opcional) de '+n.nombre]);
       r.push(['Música ambiente','ambiente/'+n.id,'ogg o mp3 que se repite sin cortes ('+n.nombre+')']);
     });
+    Object.entries(CASAS).forEach(([esc,c])=>c.n.forEach(nom=>r.push(['Casas · '+NIVELES.find(n=>n.id===esc).nombre,'casas/'+esc+'-'+nom,`${c.w*S}×${c.h*S} px (alto libre): se apoya en el piso y se centra; cada casa tiene unos ${c.w*S+120} px de ancho libres`])));
     Object.keys(sfx).filter(k=>typeof sfx[k]==='function'&&!['voz','aparece'].includes(k)).forEach(k=>r.push(['Efectos de sonido','sonidos/'+k,'ogg, mp3 o wav corto']));
     return r;
   };
@@ -2626,6 +2674,12 @@ const ASSETS=(()=>{
   A.caja=(id,x,y,s)=>{
     const im=!A.plantilla&&img['cajas/'+id];if(!im)return false;
     dib(im,0,0,im.naturalWidth,im.naturalHeight,x,y,s,s);return true;
+  };
+  // casa del fondo (CASAS): se apoya en el piso, centrada en x+cx, y mantiene el tamaño del archivo (4 px por píxel del juego)
+  A.casa=(esc,k,x)=>{
+    const c=CASAS[esc],im=!A.plantilla&&img['casas/'+esc+'-'+c.n[k]];if(!im)return false;
+    const w=im.naturalWidth/S,h=im.naturalHeight/S;
+    dib(im,0,0,im.naturalWidth,im.naturalHeight,x+c.cx-w/2,GY-h,w,h);return true;
   };
   A.jugador=(x,y,d,pierna)=>{
     const im=!A.plantilla&&((charly.fuera&&img['jugador-sin-perro'])||img['jugador']);if(!im)return false;
@@ -2703,6 +2757,8 @@ const ASSETS=(()=>{
       }
       t=0;
       for(const n of NIVELES){const [c,g]=lienzo(16,16);ctx=g;N=n;cajaGfx(0,0,16);salida.push(['cajas',n.id+'.png',c]);}
+      // casas del fondo: una plantilla por casa de cada escenario
+      for(const [esc,c] of Object.entries(CASAS)){N=NIVELES.find(n=>n.id===esc);c.n.forEach((nom,k)=>{const [cv,g]=lienzo(c.w,c.h);ctx=g;ctx.translate(0,c.h-GY);c.fn(c.w/2-c.cx,k,k);salida.push(['casas',esc+'-'+nom+'.png',cv]);});}
       // fondos: una pantalla de día (en La Boca y Núñez, la del final, con el estadio)
       hayNoche=false;
       for(const n of NIVELES){const [c,g]=lienzo(W,GY);ctx=g;N=n;cam=(n.id==='boca'||n.id==='nunez')?LARGO-W:0;ESC[n.id].fondo();bruma();salida.push(['fondos',n.id+'-lejos.png',c]);}

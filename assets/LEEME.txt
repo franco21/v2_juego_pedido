@@ -43,6 +43,26 @@ Reglas de las imágenes (PNG, también WebP/JPG/GIF)
     deja de dibujar el fondo original.
   - Los árboles, casas y edificios de adelante son parte del fondo: al reemplazarlo, los
     reemplazás también.
+  - Casas sueltas: cada casa con cartel se puede reemplazar sola, sin tocar el resto del
+    fondo. Los archivos van en assets/casas/ y se llaman <escenario>-<nombre>.png, con el
+    nombre del cartel. La lista completa con medidas está en ?assets, grupo "Casas · …".
+    Escenarios y casas:
+        conurbano / apagon  18 casas (kiosco-de-carlitos, videoclub, apolo-cyber, ...,
+                            centro-polivalente-de-arte, panaderia-patricio). El apagón
+                            tiene sus propios archivos (apagon-<nombre>.png).
+        quebrada            7 casas con cartel + iglesia
+        mendoza             6 bodegas, con sus barricas, estante y botella
+        boca                8 casas (pasaje-caminito, pizzeria-la-vueltita, conventillo-1910, ...)
+        nunez               8 edificios (cafe-la-esquina, libreria-nunez, ...)
+        sanrafael           6 casas (bodega-los-alamos, dulce-de-leche-casero, ...)
+    Iguazú y el Glaciar no tienen casas: solo carteles sobre postes.
+    Cada PNG de plantilla ya está en assets/casas/ con el dibujo actual; mide entre 256 y
+    400 px de ancho (según el escenario). La casa se apoya en el piso (borde de abajo de la
+    imagen) y se centra en su lugar; mantiene el tamaño del archivo (4 px por píxel del
+    juego), así que el alto lo elegís vos. El texto del cartel va dentro de tu dibujo. Una
+    casa sin archivo sigue con el dibujo original. Ojo: ahora las plantillas ya están en la
+    carpeta, y al correr actualizar-assets.bat el juego usa TODAS las que haya (también las
+    que no editaste, con un alto y colores fijos); borrá las que no quieras usar.
 
 Reglas de los sonidos (OGG, MP3, WAV, M4A)
   - Efectos (carpeta sonidos): cortos, uno por nombre. Suenan cada vez que pasa la acción.
