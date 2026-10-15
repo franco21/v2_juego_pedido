@@ -195,7 +195,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <div class="item" id="retoHud" title="Reto de la tercera estrella: pisá enemigos desde arriba">👟 0/1</div>
     <div class="item" id="estacionHud">☀️ Verano</div>
     <div class="item" id="charlyHud">🐶 Charly: huesos (C)</div>
-    <div class="item der">Faltan <span id="falta">24 cuadras</span></div>
+    <div class="item der">Faltan <span id="falta">1000 m</span></div>
     <button class="mute" id="pausar" title="Pausa (P)" aria-label="Pausa">⏸</button>
     <button class="mute" id="salir" title="Volver a elegir escenario (Esc)">⟵ Escenarios</button>
     <button class="mute" id="sonido" aria-pressed="false">🔊 Sonido</button>
@@ -313,7 +313,7 @@ const NIVELES=[
   ticket:'PEDIDO #0347 · 1 docena de empanadas<br>Destino: Calle 9 de Julio 1234 · Pagó en efectivo',
   texto:'Cruzá el barrio saltando pozos. Pisales la cabeza a chorros y perros.',
   frio:'Las empanadas llegaron frías y el cliente canceló.',
-  item:'medialuna',icono:'🥐',unidad:'cuadras',div:190,
+  item:'medialuna',icono:'🥐',barrio:true,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
   cielo:['#2a2550','#8a4a6a','#e0774f','#f2a65a'],
   suelo:{top:'#9a958c',top2:'#6f6a63',tierra:'#5a3e2b',speck:'#6e4d36',junta:'#7d7870',pozo:'#120e18',agua:'#4d3b26',aguaTop:'#7a6040'},
@@ -331,7 +331,7 @@ const NIVELES=[
   ticket:'PEDIDO #0412 · 12 chipá y un tereré bien frío<br>Destino: Puesto de guardaparques, Garganta del Diablo',
   texto:'Pasarelas y río abajo. Coatíes y monos te acosan; los tucanes vuelan bajito.',
   frio:'Los chipá se pusieron duros y el tereré se calentó.',
-  item:'banana',icono:'🍌',unidad:'metros',div:4,
+  item:'banana',icono:'🍌',
   skin:{perro:'coati',chorro:'mono',moto:'tucan'},
   cielo:['#4fa3d8','#8fd0e8','#c8ecef','#e6f6ee'],
   suelo:{top:'#5f9e3f',top2:'#3f7a2b',tierra:'#a4472b',speck:'#c0603a',junta:'#4f8a35',pozo:'#0d2c30',agua:'#3f8f9a',aguaTop:'#d6f4f2',espuma:true},
@@ -347,7 +347,7 @@ const NIVELES=[
   ticket:'PEDIDO #0458 · 6 empanadas salteñas y 2 humitas<br>Destino: Peña en Purmamarca',
   texto:'Al pie del Cerro de los Siete Colores. Llamas, zorros y remolinos de tierra.',
   frio:'Las humitas se enfriaron y la peña ya cerró.',
-  item:'empanada',icono:'🥟',unidad:'metros',div:4,
+  item:'empanada',icono:'🥟',
   skin:{perro:'llama',chorro:'zorrog',moto:'remolino'},
   cielo:['#2f6fc0','#5d9ad8','#a9d4f2','#e8eef0'],
   suelo:{top:'#c99c62',top2:'#a77d48',tierra:'#8a5a35',speck:'#b07a4a',junta:'#b68b55',pozo:'#3b2a20',agua:'#7d6a58',aguaTop:'#a8957f'},
@@ -363,7 +363,7 @@ const NIVELES=[
   ticket:'PEDIDO #0503 · Tomaticán y 1 docena de empanadas<br>Destino: Bodega en Luján de Cuyo',
   texto:'Entre viñas, con los Andes de fondo. Ojo con las acequias y el tractor.',
   frio:'El tomaticán se enfrió y en la bodega ya brindaron sin vos.',
-  item:'uva',icono:'🍇',unidad:'metros',div:4,
+  item:'uva',icono:'🍇',
   skin:{perro:'perro',chorro:'ladronS',moto:'tractor'},
   cielo:['#3f86d6','#7fb1e0','#e9d6b0','#f4d9a6'],
   suelo:{top:'#9b8a5a',top2:'#7a6a42',tierra:'#6b5034',speck:'#85663f',junta:'#8a7a4a',pozo:'#2a2016',agua:'#3f7fa8',aguaTop:'#9fd0ea'},
@@ -379,7 +379,7 @@ const NIVELES=[
   ticket:'PEDIDO #0577 · 6 alfajores de calafate y chocolate caliente<br>Destino: Refugio frente al glaciar',
   texto:'Nieve, viento y hielo que patina. Zorros, ladrones y bolas de nieve.',
   frio:'El chocolate se congeló antes de llegar.',
-  item:'cubo',icono:'🧊',unidad:'metros',div:4,
+  item:'cubo',icono:'🧊',
   skin:{perro:'zorroc',chorro:'ladronG',moto:'bola'},
   cielo:['#7fb6e0','#a9d2ee','#dceef8','#f2f8fc'],
   suelo:{top:'#f4f8fb',top2:'#cfdbe4',tierra:'#5d6672',speck:'#7a8590',junta:'#e2ecf3',pozo:'#0d2b3a',agua:'#3fb0c0',aguaTop:'#e6fbff',espuma:true},
@@ -395,7 +395,7 @@ const NIVELES=[
   ticket:'PEDIDO #0621 · 1 fugazzeta y 4 porciones de fainá<br>Destino: Conventillo en Caminito',
   texto:'Chapas de colores y adoquines, con el estadio Paredes azul y oro de fondo. Cruzá el Riachuelo por el puente de hierro. Juntá las copas; ojo con los motochorros.',
   frio:'La fugazzeta llegó fría. En La Boca eso no se perdona.',
-  item:'copa',icono:'🏆',unidad:'cuadras',div:190,rio:true,
+  item:'copa',icono:'🏆',barrio:true,rio:true,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
   cielo:['#3d8fd6','#7cbbe8','#c9e5f5','#f2e6c9'],
   suelo:{top:'#7d7a76',top2:'#5a5753',tierra:'#4a3b30',speck:'#5d4a3c',junta:'#5f5c58',pozo:'#141414',agua:'#3a4a3a',aguaTop:'#5f6f55',adoquin:true},
@@ -411,7 +411,7 @@ const NIVELES=[
   ticket:'PEDIDO #0688 · 1 docena de empanadas y gaseosa<br>Destino: Departamento en Av. del Libertador',
   texto:'Veredas anchas, plátanos y el estadio Pasarrella de fondo. Juntá las bandas rojas y blancas; ojo con los motochorros.',
   frio:'Las empanadas llegaron frías y el partido ya había empezado.',
-  item:'banda',icono:'🔴',unidad:'cuadras',div:190,
+  item:'banda',icono:'🔴',barrio:true,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
   cielo:['#3a86d2','#7fb8e6','#c8e2f2','#f4eed6'],
   suelo:{top:'#a9a59c',top2:'#7a766e',tierra:'#5a4a3c',speck:'#6e5a46',junta:'#8a867d',pozo:'#16121a',agua:'#4a6a7a',aguaTop:'#8fb0bd'},
@@ -427,7 +427,7 @@ const NIVELES=[
   ticket:'PEDIDO #0734 · Dulce de leche casero y mate<br>Destino: Finca en San Rafael',
   texto:'Álamos y viñas con el dique Valle Grande, Arenas del Nihuil y el arco de fondo. Juntá mates y trepá los potes de dulce de leche.',
   frio:'El mate se enfrió y el dulce de leche se endureció.',
-  item:'mate',icono:'🧉',unidad:'metros',div:4,
+  item:'mate',icono:'🧉',
   skin:{perro:'perro',chorro:'ladronS',moto:'tractor'},
   cielo:['#2f7fd0','#6fb0e4','#bfe0f0','#f6e6c0'],
   suelo:{top:'#c08a58',top2:'#9a6a40',tierra:'#7a4a2c',speck:'#94603a',junta:'#b0804e',pozo:'#2a1810',agua:'#2fa8b8',aguaTop:'#9fe0e8'},
@@ -442,7 +442,7 @@ const NIVELES=[
  {id:'apagon',nombre:'Apagón de Santa Rosa',lugar:'Quilmes, Buenos Aires',
   texto:'Un rayo dejó el barrio sin luz. Alumbrá con la linterna y juntá ⭐ para las pilas.',
   frio:'Las tortas fritas se enfriaron. Con esta lluvia, imperdonable.',
-  item:'tortafrita',icono:'🫓',unidad:'cuadras',div:190,
+  item:'tortafrita',icono:'🫓',barrio:true,
   skin:{perro:'perro',chorro:'ladron',moto:'moto'},
   cielo:['#3a4150','#4f5868','#66707e','#7c8590'],
   suelo:{top:'#4a4e55',top2:'#35383e',tierra:'#2a2622',speck:'#3a3530',junta:'#5a5e66',pozo:'#0a0a0c',agua:'#2a3a4a',aguaTop:'#6a8aa0'},
@@ -470,6 +470,7 @@ const DF=()=>DIFICULTADES[modo];
 // estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente
 // DESBLOQUEAR_TODO=true deja abiertos los 9 escenarios (para trabajar); con false vale el requisito de estrellas (?todo en la URL abre todos y ?abrir=sanrafael abre solo ese)
 const DESBLOQUEAR_TODO=true,EST_REQ=8,TODO=DESBLOQUEAR_TODO||/[?&]todo\b/.test(location.search),ABRIR=(location.search.match(/[?&]abrir=([\w-]+)/)||[])[1];
+const PX_POR_METRO=4; // el HUD cuenta cuántos metros faltan (1 m = 4 píxeles del juego)
 let retoMeta=1;
 // el progreso (pedidos entregados y estrellas) es por dificultad: pasar un escenario en Normal no abre el siguiente en Difícil ni en Experto
 const sufModo=()=>modo==='normal'?'':'-'+modo;
@@ -1517,7 +1518,7 @@ function casaConurbano(x,i,k){
   if(sinRevoque){ctx.fillStyle='#00000022';for(let yy=y+3;yy<GY;yy+=4)ctx.fillRect(x,yy,w,1);}
   R(x,y,w,2,'#5b4a52');
   const conCartel=ASSETS.plantilla||k>=cartelesConurbano.length||(h>=42&&rnd(i+11)<.8),vy=conCartel?y+22:y+8;
-  if(GY-vy>30){R(x+8,vy,14,11,'#2e2a3a');ctx.fillStyle='#6d6a73';for(let k=0;k<4;k++)ctx.fillRect(x+9+k*4,vy,1,11);if(N.tormenta&&(estado!=='juego'||t>RAYO_T)){if(rnd(i+1)<.18)R(x+14,vy+5,2,3,(t>>3)%5?'#f4a04a':'#f4c86a');}else if(rnd(i+1)<.5)R(x+10,vy+2,10,3,'#f4c86a88');}
+  if(GY-vy>30){R(x+8,vy,14,11,'#2e2a3a');ctx.fillStyle='#6d6a73';for(let k=0;k<4;k++)ctx.fillRect(x+9+k*4,vy,1,11);if(N.tormenta&&(estado!=='juego'||t>rayoAt)){if(rnd(i+1)<.18)R(x+14,vy+5,2,3,(t>>3)%5?'#f4a04a':'#f4c86a');}else if(rnd(i+1)<.5)R(x+10,vy+2,10,3,'#f4c86a88');}
   R(x+w-18,GY-20,10,20,'#4a3b35');
   if(rnd(i+7)<.55){R(x+w-20,y-12,12,11,'#22202a');R(x+w-21,y-13,14,2,'#33313c');}
   if(conCartel)cartel(x+3,y+4,w-6,cartelesCasasConu[k],estilosCartel[Math.floor(rnd(i+17)*5)]);
@@ -2414,7 +2415,7 @@ function dibujar(){
   dibujarRayos();
   dibujarAlertaDerr();
   if(estado==='juego'||estado==='fin')dibujarViento();
-  if(flash>0){ctx.save();ctx.globalAlpha=Math.min(1,flash/18)*0.85;R(0,0,W,H,'#f4ecdf');ctx.globalAlpha=Math.min(1,flash/14);ctx.font='700 14px Fredoka, sans-serif';ctx.textAlign='center';ctx.fillStyle='#2a2238';ctx.fillText(N.unidad==='cuadras'?'¡Otro camino por el barrio!':'¡Otro camino!',W/2,H/2);ctx.textAlign='left';ctx.restore();}
+  if(flash>0){ctx.save();ctx.globalAlpha=Math.min(1,flash/18)*0.85;R(0,0,W,H,'#f4ecdf');ctx.globalAlpha=Math.min(1,flash/14);ctx.font='700 14px Fredoka, sans-serif';ctx.textAlign='center';ctx.fillStyle='#2a2238';ctx.fillText(N.barrio?'¡Otro camino por el barrio!':'¡Otro camino!',W/2,H/2);ctx.textAlign='left';ctx.restore();}
   dibujarDolor();
   if(zi>1)ctx.restore();
   if(sh)ctx.restore();
@@ -2498,7 +2499,7 @@ function lunaYEstrellas(A=1){
 function prepararNoche(){
   noche={nivel:0,franjas:[]};bat=100;batHist=[];flickT=500;flick=0;luz=1;estrellas=[];avisoPila=false;
   hayNoche=esNoche();
-  rayoHecho=false;rayoT=0;
+  rayoHecho=false;rayoT=0;rayoAt=100+Math.random()*160;rayoFrac=0.35+Math.random()*0.3; // el rayo no cae siempre en el mismo momento ni lugar
   if(hayNoche){noche.franjas=[];noche.nivel=0;}
   $('bateria').hidden=!hayNoche;
 }
@@ -2685,7 +2686,7 @@ function dibujarProys(){
 // RAYO ANTES DE LA NOCHE Y TORMENTA
 // =====================================================================
 const RAYO_T=140;
-let rayoHecho=false,rayoT=0,rayos=[],destello=0,sacudida=0,quemaduras=[],proxRayo=0;
+let rayoHecho=false,rayoT=0,rayoAt=RAYO_T,rayoFrac=0.5,rayos=[],destello=0,sacudida=0,quemaduras=[],proxRayo=0;
 function camino(x1,y1,x2,y2,desv,prof,r){
   if(prof===0)return[[x1,y1],[x2,y2]];
   const mx=(x1+x2)/2+(r()-.5)*desv,my=(y1+y2)/2+(r()-.5)*desv*0.25;
@@ -2706,8 +2707,8 @@ function lanzarRayo(wx,opts={}){
   sfx.trueno(opts.lejos?0.35:1,opts.lejos?0.6+Math.random()*1.4:0);
 }
 function rayoPaso(){
-  // en el apagón el rayo cae enseguida; en los demás, al pasar la mitad del recorrido
-  if(hayNoche&&!rayoHecho&&(N.tormenta?t>=RAYO_T:P.x>=FIN*0.5)){rayoHecho=true;rayoT=t;noche.franjas=[[t+15,1e12]];lanzarRayo(Math.min(P.x+150,FIN-40));
+  // en el apagón el rayo cae al poco de empezar; en los demás, al pasar una parte del recorrido; el momento y el lugar cambian en cada intento
+  if(hayNoche&&!rayoHecho&&(N.tormenta?t>=rayoAt:P.x>=FIN*rayoFrac)){rayoHecho=true;rayoT=t;noche.franjas=[[t+15,1e12]];lanzarRayo(Math.min(Math.max(P.x-60+Math.random()*270,cam+25),FIN-40));
     setTimeout(()=>{if(estado==='juego')pista(N.tormenta?'¡Se cortó la luz en todo el barrio! Sin la linterna no ves nada.':'Se vino la noche: la linterna te alumbra hacia donde mirás. Juntá ⭐ para recargar las pilas.');},700);}
   if(N.tormenta&&hayNoche&&rayoHecho&&t>rayoT+300){
     if(proxRayo<=0)proxRayo=t+480+Math.random()*600;
@@ -2787,7 +2788,7 @@ function hud(){
   $('arco').setAttribute('stroke-dashoffset',(282.7*(1-Math.min(1,restante/TOT))).toFixed(1));
   $('bono').textContent='Bono '+Math.round(restante/60*100).toLocaleString('es-AR');
   $('reloj').classList.toggle('apurado',restante<10*60);
-  const falta=Math.max(0,Math.ceil((FIN-P.x)/N.div)),fTxt=N.unidad==='metros'?`${Math.ceil(falta/10)*10} m`:`${falta} cuadras`;
+  const falta=Math.max(0,Math.ceil((FIN-P.x)/PX_POR_METRO)),fTxt=`${Math.ceil(falta/10)*10} m`;
   const s=`${vidas}|${cuentaMedias}|${pisotones}|${fTxt}|${retoMeta}`;
   if(s===hudPrev)return;hudPrev=s;
   $('vidas').textContent='♥'.repeat(Math.max(0,vidas))+'♡'.repeat(Math.max(0,DF().vidas-vidas));
