@@ -461,9 +461,9 @@ const NIVELES=[
 // parámetros de cada pedido: el 1 es un tutorial y cada uno suma largo, enemigos y mecánicas
 // dificultad: se elige en el menú y se guarda; cambia vidas, reloj, derrumbe, enemigos y plataformas móviles
 const DIFICULTADES={
-  normal:{nombre:'Normal',icono:'🙂',vidas:3,tiempo:1,derr:1,enem:0,sigue:0,moviles:0.3,vel:1,hueco:0,cable:3},
-  dificil:{nombre:'Difícil',icono:'😤',vidas:2,tiempo:0.9,derr:1.2,enem:0.2,sigue:0.2,moviles:0.5,vel:1.35,hueco:0.6,cable:5},
-  experto:{nombre:'Experto',icono:'💀',vidas:1,tiempo:0.8,derr:1.45,enem:0.35,sigue:0.35,moviles:0.7,vel:1.7,hueco:1.2,cable:7}};
+  normal:{nombre:'Normal',icono:'🙂',vidas:3,tiempo:1,derr:1,enem:0,sigue:0,moviles:0.7,vel:1,hueco:0,cable:3},
+  dificil:{nombre:'Difícil',icono:'😤',vidas:2,tiempo:0.9,derr:1.2,enem:0.2,sigue:0.2,moviles:0.8,vel:1.35,hueco:0.6,cable:5},
+  experto:{nombre:'Experto',icono:'💀',vidas:1,tiempo:0.8,derr:1.45,enem:0.35,sigue:0.35,moviles:0.9,vel:1.7,hueco:1.2,cable:7}};
 let modo=(()=>{try{const d=localStorage.getItem('pec-dif');return DIFICULTADES[d]?d:'normal';}catch(e){return 'normal';}})();
 const DF=()=>DIFICULTADES[modo];
 // estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente
@@ -589,6 +589,13 @@ function generar(cfg){
       defMedias.push([x+gw*0.3,GY-46],[x+gw*0.5,GY-54],[x+gw*0.7,GY-46]);
       rioHecho=true;x+=gw;k++;continue;
     }
+    // pozo ancho (no se puede saltar) con una plataforma móvil que lo cruza yendo y viniendo: hay que esperarla, subirse y bajar del otro lado
+    if(cfg.moviles&&k>0&&r()<cfg.moviles){
+      x+=len;const gw=150+Math.floor(r()*40),pw=48;
+      plataformas.push({t:'movil',estilo:cfg.flota,x:x+3,y:GY,w:pw,h:8,x0:x+3,rango:gw-pw-6,f:r()*6.28,wv:Math.PI*2/(260+Math.floor(r()*80)),dx:0});
+      for(let j=0;j<3;j++)defMedias.push([x+gw*(j+1)/4,GY-46]);
+      x+=gw;k++;continue;
+    }
     // casa derrumbada sobre el pozo: se sube por los escombros y se cruza por la losa
     if(cfg.ruinas&&k>0&&r()<cfg.ruinas){
       x+=len;const gw=110+Math.floor(r()*40);
@@ -604,13 +611,6 @@ function generar(cfg){
       else if(cfg.roto&&r()<0.5){const h1=Math.floor(gw/2-20);plataformas.push({x,y:GY,w:h1,h:6,t:'puente',ini:true});plataformas.push({x:x+h1+40,y:GY,w:gw-h1-40,h:6,t:'puente',fin:true});defMedias.push([x+h1+20,GY-44]);}
       else plataformas.push({x,y:GY,w:gw,h:6,t:'puente',ini:true,fin:true});
       for(let j=1;j<4;j++)defMedias.push([x+j*gw/4,GY-12]);
-      x+=gw;k++;continue;
-    }
-    // pozo ancho (no se puede saltar) con una plataforma móvil que lo cruza yendo y viniendo: hay que esperarla, subirse y bajar del otro lado
-    if(cfg.moviles&&k>0&&r()<cfg.moviles){
-      x+=len;const gw=150+Math.floor(r()*40),pw=48;
-      plataformas.push({t:'movil',estilo:cfg.flota,x:x+3,y:GY,w:pw,h:8,x0:x+3,rango:gw-pw-6,f:r()*6.28,wv:Math.PI*2/(260+Math.floor(r()*80)),dx:0});
-      for(let j=0;j<3;j++)defMedias.push([x+gw*(j+1)/4,GY-46]);
       x+=gw;k++;continue;
     }
     const gap=46+Math.floor(r()*(8+cfg.dif*4));
