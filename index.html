@@ -466,8 +466,8 @@ const DIFICULTADES={
   experto:{nombre:'Experto',icono:'💀',vidas:1,tiempo:0.8,derr:1.4,enem:0.25,sigue:0.2,moviles:0.6}};
 let modo=(()=>{try{const d=localStorage.getItem('pec-dif');return DIFICULTADES[d]?d:'normal';}catch(e){return 'normal';}})();
 const DF=()=>DIFICULTADES[modo];
-// estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente (?todo en la URL abre todos, para probar)
-const EST_REQ=8,TODO=/[?&]todo\b/.test(location.search);
+// estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente (?todo en la URL abre todos, ?abrir=sanrafael abre solo ese, para probar)
+const EST_REQ=8,TODO=/[?&]todo\b/.test(location.search),ABRIR=(location.search.match(/[?&]abrir=([\w-]+)/)||[])[1];
 let retoMeta=1;
 // el progreso (pedidos entregados y estrellas) es por dificultad: pasar un escenario en Normal no abre el siguiente en Difícil ni en Experto
 const sufModo=()=>modo==='normal'?'':'-'+modo;
@@ -479,7 +479,7 @@ function barraEstrellas(id,actual){
   const gr=[0,1,2,3,4].map(k=>{const n=leerEstrellas(id,k);return `<span class="gr${k===actual?' act':''}">${[0,1,2].map(j=>`<i class="${j<n?'on':''}">★</i>`).join('')}</span>`;}).join('');
   return `${gr}<b>${estrellasEscenario(NIVELES.findIndex(n=>n.id===id))}/15</b>estrellas`;
 }
-const escenarioAbierto=i=>TODO||i===0||estrellasEscenario(i-1)>=EST_REQ;
+const escenarioAbierto=i=>TODO||i===0||NIVELES[i].id===ABRIR||estrellasEscenario(i-1)>=EST_REQ;
 const claveRec=()=>N.id+'-'+PI+(modo==='normal'?'':'-'+modo);
 function calcularReto(){const n=defEnem.filter(e=>e.tipo==='chorro'||e.tipo==='perro').length+(SKIN[N.skin.moto].pisable?disparos.length:0);return Math.max(1,Math.ceil(n*0.6));}
 function cfgPedido(){
