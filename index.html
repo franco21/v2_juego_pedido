@@ -317,7 +317,12 @@ const NIVELES=[
   cielo:['#2a2550','#8a4a6a','#e0774f','#f2a65a'],
   suelo:{top:'#9a958c',top2:'#6f6a63',tierra:'#5a3e2b',speck:'#6e4d36',junta:'#7d7870',pozo:'#120e18',agua:'#4d3b26',aguaTop:'#7a6040'},
   charco:{tipo:'lento',c1:'#4f6f86',c2:'#8fb3c9'},
-  destino:{pared:'#e8d8bf',techo:'#8d4a3a',puerta:'#3f6e8c',rotulo:'1234',reja:true},
+  destinos:[
+   {pared:'#e8d8bf',techo:'#8d4a3a',puerta:'#3f6e8c',rotulo:'1234',reja:true},
+   {pared:'#b5694a',techo:'#4a4a52',puerta:'#e8b04a',rotulo:'455',ladrillo:true,macetas:true},
+   {pared:'#9fc5a8',techo:'#a8553a',puerta:'#7a3a2a',rotulo:'CASA 12',chimenea:true,macetas:true},
+   {pared:'#d8d2c4',techo:'#5a5f66',puerta:'#c0392b',rotulo:'EVA PERÓN 3100',toldo:'#c0392b',vent:'#9fd3f0'},
+   {pared:'#f4ecdf',techo:'#2f6b3a',puerta:'#1d4e89',rotulo:'EL PROGRESO',chapa:true,banderin:['#2f6b3a','#f4ecdf']}],
   pedidos:['1 docena de empanadas · Calle 9 de Julio 1234','2 pizzas grandes · Pasaje Los Aromos 455','Milanesa napolitana con fritas · Barrio Las Flores, casa 12','6 hamburguesas y gaseosa · Av. Eva Perón 3100','Asado para 10 · Club Social y Deportivo El Progreso'],
   clientes:['Doña Rosa','Marcelo','Yanina','El Tano','Coqui'],
   caja:['kiosco','conte','bondi','conte'],flota:'chapa',seed:1201},
@@ -330,7 +335,12 @@ const NIVELES=[
   cielo:['#4fa3d8','#8fd0e8','#c8ecef','#e6f6ee'],
   suelo:{top:'#5f9e3f',top2:'#3f7a2b',tierra:'#a4472b',speck:'#c0603a',junta:'#4f8a35',pozo:'#0d2c30',agua:'#3f8f9a',aguaTop:'#d6f4f2',espuma:true},
   charco:{tipo:'lento',c1:'#7a3220',c2:'#a9502e'},
-  destino:{pared:'#7a5a3a',techo:'#2f6b3a',puerta:'#4a3220',rotulo:'GUARDAPARQUES'},
+  destinos:[
+   {pared:'#7a5a3a',techo:'#2f6b3a',puerta:'#4a3220',rotulo:'GUARDAPARQUES',vigas:true},
+   {pared:'#d8c8a0',techo:'#b0442e',puerta:'#2f5f8a',rotulo:'ESTACIÓN',toldo:'#2f6b3a',vent:'#9fd3f0'},
+   {pared:'#a97d4a',techo:'#c8a85a',puerta:'#4a3220',rotulo:'MIRADOR',paja:true,vigas:true},
+   {pared:'#efe6d4',techo:'#8d3a2a',puerta:'#2f6b3a',rotulo:'HOTEL',toldo:'#c0392b',macetas:true,chimenea:true},
+   {pared:'#8a9aa0',techo:'#3a4a52',puerta:'#2f4a6a',rotulo:'GARGANTA',ladrillo:true,banderin:['#3fa7d6','#f4ecdf']}],
   seed:4412,pedidos:['12 chipá y un tereré · Puesto de guardaparques','Sopa paraguaya · Estación Cataratas','Chipá guazú y mbejú · Mirador Salto Bossetti','Reviro con mandioca · Hotel en la selva','Pacú a la parrilla para 4 · Garganta del Diablo'],clientes:['Guardaparque Ramón','Lucía','Don Benítez','Tamara','Capitán Sosa'],caja:'roca',flota:'pasarela',clima:'mariposas'},
  {id:'quebrada',nombre:'Quebrada de Humahuaca',lugar:'Purmamarca, Jujuy',
   ticket:'PEDIDO #0458 · 6 empanadas salteñas y 2 humitas<br>Destino: Peña en Purmamarca',
@@ -341,7 +351,12 @@ const NIVELES=[
   cielo:['#2f6fc0','#5d9ad8','#a9d4f2','#e8eef0'],
   suelo:{top:'#c99c62',top2:'#a77d48',tierra:'#8a5a35',speck:'#b07a4a',junta:'#b68b55',pozo:'#3b2a20',agua:'#7d6a58',aguaTop:'#a8957f'},
   charco:{tipo:'lento',c1:'#d8b77a',c2:'#ecd29a'},
-  destino:{pared:'#c9a27a',techo:'#d8c27a',puerta:'#2f5f8a',rotulo:'PEÑA'},
+  destinos:[
+   {pared:'#c9a27a',techo:'#d8c27a',puerta:'#2f5f8a',rotulo:'PEÑA',paja:true},
+   {pared:'#d8b58a',techo:'#9a5a3a',puerta:'#3f7a4a',rotulo:'PLAZA',macetas:true,banderin:['#c0392b','#f2c14e','#3f7a4a']},
+   {pared:'#e4cfa8',techo:'#7a3a4a',puerta:'#6a2a7a',rotulo:'LOS COLORES',vigas:true,banderin:['#c0392b','#f2c14e','#2f5f8a','#3f7a4a']},
+   {pared:'#b98a64',techo:'#e0a33a',puerta:'#3a2418',rotulo:'PACHAMAMA',toldo:'#d4572e',chimenea:true},
+   {pared:'#efe0c0',techo:'#8d4a3a',puerta:'#2f5f8a',rotulo:'TILCARA',ladrillo:true,macetas:true}],
   seed:5813,pedidos:['6 empanadas salteñas y 2 humitas · Peña en Purmamarca','Tamales para 4 · Plaza de Purmamarca','Locro y tortillas · Hospedaje Los Colores','Guiso de quinoa · Comedor La Pachamama','Picante de pollo para la peña · Tilcara'],clientes:['Doña Juana','Wayra','Don Cruz','Nina','El Coya Ramos'],caja:'adobe',flota:'cardon',clima:null},
  {id:'mendoza',nombre:'Viñedos de Mendoza',lugar:'Luján de Cuyo, Mendoza',
   ticket:'PEDIDO #0503 · Tomaticán y 1 docena de empanadas<br>Destino: Bodega en Luján de Cuyo',
@@ -352,7 +367,12 @@ const NIVELES=[
   cielo:['#3f86d6','#7fb1e0','#e9d6b0','#f4d9a6'],
   suelo:{top:'#9b8a5a',top2:'#7a6a42',tierra:'#6b5034',speck:'#85663f',junta:'#8a7a4a',pozo:'#2a2016',agua:'#3f7fa8',aguaTop:'#9fd0ea'},
   charco:{tipo:'lento',c1:'#3f7fa8',c2:'#9fd0ea',acequia:true},
-  destino:{pared:'#f1e9da',techo:'#b4532e',puerta:'#5a3b22',rotulo:'BODEGA'},
+  destinos:[
+   {pared:'#f1e9da',techo:'#b4532e',puerta:'#5a3b22',rotulo:'BODEGA'},
+   {pared:'#d8c49a',techo:'#7a5a3a',puerta:'#3a2418',rotulo:'DON PEDRO',vigas:true,macetas:true},
+   {pared:'#c9b8a0',techo:'#6a2a3a',puerta:'#5a3b22',rotulo:'LOS ÁLAMOS',ladrillo:true,chimenea:true},
+   {pared:'#e8dcc0',techo:'#9a4a2a',puerta:'#2f6b3a',rotulo:'CHACRAS',toldo:'#6a2a7a',macetas:true},
+   {pared:'#f4ecdf',techo:'#9a9aa6',puerta:'#3a3a52',rotulo:'TEATRO',columnas:true}],
   seed:6029,pedidos:['Tomaticán y 1 docena de empanadas · Bodega en Luján','Sopaipillas con mate · Finca Don Pedro','Chivito al horno · Bodega Los Álamos','Picada para la degustación · Chacras de Coria','Cena de la Vendimia para 20 · Teatro Griego'],clientes:['Enóloga Paula','Don Pedro','Sofi','Martín de la bodega','La Reina de la Vendimia'],caja:'barrica',flota:'tabla',clima:null},
  {id:'glaciar',nombre:'Glaciar Perito Moreno',lugar:'El Calafate, Santa Cruz',
   ticket:'PEDIDO #0577 · 6 alfajores de calafate y chocolate caliente<br>Destino: Refugio frente al glaciar',
@@ -363,7 +383,12 @@ const NIVELES=[
   cielo:['#7fb6e0','#a9d2ee','#dceef8','#f2f8fc'],
   suelo:{top:'#f4f8fb',top2:'#cfdbe4',tierra:'#5d6672',speck:'#7a8590',junta:'#e2ecf3',pozo:'#0d2b3a',agua:'#3fb0c0',aguaTop:'#e6fbff',espuma:true},
   charco:{tipo:'resbala',c1:'#a9def0',c2:'#e8fbff'},
-  destino:{pared:'#8a5a3a',techo:'#5a3a2a',puerta:'#3a2418',rotulo:'REFUGIO',nieve:true},
+  destinos:[
+   {pared:'#8a5a3a',techo:'#5a3a2a',puerta:'#3a2418',rotulo:'REFUGIO',nieve:true},
+   {pared:'#6a8aa0',techo:'#4a6a8a',puerta:'#c0392b',rotulo:'PASARELAS',nieve:true,vigas:true},
+   {pared:'#c9a27a',techo:'#7a3a3a',puerta:'#3a2418',rotulo:'CASA DE TÉ',nieve:true,toldo:'#c0392b',chimenea:true},
+   {pared:'#5a5f6a',techo:'#3a3f4a',puerta:'#e8b04a',rotulo:'MIRADOR',nieve:true,ladrillo:true},
+   {pared:'#d8602a',techo:'#4a4a5a',puerta:'#2a2a3a',rotulo:'BASE GLACIAR',nieve:true,banderin:['#f4ecdf','#3fa7d6']}],
   seed:7741,pedidos:['6 alfajores de calafate · Refugio frente al glaciar','Chocolate caliente para 4 · Pasarelas','Cordero patagónico · Casa de té','Trucha ahumada · Mirador Principal','Cena para el grupo de trekking · Base del glaciar'],clientes:['Guía Ezequiel','Ana','Don Klaus','Malena','Grupo de trekking'],caja:'hielo',flota:'tabla',clima:'nieve',extra:10},
  {id:'boca',nombre:'La Boca, Caminito',lugar:'Ciudad de Buenos Aires',
   ticket:'PEDIDO #0621 · 1 fugazzeta y 4 porciones de fainá<br>Destino: Conventillo en Caminito',
@@ -374,7 +399,12 @@ const NIVELES=[
   cielo:['#3d8fd6','#7cbbe8','#c9e5f5','#f2e6c9'],
   suelo:{top:'#7d7a76',top2:'#5a5753',tierra:'#4a3b30',speck:'#5d4a3c',junta:'#5f5c58',pozo:'#141414',agua:'#3a4a3a',aguaTop:'#5f6f55',adoquin:true},
   charco:{tipo:'lento',c1:'#4f6f86',c2:'#8fb3c9'},
-  destino:{pared:'#f2c14e',techo:'#c0392b',puerta:'#1d4e89',rotulo:'CAMINITO',chapa:true},
+  destinos:[
+   {pared:'#f2c14e',techo:'#c0392b',puerta:'#1d4e89',rotulo:'CONVENTILLO',chapa:true},
+   {pared:'#c0392b',techo:'#f4ecdf',puerta:'#2f6b3a',rotulo:'DON NICOLA',toldo:'#2f6b3a'},
+   {pared:'#1d4e89',techo:'#f2c14e',puerta:'#f2c14e',rotulo:'LA CANCHA',banderin:['#1d4e89','#f2c14e']},
+   {pared:'#3fa7d6',techo:'#e04b5b',puerta:'#f2c14e',rotulo:'CAMINITO',chapa:true,macetas:true},
+   {pared:'#2f9a6a',techo:'#f2a65a',puerta:'#7a2a7a',rotulo:'VUELTA DE ROCHA',chapa:true,toldo:'#f2c14e'}],
   seed:8833,pedidos:['1 fugazzeta y 4 de fainá · Conventillo en Caminito','Sorrentinos con tuco · Cantina Don Nicola','Choripán para 6 · Afuera de la cancha','Pizza de muzza y moscato · Pasaje Caminito','Banquete para el show de tango · Vuelta de Rocha'],clientes:['Tita','El Pibe','Doña Carmela','Gardelito','La Milonguera'],caja:'conte',flota:'chapa',clima:null},
  {id:'nunez',nombre:'Núñez, Pasarrella',lugar:'Ciudad de Buenos Aires',
   ticket:'PEDIDO #0688 · 1 docena de empanadas y gaseosa<br>Destino: Departamento en Av. del Libertador',
@@ -385,7 +415,12 @@ const NIVELES=[
   cielo:['#3a86d2','#7fb8e6','#c8e2f2','#f4eed6'],
   suelo:{top:'#a9a59c',top2:'#7a766e',tierra:'#5a4a3c',speck:'#6e5a46',junta:'#8a867d',pozo:'#16121a',agua:'#4a6a7a',aguaTop:'#8fb0bd'},
   charco:{tipo:'lento',c1:'#5f8aa0',c2:'#a8cddc'},
-  destino:{pared:'#efe6d4',techo:'#b53a3a',puerta:'#8a2a2a',rotulo:'DPTO 4B',reja:true},
+  destinos:[
+   {pared:'#efe6d4',techo:'#b53a3a',puerta:'#8a2a2a',rotulo:'DPTO 4B',reja:true},
+   {pared:'#d8e8d0',techo:'#4a7a4a',puerta:'#3a5a3a',rotulo:'PLAZA',macetas:true,banderin:['#b53a3a','#f4ecdf']},
+   {pared:'#e8c8a0',techo:'#8d3a2a',puerta:'#2f4a6a',rotulo:'CALLE VEDIA',ladrillo:true,toldo:'#b53a3a'},
+   {pared:'#c8dcc0',techo:'#3f6a4a',puerta:'#5a3b22',rotulo:'PARQUE NORTE',vigas:true,macetas:true},
+   {pared:'#f4ecdf',techo:'#b53a3a',puerta:'#b53a3a',rotulo:'PASARRELLA',columnas:true,banderin:['#b53a3a','#f4ecdf']}],
   seed:9241,pedidos:['1 docena de empanadas · Departamento en Av. del Libertador','Choripán y gaseosa · Plaza frente a Pasarrella','Pizza de muzza y fainá · Calle Vedia','Helado para 6 · Parque Norte','Asado para el banderazo · Estadio Pasarrella'],clientes:['Doña Elvira','Julián','Marta','Los pibes de la escuelita','La barra del banderazo'],caja:['kiosco','conte','bondi'],flota:'chapa',clima:null},
  {id:'sanrafael',nombre:'San Rafael, Mendoza',lugar:'San Rafael, Mendoza',
   ticket:'PEDIDO #0734 · Dulce de leche casero y mate<br>Destino: Finca en San Rafael',
@@ -396,7 +431,12 @@ const NIVELES=[
   cielo:['#2f7fd0','#6fb0e4','#bfe0f0','#f6e6c0'],
   suelo:{top:'#c08a58',top2:'#9a6a40',tierra:'#7a4a2c',speck:'#94603a',junta:'#b0804e',pozo:'#2a1810',agua:'#2fa8b8',aguaTop:'#9fe0e8'},
   charco:{tipo:'lento',c1:'#2fa8b8',c2:'#9fe0e8',acequia:true},
-  destino:{pared:'#f1e9da',techo:'#b4532e',puerta:'#5a3b22',rotulo:'FINCA'},
+  destinos:[
+   {pared:'#f1e9da',techo:'#b4532e',puerta:'#5a3b22',rotulo:'FINCA'},
+   {pared:'#9fd0d8',techo:'#3a6a8a',puerta:'#f4ecdf',rotulo:'DIQUE',banderin:['#2fa8b8','#f4ecdf']},
+   {pared:'#d8a86a',techo:'#8a5a3a',puerta:'#4a3220',rotulo:'NIHUIL',paja:true,vigas:true},
+   {pared:'#e4d4b0',techo:'#6a2a3a',puerta:'#3a2418',rotulo:'CUADRO NACIONAL',ladrillo:true,toldo:'#6a2a7a',chimenea:true},
+   {pared:'#b8744a',techo:'#7a3a2a',puerta:'#2f4a6a',rotulo:'CAÑÓN ATUEL',vigas:true,macetas:true}],
   seed:10453,pedidos:['Dulce de leche casero y mate · Finca en San Rafael','Alfajores de dulce de leche · Dique Valle Grande','Sopaipillas con mate · Arenas del Nihuil','Tabla de quesos y vino · Bodega en Cuadro Nacional','Asado y flan con dulce de leche · Cañón del Atuel'],clientes:['Doña Mirta','Nacho','Tía Delia','Enólogo Bruno','Los guías de rafting'],caja:['adobe','barrica'],flota:'tabla',clima:null},
  {id:'apagon',nombre:'Apagón de Santa Rosa',lugar:'Quilmes, Buenos Aires',
   texto:'Un rayo dejó el barrio sin luz. Alumbrá con la linterna y juntá ⭐ para las pilas.',
@@ -406,7 +446,12 @@ const NIVELES=[
   cielo:['#3a4150','#4f5868','#66707e','#7c8590'],
   suelo:{top:'#4a4e55',top2:'#35383e',tierra:'#2a2622',speck:'#3a3530',junta:'#5a5e66',pozo:'#0a0a0c',agua:'#2a3a4a',aguaTop:'#6a8aa0'},
   charco:{tipo:'lento',c1:'#3a5468',c2:'#7fa0b8'},
-  destino:{pared:'#d8cbb4',techo:'#5a4a42',puerta:'#3f5a6e',rotulo:'LA ABUELA',reja:true},
+  destinos:[
+   {pared:'#d8cbb4',techo:'#5a4a42',puerta:'#3f5a6e',rotulo:'LA ABUELA',reja:true},
+   {pared:'#c8b89a',techo:'#4a4a52',puerta:'#7a3a2a',rotulo:'LA CAÑADA',chapa:true,macetas:true},
+   {pared:'#b9a08a',techo:'#6a3a3a',puerta:'#2f5a4a',rotulo:'SAN MARTÍN 22',ladrillo:true,chimenea:true},
+   {pared:'#cfd8c8',techo:'#3f5a6e',puerta:'#c0392b',rotulo:'LOS GURISES',toldo:'#3f7a4a',vent:'#f4c86a'},
+   {pared:'#e0d4c0',techo:'#7a4a3a',puerta:'#3f5a6e',rotulo:'JUBILADOS',reja:true,banderin:['#f2c14e','#3f5a6e']}],
   seed:9917,pedidos:['Docena de tortas fritas · Calle Mitre 870','Mate cocido y bizcochitos · Barrio La Cañada','Polenta con tuco · Pasaje San Martín 22','Guiso de lentejas para 6 · Comedor Los Gurises','Pastelitos para el corte de luz · Centro de jubilados'],
   clientes:['La abuela Nelly','Fede','Doña Chela','Comedor Los Gurises','Don Aldo'],
   caja:['conte','kiosco','conte'],flota:'chapa',clima:'lluvia',noche:true,tormenta:true,extra:8},
@@ -2303,12 +2348,21 @@ function dibujarEnemigo(e){
 }
 function dibujarFinal(){
   const x=FIN+10-cam;if(x>W+20)return;
-  const d=N.destino;
+  const d=N.destinos[PI];
   R(x,GY-60,90,60,d.pared);
-  if(d.chapa){ctx.fillStyle='#00000022';for(let k=0;k<90;k+=3)ctx.fillRect(x+k,GY-60,1,60);}
+  ctx.fillStyle='#00000022';
+  if(d.chapa)for(let k=0;k<90;k+=3)ctx.fillRect(x+k,GY-60,1,60);
+  if(d.ladrillo)for(let k=0;k<60;k+=4){ctx.fillRect(x,GY-60+k,90,1);for(let j=(k>>2)%2*4;j<90;j+=8)ctx.fillRect(x+j,GY-60+k,1,4);}
+  if(d.vigas){ctx.fillStyle='#3a2a1e66';for(const k of [0,34,88])ctx.fillRect(x+k,GY-60,2,60);ctx.fillRect(x,GY-30,90,2);}
+  if(d.columnas)for(const k of [0,34,74,87]){R(x+k,GY-60,3,60,'#f4ecdf');R(x+k-1,GY-60,5,2,'#d8cfc0');}
+  if(d.chimenea){R(x+72,GY-78,8,14,'#6b5a4e');R(x+71,GY-79,10,2,'#4f4339');}
   R(x-4,GY-64,98,5,d.techo);if(d.nieve){R(x-4,GY-68,98,4,'#f4f8fb');}
-  R(x+10,GY-46,18,16,'#2e2a3a');R(x+12,GY-44,14,6,'#f4c86a');
+  if(d.paja){R(x-6,GY-72,102,9,d.techo);ctx.fillStyle='#00000033';for(let k=-6;k<96;k+=3)ctx.fillRect(x+k,GY-72,1,9);R(x-6,GY-72,102,1,'#ffffff33');}
+  if(d.banderin){R(x-4,GY-59,98,1,'#3a2a1e');for(let k=0,i=0;k<94;k+=7,i++)R(x+k-1,GY-58,4,3,d.banderin[i%d.banderin.length]);}
+  R(x+10,GY-46,18,16,'#2e2a3a');R(x+12,GY-44,14,6,d.vent||'#f4c86a');
   R(x+52,GY-36,16,36,d.puerta);R(x+65,GY-18,2,2,'#e8b04a');
+  if(d.toldo){for(let k=0;k<24;k+=6){R(x+46+k,GY-41,3,5,d.toldo);R(x+49+k,GY-41,3,5,'#f4ecdf');}R(x+46,GY-36,27,1,'#00000033');}
+  if(d.macetas)for(const k of [28,72]){R(x+k,GY-6,6,6,'#a0522d');R(x+k-1,GY-11,8,5,'#3f7a4a');R(x+k+1,GY-12,2,2,'#e04b5b');R(x+k+4,GY-11,2,2,'#f2c14e');}
   ctx.font='700 6px Fredoka, sans-serif';const tw=ctx.measureText(d.rotulo).width;
   R(x+60-tw/2-3,GY-56,tw+6,9,'#2a2238');ctx.fillStyle='#f4ecdf';ctx.fillText(d.rotulo,x+60-tw/2,GY-49.5);
   if(d.reja){for(let k=-14;k<104;k+=5)R(x+k,GY-16,2,16,'#3f7a4a');R(x-14,GY-16,118,2,'#3f7a4a');}
@@ -2578,7 +2632,7 @@ let casasTecho=[];
 const CASA_H=66;
 function dibujarCasaTecho(c){
   const x=c.x-cam;if(x>W+20||x+c.w<-20)return;
-  const d=N.destino,y=GY-CASA_H;
+  const d=N.destinos[PI],y=GY-CASA_H;
   R(x,y,c.w,CASA_H,d.pared);ctx.fillStyle='#00000018';for(let yy=y+4;yy<GY;yy+=5)ctx.fillRect(x,yy,c.w,1);
   R(x-2,y-3,c.w+4,4,d.techo);R(x-2,y-3,c.w+4,1,'#ffffff33');
   R(x+c.w-18,y-15,12,12,'#22202a');R(x+c.w-19,y-16,14,2,'#33313c');
