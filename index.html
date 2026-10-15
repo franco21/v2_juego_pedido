@@ -260,10 +260,9 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <div class="opc">
       <label>🔊 Efectos<input type="range" id="volEf" min="0" max="100" step="5"><b id="volEfN">100</b></label>
       <label>🌲 Ambiente<input type="range" id="volAm" min="0" max="100" step="5"><b id="volAmN">100</b></label>
-      <div class="botones"><button class="btn sec" id="optSonido">🔊 Sonido activado</button><button class="btn sec" id="optPriv">🔒 Privacidad</button></div>
+      <div class="botones"><button class="btn sec" id="optSonido">🔊 Sonido activado</button><button class="btn sec" id="optCred">🎵 Créditos</button><button class="btn sec" id="optPriv">🔒 Privacidad</button></div>
       <div class="botones" id="optBorrarFila"><button class="btn sec" id="borrarBtn">🗑 Borrar progreso</button><span id="borrarConf" hidden>¿Seguro? Se borran estrellas y récords. <button class="btn" id="borrarSi">Sí, borrar</button> <button class="btn sec" id="borrarNo">No</button></span></div>
       <div class="opcMsg" id="opcMsg" role="status"></div>
-      <small>Música de La Boca: «Milonga Argentina» (Justo T. Morales), arreglo para guitarra de GregorQuendel, <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC 4.0</a> (<a href="https://freesound.org/s/757619/" target="_blank" rel="noopener" style="color:inherit">freesound.org/s/757619</a>). Fragmento recortado y editado.</small>
     </div>
     <div class="botones"><button class="btn" id="optVolver">‹ Volver</button></div>
   </div>
@@ -462,9 +461,9 @@ const NIVELES=[
 // parámetros de cada pedido: el 1 es un tutorial y cada uno suma largo, enemigos y mecánicas
 // dificultad: se elige en el menú y se guarda; cambia vidas, reloj, derrumbe, enemigos y plataformas móviles
 const DIFICULTADES={
-  normal:{nombre:'Normal',icono:'🙂',vidas:3,tiempo:1,derr:1,enem:0,sigue:0,moviles:0.3},
-  dificil:{nombre:'Difícil',icono:'😤',vidas:2,tiempo:0.9,derr:1.2,enem:0.12,sigue:0.1,moviles:0.45},
-  experto:{nombre:'Experto',icono:'💀',vidas:1,tiempo:0.8,derr:1.4,enem:0.25,sigue:0.2,moviles:0.6}};
+  normal:{nombre:'Normal',icono:'🙂',vidas:3,tiempo:1,derr:1,enem:0,sigue:0,moviles:0.3,vel:1,hueco:0,cable:3},
+  dificil:{nombre:'Difícil',icono:'😤',vidas:2,tiempo:0.9,derr:1.2,enem:0.2,sigue:0.2,moviles:0.5,vel:1.35,hueco:0.6,cable:5},
+  experto:{nombre:'Experto',icono:'💀',vidas:1,tiempo:0.8,derr:1.45,enem:0.35,sigue:0.35,moviles:0.7,vel:1.7,hueco:1.2,cable:7}};
 let modo=(()=>{try{const d=localStorage.getItem('pec-dif');return DIFICULTADES[d]?d:'normal';}catch(e){return 'normal';}})();
 const DF=()=>DIFICULTADES[modo];
 // estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente
@@ -487,7 +486,7 @@ const claveRec=()=>N.id+'-'+PI+(modo==='normal'?'':'-'+modo);
 function calcularReto(){const n=defEnem.filter(e=>e.tipo==='chorro'||e.tipo==='perro').length+(SKIN[N.skin.moto].pisable?disparos.length:0);return Math.max(1,Math.ceil(n*0.6));}
 function cfgPedido(){
   const k=PI;
-  return{rio:!!N.rio,seed:N.seed+k*101+VAR*7919,largo:1650+k*410,dif:Math.min(2.4,k*0.5+NI*0.08),caja:N.caja,flota:N.flota,
+  return{rio:!!N.rio,seed:N.seed+k*101+VAR*7919,largo:1650+k*410,dif:Math.min(2.4,k*0.5+NI*0.08)+DF().hueco,caja:N.caja,flota:N.flota,
     puentes:k===0?0.5:0.3,colgantes:k===0?0:0.5,roto:k>=2,ruinas:k===0?0.35:0.3,tuneles:k===0?0.7:0.6,techos:k>=3,pEnem:Math.min(0.98,0.35+k*0.15+DF().enem),pSigue:k===0?0:Math.min(0.9,0.35+k*0.1+DF().sigue),motos:k>=2||(modo!=='normal'&&k>=1),barro:k>=1,charcos:k>=1,
     derr:Math.min(1.4,0.6+k*0.16+NI*0.02)*DF().derr,
     cables:k===0?0.7:0.95,cajas:k===0?0.6:0.7,altos:k===0?0:0.5,moviles:k===0?0:DF().moviles,
@@ -656,9 +655,9 @@ function nuevaPartida(){
 function crearEnemigos(cerca){
   const sk=N.skin;
   enemigos=defEnem.filter(d=>d.b<cerca-60||d.a>cerca+150).map(d=>{
-    if(d.tipo==='perro'){const s=SKIN[sk.perro];return{tipo:'perro',skin:sk.perro,x:d.a+10,y:GY-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:0.9,vivo:true,sigue:d.sigue,smin:d.a,smax:d.b,cd:0,guau:0};}
-    if(d.tipo==='techo'){const s=SKIN[sk.chorro];return{tipo:'techo',skin:sk.chorro,x:d.a+10,y:GY-CASA_H-3-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:0.25,vivo:true,cd:40,tira:0};}
-    const s=SKIN[sk.chorro];return{tipo:'chorro',skin:sk.chorro,x:d.a+30,y:GY-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:-0.55,vivo:true};
+    if(d.tipo==='perro'){const s=SKIN[sk.perro];return{tipo:'perro',skin:sk.perro,x:d.a+10,y:GY-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:0.9*DF().vel,vivo:true,sigue:d.sigue,smin:d.a,smax:d.b,cd:0,guau:0};}
+    if(d.tipo==='techo'){const s=SKIN[sk.chorro];return{tipo:'techo',skin:sk.chorro,x:d.a+10,y:GY-CASA_H-3-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:0.25*DF().vel,vivo:true,cd:40,tira:0};}
+    const s=SKIN[sk.chorro];return{tipo:'chorro',skin:sk.chorro,x:d.a+30,y:GY-s.h,w:s.w,h:s.h,min:d.a,max:d.b,vx:-0.55*DF().vel,vivo:true};
   });
 }
 
@@ -777,6 +776,7 @@ $('borrarBtn').onclick=()=>{$('borrarBtn').hidden=true;$('borrarConf').hidden=fa
 $('borrarNo').onclick=pintarOpciones;
 $('borrarSi').onclick=()=>{borrarProgreso();pintarOpciones();$('opcMsg').textContent='Progreso borrado.';};
 $('optPriv').onclick=()=>window.open('privacidad.html','_blank','noopener');
+$('optCred').onclick=()=>window.open('creditos.html','_blank','noopener');
 // borra pedidos entregados, estrellas y récords de todas las dificultades; se conservan volúmenes, dificultad y la guía vista
 function borrarProgreso(){try{Object.keys(localStorage).filter(k=>/^pec-(prog|est|rec)-/.test(k)).forEach(k=>localStorage.removeItem(k));}catch(e){}}
 // ---------- inventario: sombrero, remera, pantalón y calzado del repartidor (se guardan en el navegador) ----------
@@ -1264,7 +1264,7 @@ function cablesPaso(){
     const g=cableGeom(c);
     for(let k=1;k<=10;k++){
       const f=k/10,x=g.px+(g.bx-g.px)*f,y=g.py+(g.by-g.py)*f;
-      if(x>P.x-1.5&&x<P.x+P.w+1.5&&y>P.y-1.5&&y<P.y+P.h+1.5){lastimar(3);break;}
+      if(x>P.x-1.5&&x<P.x+P.w+1.5&&y>P.y-1.5&&y<P.y+P.h+1.5){lastimar(DF().cable);break;}
     }
   }
 }
@@ -1313,20 +1313,20 @@ function paso(){
   // los pájaros no entran en los túneles: no salen si hay un túnel entre la derecha de la pantalla y el repartidor
   const tunelAdelante=dm.vuela&&plataformas.some(p=>p.t==='tunel'&&p.x-40<cam+W+60&&p.x+p.w+40>P.x-30);
   for(const d of disparos)if(P.x>d&&!motosDisparadas.has(d)){motosDisparadas.add(d);if(tunelAdelante)continue;
-    enemigos.push({tipo:'moto',skin:sm,x:cam+W+20,y:dm.vuela?GY-22:GY-dm.h,base:dm.vuela?GY-22:GY-dm.h,w:dm.w,h:dm.h,vx:dm.vx,vivo:true});sfx.aparece(sm);}
+    enemigos.push({tipo:'moto',skin:sm,x:cam+W+20,y:dm.vuela?GY-22:GY-dm.h,base:dm.vuela?GY-22:GY-dm.h,w:dm.w,h:dm.h,vx:dm.vx*DF().vel,vivo:true});sfx.aparece(sm);}
   for(const e of enemigos){
     if(!e.vivo){e.vy=(e.vy||-3)+0.3;e.y+=e.vy;e.x+=e.vx*0.5;continue;}
     if(e.tipo==='perro'){
       const dx=P.x-e.x,cerca=Math.abs(dx)<(e.sigue?160:90)&&Math.abs(P.y-e.y)<70;
       e.persigue=e.sigue&&cerca;
-      if(e.persigue){const obj=Math.abs(dx)>6?Math.sign(dx)*1.75:0;e.vx+=(obj-e.vx)*0.12;}
-      else if(Math.abs(e.vx)>0.95||Math.abs(e.vx)<0.5)e.vx=Math.sign(e.vx||1)*0.9;
+      if(e.persigue){const obj=Math.abs(dx)>6?Math.sign(dx)*1.75*DF().vel:0;e.vx+=(obj-e.vx)*0.12;}
+      else if(Math.abs(e.vx)>0.95*DF().vel||Math.abs(e.vx)<0.5*DF().vel)e.vx=Math.sign(e.vx||1)*0.9*DF().vel;
       e.cd--;if(e.guau>0)e.guau--;
       if(cerca&&e.cd<=0){sfx.voz(e.skin,Math.max(-1,Math.min(1,(e.x-P.x)/120)));e.guau=30;e.cd=(e.persigue?60:100)+Math.random()*50;}
     }
     if(e.tipo==='techo')techoPaso(e);
     if(e.tipo==='moto'){if(e.skin==='tucan'){const tu=plataformas.find(p=>p.t==='tunel'&&e.x+e.w>p.x-70&&e.x<p.x+p.w+30);e.base+=((tu?tu.y-44:GY-22)-e.base)*0.1;e.y=e.base+Math.sin(t*0.15)*2;} // si ya venía volando, pasa por encima del cerro
-      if(e.skin==='remolino')e.vx=-1.6+Math.sin(t*0.05)*0.6;}
+      if(e.skin==='remolino')e.vx=(-1.6+Math.sin(t*0.05)*0.6)*DF().vel;}
     e.x+=e.vx;
     if(e.tipo==='perro'&&e.persigue){if(e.x<e.smin){e.x=e.smin;e.vx=0;}if(e.x+e.w>e.smax){e.x=e.smax-e.w;e.vx=0;}}
     if(e.tipo!=='moto'&&!e.persigue){if(e.x<e.min){e.x=e.min;e.vx*=-1;}if(e.x+e.w>e.max){e.x=e.max-e.w;e.vx*=-1;}}
