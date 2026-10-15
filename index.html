@@ -140,6 +140,13 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .opc b{color:var(--sol);text-align:right}
 .opcMsg{min-height:1.2em;font-size:clamp(10px,1.5vw,13px);color:var(--sol)}
 @media (max-height:560px){.menuV{gap:6px}.opc{gap:4px}.opc input[type=range]{height:18px}#titulo h1{font-size:clamp(22px,6vw,38px)}}
+.inv{display:flex;gap:clamp(10px,2.4vw,28px);align-items:center;justify-content:center;width:min(100%,820px);flex-wrap:wrap;font-family:var(--display)}
+.invVista canvas{display:block;width:clamp(80px,17vw,170px);height:auto;aspect-ratio:30/34;background:#2a2340;border:2px solid #4a4066;box-shadow:3px 3px 0 #0008}
+.invCats{display:flex;flex-direction:column;gap:clamp(4px,1vw,10px);flex:1;min-width:min(100%,250px);text-align:left}
+.invCat>span{display:block;margin-bottom:2px;font-size:clamp(10px,1.3vw,13px);color:var(--chapa);text-transform:uppercase;letter-spacing:.06em}
+.invOpc{display:flex;flex-wrap:wrap;gap:4px}
+body.touch .invOpc .dif{padding:5px 9px;min-height:32px}
+@media (max-height:560px){#inventario h2{display:none}.invCats{gap:3px}.invCat>span{font-size:9px;margin:0}.invOpc{gap:3px}.invOpc .dif,body.touch .invOpc .dif{padding:1px 7px;min-height:0;font-size:10px}#inventario button.btn,body.touch #inventario button.btn{padding:3px 16px;font-size:12px}}
 .tactil{display:none;position:absolute;left:0;right:0;bottom:0;padding:0 clamp(8px,2.2vmin,22px) clamp(8px,2.2vmin,22px);justify-content:space-between;align-items:flex-end;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;z-index:6}
 .tactil .mov,.tactil .acc{display:flex;gap:clamp(8px,2.4vmin,20px);align-items:flex-end}
 .tactil .mov{pointer-events:auto;touch-action:none;padding:10px 10px 0 0}
@@ -222,7 +229,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
     <h1>Pedido en Camino</h1>
     <p class="sub">Un repartidor, un pedido y el reloj corriendo.</p>
-    <div class="menuV"><button class="btn" id="tJugar">▶ Jugar</button><button class="btn sec" id="tOpciones">⚙ Opciones</button></div>
+    <div class="menuV"><button class="btn" id="tJugar">▶ Jugar</button><button class="btn sec" id="tInventario">🎒 Inventario</button><button class="btn sec" id="tOpciones">⚙ Opciones</button></div>
   </div>
   <div class="capa" id="inicio">
     <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
@@ -246,7 +253,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
 
   <div class="capa" id="pausaCapa" hidden>
     <h2>Pausa</h2>
-    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pOpciones">⚙ Opciones</button><button class="btn sec" id="pMenu">⌂ Menú principal</button></div>
+    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pInventario">🎒 Inventario</button><button class="btn sec" id="pOpciones">⚙ Opciones</button><button class="btn sec" id="pMenu">⌂ Menú principal</button></div>
   </div>
   <div class="capa" id="opciones" hidden>
     <h2>Opciones</h2>
@@ -258,6 +265,14 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
       <div class="opcMsg" id="opcMsg" role="status"></div>
     </div>
     <div class="botones"><button class="btn" id="optVolver">‹ Volver</button></div>
+  </div>
+  <div class="capa" id="inventario" hidden>
+    <h2>🎒 Inventario</h2>
+    <div class="inv">
+      <div class="invVista"><canvas id="invCv" aria-label="Vista previa del repartidor"></canvas></div>
+      <div class="invCats" id="invCats"></div>
+    </div>
+    <div class="botones"><button class="btn" id="invVolver">‹ Volver</button></div>
   </div>
   <div class="capa" id="guia" hidden>
     <h2>Cómo se juega</h2>
@@ -622,11 +637,12 @@ const mapa={KeyC:'charly',ArrowLeft:'izq',KeyA:'izq',ArrowRight:'der',KeyD:'der'
 addEventListener('keydown',e=>{
   if(mapa[e.code]&&estado==='juego'){tecla[mapa[e.code]]=true;e.preventDefault();}
   if(e.code==='KeyP')alternarPausa();
-  if(e.code==='KeyR'&&pausa&&estado==='juego'&&$('opciones').hidden)arrancar();
+  if(e.code==='KeyR'&&pausa&&estado==='juego'&&$('opciones').hidden&&$('inventario').hidden)arrancar();
   if(e.code==='KeyF')pantallaCompleta();
   if(e.code==='KeyM'){ponerMudo(!mudo);}
   if(e.code==='Escape'){
     if(!$('opciones').hidden){e.preventDefault();cerrarOpciones();return;}
+    if(!$('inventario').hidden){e.preventDefault();cerrarInventario();return;}
     if(estado==='inicio'){e.preventDefault();abrirTitulo();return;}
   }
   if(e.code==='Escape'&&(estado==='juego'||estado==='brief'||estado==='fin')){e.preventDefault();salirAlMenu();}
@@ -662,7 +678,7 @@ function armarMenu(){
     return `<button class="nivel bloq" data-i="${i}" disabled><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>🔒 ${n.nombre}</b><span>Necesitás ${EST_REQ}★ en ${NIVELES[i-1].nombre} (${estrellasEscenario(i-1)}/${EST_REQ})</span></button>`;}).join('');
   $('niveles').querySelectorAll('.nivel:not(.bloq)').forEach(b=>{b.onclick=()=>abrirBrief(+b.dataset.i);b.onfocus=b.onmouseenter=()=>{if(estado==='inicio'&&NI!==+b.dataset.i){cargarNivel(+b.dataset.i);}};});
 }
-function mostrar(id){['titulo','inicio','brief','fin','guia','opciones'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;$('pausaCapa').hidden=true;if(id!==null)$('pista').hidden=true;}
+function mostrar(id){['titulo','inicio','brief','fin','guia','opciones','inventario'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;$('pausaCapa').hidden=true;if(id!==null)$('pista').hidden=true;}
 // guía de cómo se juega: sale la primera vez y se puede omitir; después se abre desde el menú
 const guiaVista=()=>{try{return localStorage.getItem('pec-guia')==='1';}catch(e){return false;}};
 let guiaN=0;
@@ -713,6 +729,24 @@ $('borrarSi').onclick=()=>{borrarProgreso();pintarOpciones();$('opcMsg').textCon
 $('optPriv').onclick=()=>window.open('privacidad.html','_blank','noopener');
 // borra pedidos entregados, estrellas y récords de todas las dificultades; se conservan volúmenes, dificultad y la guía vista
 function borrarProgreso(){try{Object.keys(localStorage).filter(k=>/^pec-(prog|est|rec)-/.test(k)).forEach(k=>localStorage.removeItem(k));}catch(e){}}
+// ---------- inventario: sombrero, remera, pantalón y calzado del repartidor (se guardan en el navegador) ----------
+let invDesde='titulo';
+function armarInventario(){
+  $('invCats').innerHTML=ESTILO_CATS.map(c=>`<div class="invCat"><span>${c.titulo}</span><div class="invOpc" role="group" aria-label="${c.nombre}">${c.op.map(([k,n])=>`<button class="dif" data-c="${c.id}" data-k="${k}" aria-pressed="${ESTILO[c.id]===k}">${n}</button>`).join('')}</div></div>`).join('');
+  $('invCats').querySelectorAll('.dif').forEach(b=>b.onclick=()=>{
+    ESTILO[b.dataset.c]=b.dataset.k;guardarEstilo();audioInit();sfx.click();
+    b.parentNode.querySelectorAll('.dif').forEach(o=>o.setAttribute('aria-pressed',o===b));
+  });
+}
+function abrirInventario(desde){invDesde=desde;if(desde!=='pausa')estado='inventario';mostrar('inventario');armarInventario();vistaT=0;invOn=true;$('invVolver').focus();}
+function cerrarInventario(){
+  invOn=false;
+  if(invDesde==='pausa'){mostrar(null);$('pausaCapa').hidden=false;$('tactil').hidden=true;$('pSeguir').focus();}
+  else abrirTitulo();
+}
+$('invVolver').onclick=cerrarInventario;
+$('tInventario').onclick=()=>abrirInventario('titulo');
+$('pInventario').onclick=()=>abrirInventario('pausa');
 function abrirMenu(){if(derr.on)cargarNivel(NI,PI);estado='inicio';$('izq').hidden=true;armarMenu();mostrar('inicio');$('hud').hidden=true;$('reloj').hidden=true;audioInit();ambienteNivel(N.id);$('niveles').querySelector(`[data-i="${NI}"]`)?.focus();}
 function abrirBrief(i,pi){
   if(!escenarioAbierto(i)){abrirMenu();return;}
@@ -747,7 +781,7 @@ $('salir').onclick=salirAlMenu;
 $('pMenu').onclick=salirAlTitulo;
 $('sonido').onclick=()=>{ponerMudo(!mudo);$('juego').focus();};
 function alternarPausa(){
-  if(estado!=='juego'||!$('opciones').hidden)return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();
+  if(estado!=='juego'||!$('opciones').hidden||!$('inventario').hidden)return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();
   for(const id of ['pausar','pausarT']){$(id).textContent=pausa?'▶':'⏸';$(id).setAttribute('aria-label',pausa?'Seguir':'Pausa');}
   $('pausaCapa').hidden=!pausa;$('tactil').hidden=pausa;if(pausa)$('pSeguir').focus();
 }
@@ -2123,12 +2157,75 @@ function dibujarItem(m){
 // =====================================================================
 // PERSONAJES
 // =====================================================================
+// estilo del repartidor: cada catálogo es [id guardado, nombre en el menú]; los dibujos están en REMERAS, PANTALONES, zapato() y sombrero()
+const ESTILO_CATS=[
+  {id:'s',nombre:'Sombrero',titulo:'🧢 Sombrero',op:[['gorra','Gorra'],['lana','Gorro de lana'],['paja','Sombrero de paja'],['casco','Casco'],['boina','Boina'],['nada','Sin sombrero']]},
+  {id:'r',nombre:'Remera',titulo:'👕 Remera',op:[['verde','Verde 65'],['celeste','Celeste y blanca'],['boca','Azul y oro'],['roja','Roja'],['negra','Negra'],['naranja','Naranja']]},
+  {id:'p',nombre:'Pantalón',titulo:'👖 Pantalón',op:[['oscuro','Clásico'],['jean','Jean'],['gris','Jogging'],['bermuda','Bermuda'],['short','Short rojo']]},
+  {id:'z',nombre:'Calzado',titulo:'👟 Calzado',op:[['clasicas','Zapatillas'],['botas','Botas'],['montana','Zapatillas de montaña'],['roller','Rollers'],['ojotas','Ojotas'],['descalzo','Descalzo']]},
+];
+const REMERAS={ // b: color base, v: rayas verticales, h: franja horizontal, n: color del número
+  verde:{b:'#3f9a4a',n:'#f4ecdf'},
+  celeste:{b:'#75aadb',v:'#f4f4f6',n:'#1a3e8c'},
+  boca:{b:'#1a3e8c',h:'#f2c200',n:'#1a3e8c'},
+  roja:{b:'#c4263a',n:'#f4ecdf'},
+  negra:{b:'#2a2832',n:'#f2c14e'},
+  naranja:{b:'#e8762c',n:'#2a2238'},
+};
+const PANTALONES={ // c: color, corto: filas de tela desde la cintura (el resto de la pierna queda a la vista)
+  oscuro:{c:'#3b3550'},
+  jean:{c:'#3a5f94'},
+  gris:{c:'#7a7a86'},
+  bermuda:{c:'#a8956a',corto:5},
+  short:{c:'#c0392b',corto:4},
+};
+let ESTILO=(()=>{
+  const d={s:'gorra',r:'verde',p:'oscuro',z:'clasicas'};
+  try{const g=JSON.parse(localStorage.getItem('pec-estilo'));if(g)for(const c of ESTILO_CATS)if(c.op.some(([k])=>k===g[c.id]))d[c.id]=g[c.id];}catch(e){}
+  return d;
+})();
+function guardarEstilo(){try{localStorage.setItem('pec-estilo',JSON.stringify(ESTILO));}catch(e){}}
+// un pie de 3×N píxeles: fx es la columna más a la izquierda, yb la fila de abajo, u=0 es el talón y u=2 la punta (mirando a d)
+function zapato(tipo,fx,yb,d,barro,piel){
+  const Q=(u,dy,w,c)=>R(d>0?fx+u:fx+2-(u+w-1),yb+dy,w,1,barro?'#5a3a1e':c);
+  switch(tipo){
+  case 'botas':Q(0,-3,2,'#8a5a30');Q(0,-2,2,'#6a4326');Q(1,-2,1,'#d8c8a0');Q(0,-1,3,'#6a4326');Q(0,0,3,'#2a1a0e');break;
+  case 'montana':Q(0,-2,2,'#7a8a64');Q(1,-2,1,'#e8762c');Q(0,-1,3,'#7a8a64');Q(2,-1,1,'#4a5a3a');Q(0,0,3,'#2a2a2a');break;
+  case 'roller':Q(0,-3,2,'#3a8fd6');Q(1,-3,1,'#f4f4f6');Q(0,-2,3,'#3a8fd6');Q(0,-1,3,'#bdbdbd');Q(0,0,1,'#f2c14e');Q(2,0,1,'#f2c14e');break;
+  case 'ojotas':Q(0,-1,3,piel);Q(1,-1,1,'#3fa7d6');Q(0,0,3,'#3fa7d6');break;
+  case 'descalzo':Q(0,-1,2,piel);Q(0,0,3,piel);Q(2,0,1,'#c98a60');break;
+  default:Q(0,-1,2,'#f4ecdf');Q(1,-1,1,'#c8553d');Q(0,0,3,'#f4ecdf');
+  }
+}
+// cabeza: x,y del repartidor (la cara ocupa x+2..x+6, y+1..y+5)
+function sombrero(tipo,x,y,d){
+  switch(tipo){
+  case 'lana':R(x+1,y-1,7,3,'#3a6ea5');R(x+1,y+1,7,1,'#2a4e7a');R(x+4,y-3,2,2,'#f4ecdf');break;
+  case 'paja':R(x-1,y,10,1,'#d8c27a');R(x+2,y-2,5,2,'#d8c27a');R(x+2,y-1,5,1,'#8a4a2a');break;
+  case 'casco':R(x+1,y-1,7,3,'#e8b020');R(x+2,y-2,5,1,'#e8b020');R(x+3,y-1,2,1,'#fff3a0');R(x+1,y+1,7,1,'#b88410');R(d>0?x+6:x+2,y+2,1,2,'#3a2a1e');break;
+  case 'boina':R(x+1,y,7,2,'#7a2a3a');R(x+2,y-1,5,1,'#7a2a3a');R(d>0?x+3:x+5,y-2,1,1,'#7a2a3a');break;
+  case 'nada':R(x+2,y,5,2,'#3a2a1e');R(d>0?x+2:x+6,y+2,1,2,'#3a2a1e');break;
+  default:R(x+2,y,5,2,'#c8553d');R(d>0?x+6:x-1,y+1,4,1,'#c8553d');
+  }
+}
+// vista previa del inventario: dibuja el repartidor caminando en su propio lienzo (40×36)
+let invOn=false,vistaT=0,vistaCtx=null;
+function dibujarVistaPrevia(){
+  if(!vistaCtx){const c=$('invCv');c.width=30*S;c.height=34*S;vistaCtx=c.getContext('2d');vistaCtx.setTransform(S,0,0,S,0,0);vistaCtx.imageSmoothingEnabled=false;}
+  const sv={ctx,P,cam,charly};
+  try{
+    ctx=vistaCtx;cam=0;charly={...charly,fuera:false,tiro:0};
+    R(0,0,30,34,'#2a2340');R(0,30,30,4,'#3a3352');R(0,30,30,1,'#4a4066');
+    P={x:14,y:8,w:8,h:22,vx:2,vy:0,piso:true,dir:1,inv:0,anim:vistaT/8,barro:0,coyote:0,buffer:0};
+    dibujarJugador();
+  }finally{ctx=sv.ctx;P=sv.P;cam=sv.cam;charly=sv.charly;}
+}
 function dibujarJugador(){
   if(P.inv>0&&(t>>2)%2)return;
   // repartidor flaco y alto (8×22) con la 65 en la remera
   const x=Math.round(P.x-cam),y=Math.round(P.y),d=P.dir,pierna=P.piso?Math.floor(P.anim)%2:1;
   if(ASSETS.jugador(x,y,d,pierna))return;
-  const piel='#e1a77d',remera='#3f9a4a',pant='#3b3550';
+  const piel='#e1a77d',es=ESTILO,rm=REMERAS[es.r],pn=PANTALONES[es.p];
   const mx=d>0?x-6:x+7;
   // perrito asomado en la mochila, con orejas grandes que rebotan al correr y al saltar
   const rebote=!P.piso?(P.vy<0?-1:1):(Math.abs(P.vx)>0.4?(Math.floor(P.anim*2)%2):0);
@@ -2145,22 +2242,25 @@ function dibujarJugador(){
   // mochila térmica
   R(mx,y+7,7,9,'#e8762c');R(mx,y+7,7,2,'#f29a52');R(mx+2,y+11,3,1,'#9c4410');
   if(!charly.fuera){R(hx,y+8,2,1,pel);R(hx+5,y+8,2,1,pel);}                         // patitas sobre el borde
-  // piernas largas
-  const zap=P.barro>0?'#5a3a1e':'#f4ecdf';
-  R(x+2,y+14,2,8-(pierna?1:0),pant);R(x+5,y+14,2,8-(pierna?0:1),pant);
-  R(x+1,y+21-(pierna?1:0),3,1,zap);R(x+5,y+21-(pierna?0:1),3,1,zap);
+  // piernas largas: el pantalón corto deja la pierna a la vista
+  const lp=8-(pierna?1:0),rp=8-(pierna?0:1),co=pn.corto||8;
+  R(x+2,y+14,2,Math.min(co,lp),pn.c);R(x+5,y+14,2,Math.min(co,rp),pn.c);
+  if(co<8){R(x+2,y+14+co,2,lp-co,piel);R(x+5,y+14+co,2,rp-co,piel);}
+  zapato(es.z,d>0?x+2:x+1,y+21-(pierna?1:0),d,P.barro>0,piel);zapato(es.z,d>0?x+5:x+4,y+21-(pierna?0:1),d,P.barro>0,piel);
   if(P.barro>2){R(x+2,y+18,2,2,'#5a3a1e');R(x+5,y+18,2,2,'#5a3a1e');}
-  // torso angosto con la 65
-  R(x+1,y+7,7,8,remera);R(x+1,y+7,7,1,'#ffffff44');R(x+1,y+14,7,1,'#00000033');
+  // torso angosto con el número
+  R(x+1,y+7,7,8,rm.b);
+  if(rm.v)for(let k=1;k<7;k+=2)R(x+1+k,y+7,1,8,rm.v);
+  if(rm.h)R(x+1,y+9,7,4,rm.h);
+  R(x+1,y+7,7,1,'#ffffff44');R(x+1,y+14,7,1,'#00000033');
   ctx.font='700 4.4px Fredoka, sans-serif';ctx.textAlign='center';
-  ctx.fillStyle='#00000055';ctx.fillText('65',x+4.9,y+13.2);ctx.fillStyle='#f4ecdf';ctx.fillText('65',x+4.5,y+12.8);ctx.textAlign='left';
+  ctx.fillStyle='#00000055';ctx.fillText('65',x+4.9,y+13.2);ctx.fillStyle=rm.n;ctx.fillText('65',x+4.5,y+12.8);ctx.textAlign='left';
   // brazo y cuello
   R(d>0?x+7:x,y+8,1,6,piel);R(d>0?x+7:x,y+14,1,1,'#c98a60');
   R(x+3,y+6,2,1,piel);
   // cabeza
   R(x+2,y+1,5,5,piel);R(d>0?x+5:x+3,y+3,1,1,'#1b1726');R(d>0?x+6:x+2,y+5,1,1,'#c98a60');
-  if(N.id==='glaciar'){R(x+1,y-1,7,3,'#3a6ea5');R(x+4,y-3,2,2,'#f4ecdf');}
-  else{R(x+2,y,5,2,'#c8553d');R(d>0?x+6:x-1,y+1,4,1,'#c8553d');}
+  sombrero(es.s,x,y,d);
 }
 function cuadrupedo(x,y,d,a,col,osc,cola){
   R(x+2,y+3,11,4,col);R(d>0?x+11:x,y,5,5,col);R(d>0?x+14:x,y+2,2,2,osc);R(d>0?x+12:x+2,y-1,2,2,osc);
@@ -2864,11 +2964,12 @@ function bucle(ahora){
     if(!pausa)heliPaso();
     if(flash>0&&!pausa)flash--;if(dolor>0&&!pausa)dolor=Math.max(0,dolor-0.016);
     if(estado==='juego'&&!pausa)paso();
-    else if(estado==='inicio'||estado==='brief'||estado==='guia'||estado==='titulo'||estado==='opciones'){t++;cam=(cam+0.45)%(LARGO-W);}
+    else if(estado==='inicio'||estado==='brief'||estado==='guia'||estado==='titulo'||estado==='opciones'||estado==='inventario'){t++;cam=(cam+0.45)%(LARGO-W);}
     else if(estado==='fin')t++;
+    if(invOn)vistaT++;
     acum-=1000/60;
   }
-  dibujar();if(estado==='juego')hud();
+  dibujar();if(estado==='juego')hud();if(invOn)dibujarVistaPrevia();
   requestAnimationFrame(bucle);
 }
 requestAnimationFrame(bucle);
