@@ -253,7 +253,8 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
 
   <div class="capa" id="pausaCapa" hidden>
     <h2>Pausa</h2>
-    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pInventario">🎒 Inventario</button><button class="btn sec" id="pOpciones">⚙ Opciones</button><button class="btn sec" id="pMenu">⌂ Menú principal</button></div>
+    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button></div>
+    <div class="botones"><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pOpciones">⚙ Opciones</button><button class="btn sec" id="pMenu">⌂ Menú principal</button></div>
   </div>
   <div class="capa" id="opciones" hidden>
     <h2>Opciones</h2>
@@ -730,7 +731,6 @@ $('optPriv').onclick=()=>window.open('privacidad.html','_blank','noopener');
 // borra pedidos entregados, estrellas y récords de todas las dificultades; se conservan volúmenes, dificultad y la guía vista
 function borrarProgreso(){try{Object.keys(localStorage).filter(k=>/^pec-(prog|est|rec)-/.test(k)).forEach(k=>localStorage.removeItem(k));}catch(e){}}
 // ---------- inventario: sombrero, remera, pantalón y calzado del repartidor (se guardan en el navegador) ----------
-let invDesde='titulo';
 function armarInventario(){
   $('invCats').innerHTML=ESTILO_CATS.map(c=>`<div class="invCat"><span>${c.titulo}</span><div class="invOpc" role="group" aria-label="${c.nombre}">${c.op.map(([k,n])=>`<button class="dif" data-c="${c.id}" data-k="${k}" aria-pressed="${ESTILO[c.id]===k}">${n}</button>`).join('')}</div></div>`).join('');
   $('invCats').querySelectorAll('.dif').forEach(b=>b.onclick=()=>{
@@ -738,15 +738,10 @@ function armarInventario(){
     b.parentNode.querySelectorAll('.dif').forEach(o=>o.setAttribute('aria-pressed',o===b));
   });
 }
-function abrirInventario(desde){invDesde=desde;if(desde!=='pausa')estado='inventario';mostrar('inventario');armarInventario();vistaT=0;invOn=true;$('invVolver').focus();}
-function cerrarInventario(){
-  invOn=false;
-  if(invDesde==='pausa'){mostrar(null);$('pausaCapa').hidden=false;$('tactil').hidden=true;$('pSeguir').focus();}
-  else abrirTitulo();
-}
+function abrirInventario(){estado='inventario';mostrar('inventario');armarInventario();vistaT=0;invOn=true;$('invVolver').focus();}
+function cerrarInventario(){invOn=false;abrirTitulo();}
 $('invVolver').onclick=cerrarInventario;
-$('tInventario').onclick=()=>abrirInventario('titulo');
-$('pInventario').onclick=()=>abrirInventario('pausa');
+$('tInventario').onclick=abrirInventario;
 function abrirMenu(){if(derr.on)cargarNivel(NI,PI);estado='inicio';$('izq').hidden=true;armarMenu();mostrar('inicio');$('hud').hidden=true;$('reloj').hidden=true;audioInit();ambienteNivel(N.id);$('niveles').querySelector(`[data-i="${NI}"]`)?.focus();}
 function abrirBrief(i,pi){
   if(!escenarioAbierto(i)){abrirMenu();return;}
@@ -2330,9 +2325,13 @@ function estrellaPisoton(p){
   for(let i=0;i<10;i++){const rr=i%2?r*0.42:r,a=-Math.PI/2+i*Math.PI/5;ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);}
   ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
 }
+const ZOOM_INI=0.2,ZOOM_INI_T=90,easeOut=u=>1-(1-u)**3; // acercamiento inicial: +20 % que baja a 1 en 90 cuadros (1,5 s)
 function dibujar(){
   const E=ESC[N.id],enJuego=estado==='juego',tem=enJuego?temblor:0,sac=enJuego?sacudida:0,sh=sac>0||tem>0.05,am=(sac>0?sac*0.4:0)+tem;
   if(sh){ctx.save();ctx.translate((Math.random()-.5)*am,(Math.random()-.5)*am);}
+  // al empezar la partida la cámara arranca cerca del repartidor y se aleja suave hasta el encuadre normal
+  const zi=(enJuego||estado==='fin')&&t<ZOOM_INI_T?1+ZOOM_INI*(1-easeOut(t/ZOOM_INI_T)):1;
+  if(zi>1){const ax=P.x-cam+P.w/2,ay=P.y+P.h/2;ctx.save();ctx.translate(ax,ay);ctx.scale(zi,zi);ctx.translate(-ax,-ay);}
   ASSETS.fondo(E);bruma();if(E.cerca)E.cerca();
   dibujarSuelo();dibujarDerrumbe();dibujarQuemaduras();
   casasTecho.forEach(dibujarCasaTecho);
@@ -2352,6 +2351,7 @@ function dibujar(){
   if(estado==='juego'||estado==='fin')dibujarViento();
   if(flash>0){ctx.save();ctx.globalAlpha=Math.min(1,flash/18)*0.85;R(0,0,W,H,'#f4ecdf');ctx.globalAlpha=Math.min(1,flash/14);ctx.font='700 14px Fredoka, sans-serif';ctx.textAlign='center';ctx.fillStyle='#2a2238';ctx.fillText(N.unidad==='cuadras'?'¡Otro camino por el barrio!':'¡Otro camino!',W/2,H/2);ctx.textAlign='left';ctx.restore();}
   dibujarDolor();
+  if(zi>1)ctx.restore();
   if(sh)ctx.restore();
 }
 

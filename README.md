@@ -21,7 +21,7 @@ Menús
   Opciones     volumen de efectos y de ambiente (se guardan), sonido on/off, enlace a la privacidad y
                "Borrar progreso" (con confirmación; borra pedidos, estrellas y récords, no los volúmenes).
                También se abre desde el menú de pausa.
-  Inventario   desde el título y desde la pausa: elegís sombrero (gorra, gorro de lana, sombrero de paja, casco, boina o ninguno),
+  Inventario   desde el título: elegís sombrero (gorra, gorro de lana, sombrero de paja, casco, boina o ninguno),
                remera (6), pantalón (clásico, jean, jogging, bermuda, short) y calzado (zapatillas, botas, zapatillas de montaña,
                rollers, ojotas o descalzo). Vista previa animada y se guarda en el navegador (pec-estilo); "Borrar progreso" no
                lo toca. Es solo estético. Si hay assets/jugador.png, ese dibujo reemplaza al repartidor y el estilo no se ve.
