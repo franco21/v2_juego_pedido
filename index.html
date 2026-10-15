@@ -466,8 +466,9 @@ const DIFICULTADES={
   experto:{nombre:'Experto',icono:'💀',vidas:1,tiempo:0.8,derr:1.4,enem:0.25,sigue:0.2,moviles:0.6}};
 let modo=(()=>{try{const d=localStorage.getItem('pec-dif');return DIFICULTADES[d]?d:'normal';}catch(e){return 'normal';}})();
 const DF=()=>DIFICULTADES[modo];
-// estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente (?todo en la URL abre todos, ?abrir=sanrafael abre solo ese, para probar)
-const EST_REQ=8,TODO=/[?&]todo\b/.test(location.search),ABRIR=(location.search.match(/[?&]abrir=([\w-]+)/)||[])[1];
+// estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente
+// DESBLOQUEAR_TODO=true deja abiertos los 9 escenarios (para trabajar); con false vale el requisito de estrellas (?todo en la URL abre todos y ?abrir=sanrafael abre solo ese)
+const DESBLOQUEAR_TODO=true,EST_REQ=8,TODO=DESBLOQUEAR_TODO||/[?&]todo\b/.test(location.search),ABRIR=(location.search.match(/[?&]abrir=([\w-]+)/)||[])[1];
 let retoMeta=1;
 // el progreso (pedidos entregados y estrellas) es por dificultad: pasar un escenario en Normal no abre el siguiente en Difícil ni en Experto
 const sufModo=()=>modo==='normal'?'':'-'+modo;
