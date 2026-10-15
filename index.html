@@ -253,8 +253,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
 
   <div class="capa" id="pausaCapa" hidden>
     <h2>Pausa</h2>
-    <div class="botones"><button class="btn" id="pSeguir">▶ Seguir</button></div>
-    <div class="botones"><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pOpciones">⚙ Opciones</button><button class="btn sec" id="pMenu">⌂ Menú principal</button></div>
+    <div class="menuV"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pOpciones">⚙ Opciones</button><button class="btn sec" id="pMenu">⌂ Menú principal</button></div>
   </div>
   <div class="capa" id="opciones" hidden>
     <h2>Opciones</h2>
@@ -778,7 +777,7 @@ $('sonido').onclick=()=>{ponerMudo(!mudo);$('juego').focus();};
 function alternarPausa(){
   if(estado!=='juego'||!$('opciones').hidden||!$('inventario').hidden)return;pausa=!pausa;if(AC)pausa?AC.suspend():AC.resume();
   for(const id of ['pausar','pausarT']){$(id).textContent=pausa?'▶':'⏸';$(id).setAttribute('aria-label',pausa?'Seguir':'Pausa');}
-  $('pausaCapa').hidden=!pausa;$('tactil').hidden=pausa;if(pausa)$('pSeguir').focus();
+  $('pausaCapa').hidden=!pausa;$('tactil').hidden=pausa;if(pausa){$('pista').hidden=true;$('pSeguir').focus();}
 }
 $('pSeguir').onclick=()=>{alternarPausa();$('juego').focus();};
 $('pReiniciar').onclick=arrancar;
