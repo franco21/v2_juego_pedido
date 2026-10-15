@@ -26,6 +26,7 @@ Cómo se usa
         assets/fondos/boca-lejos.png     el fondo de La Boca
         assets/sonidos/gol.ogg           el grito de gol
         assets/ambiente/boca.ogg         la música ambiente de La Boca
+        assets/ambiente/titulo.ogg       la música de la pantalla de título (suena hasta que tocás Jugar)
   4. Hacé doble clic en  actualizar-assets.bat  (o corré  node tools/assets.mjs ).
      Eso actualiza assets/manifest.json, la lista de archivos que lee el juego.
   5. Subí el juego (commit, push y vercel --prod).

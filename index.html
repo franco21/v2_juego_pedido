@@ -749,7 +749,9 @@ $('guiaSig').onclick=()=>{if(guiaN<pasosGuia().length-1){guiaN++;pintarGuia();}e
 $('guiaOmitir').onclick=cerrarGuia;
 $('verGuia').onclick=abrirGuia;
 // ---------- título y opciones ----------
-function abrirTitulo(){estado='titulo';$('izq').hidden=true;$('hud').hidden=true;$('reloj').hidden=true;mostrar('titulo');$('tJugar').focus();}
+function abrirTitulo(){estado='titulo';$('izq').hidden=true;$('hud').hidden=true;$('reloj').hidden=true;mostrar('titulo');$('tJugar').focus();audioInit();ambienteNivel('titulo');}
+// el navegador no deja sonar hasta el primer toque o tecla: ahí arranca la música del título
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>audioInit(),{once:true,capture:true}));
 $('tJugar').onclick=()=>{audioInit();if(!guiaVista())abrirGuia();else abrirMenu();};
 $('tOpciones').onclick=()=>abrirOpciones('titulo');
 $('aTitulo').onclick=abrirTitulo;
@@ -1108,6 +1110,16 @@ const AMB={
     compases(gen,corch*6,(c,n)=>{const ac=acordes[n%4];
       tono(ac[0],ac[0],corch*5,'triangle',0.08,c,mus);
       [1,2,3,2,1].forEach((k,j)=>tono(ac[k]*2,ac[k]*2,0.9,'triangle',0.035,c+corch*(j+1),mus));});
+  },
+  // música de la pantalla de título: sigue hasta que se toca ▶ Jugar y se pasa al ambiente del escenario
+  titulo(bus,gen){
+    const mus=filtroMusica(bus,2400,1.4),negra=60/100;
+    const bajo=[130.8,110,87.3,98],arp=[[261.6,329.6,392],[220,261.6,329.6],[174.6,220,261.6],[196,246.9,293.7]];
+    const mel=[[[0,659.3],[1,784],[2,659.3],[3,523.3]],[[0,523.3],[1,659.3],[2,587.3],[3,440]],[[0,698.5],[1,659.3],[2,523.3],[3,440]],[[0,587.3],[1,659.3],[2,587.3],[3,493.9]]];
+    compases(gen,negra*4,(c,n)=>{const k=n%4;
+      tono(bajo[k],bajo[k],negra*1.8,'triangle',0.09,c,mus);tono(bajo[k],bajo[k],negra*1.8,'triangle',0.07,c+negra*2,mus);
+      [0,1,2,1,0,1,2,1].forEach((q,j)=>tono(arp[k][q],arp[k][q],negra*0.45,'triangle',0.03,c+j*negra/2,mus));
+      mel[k].forEach(([b,f])=>tono(f,f,negra*0.9,'triangle',0.06,c+b*negra,mus,0.01));});
   },
 };
 let glacEvento=null;
@@ -2802,6 +2814,7 @@ const ASSETS=(()=>{
     const r=[['Jugador','jugador','tira de 4 cuadros de 64×112 px en fila (quieto, correr, correr, salto), mirando a la derecha, con mochila y Charly'],['Jugador','jugador-sin-perro','igual que jugador, para cuando Charly salió a tirar el hueso (opcional)']];
     [...new Set(NIVELES.map(n=>n.item).filter(Boolean))].forEach(i=>r.push(['Premios','items/'+i,'64×64 px (se ve de 16×16 píxeles del juego)']));
     Object.entries(SKIN).forEach(([k,b])=>r.push(['Enemigos','enemigos/'+k,`1 o 2 cuadros en fila de ${(b.w+8)*4}×${(b.h+8)*4} px cada uno, mirando a la derecha`]));
+    r.push(['Música ambiente','ambiente/titulo','ogg o mp3 que se repite sin cortes: suena en la pantalla de título hasta que se toca Jugar']);
     NIVELES.forEach(n=>{
       r.push(['Cajas','cajas/'+n.id,'64×64 px: las cajas apiladas de '+n.nombre]);
       r.push(['Fondos','fondos/'+n.id+'-lejos','1536×736 px, tiene que enganchar por los costados; capa lenta de '+n.nombre+' (la plantilla es una sola pantalla: hay que igualar el borde derecho con el izquierdo)']);
@@ -2958,7 +2971,7 @@ const ASSETS=(()=>{
     const existe=async(carp,nombre)=>{try{await(await dir.getDirectoryHandle(carp)).getFileHandle(nombre);return true;}catch(e){return false;}};
     const guardar=async(carp,nombre,blob)=>{const d=await dir.getDirectoryHandle(carp,{create:true}),w=await(await d.getFileHandle(nombre,{create:true})).createWritable();await w.write(blob);await w.close();};
     const silencio=()=>{ambGen++;ambId=null;ambFuentes.forEach(s=>{try{s.stop();}catch(e){}});ambFuentes=[];if(ambBus){ambBus.disconnect();ambBus=null;}};
-    const tareas=[...NIVELES.map(n=>['ambiente',n.id]),...Object.keys(sfx).filter(k=>typeof sfx[k]==='function'&&!['voz','aparece'].includes(k)).map(k=>['sonidos',k])];
+    const tareas=[...['titulo',...NIVELES.map(n=>n.id)].map(id=>['ambiente',id]),...Object.keys(sfx).filter(k=>typeof sfx[k]==='function'&&!['voz','aparece'].includes(k)).map(k=>['sonidos',k])];
     let nuevos=0,omitidos=0,i=0;
     A.plantilla=true;ponerMudo(false);busEf.gain.value=1;busAm.gain.value=1;
     try{
@@ -3008,7 +3021,8 @@ const ASSETS=(()=>{
 P={x:40,y:GY-22,w:8,h:22,vx:0,vy:0,piso:true,dir:1,inv:0,anim:0,coyote:0,buffer:0,barro:0};
 cargarNivel(0);armarMenu();
 abrirTitulo();
-ASSETS.iniciar().then(()=>{if(/[?&]assets\b/.test(location.search))ASSETS.panel();});
+// si el título ya empezó a sonar con la música generada y hay una propia (assets/ambiente/titulo), se cambia
+ASSETS.iniciar().then(()=>{if(estado==='titulo'&&AC){ambId=null;ambienteNivel('titulo');}if(/[?&]assets\b/.test(location.search))ASSETS.panel();});
 let ultimo=performance.now(),acum=0;
 function bucle(ahora){
   acum+=Math.min(100,ahora-ultimo);ultimo=ahora;
