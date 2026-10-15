@@ -1277,8 +1277,6 @@ function paso(){
   vientoPaso();movilesPaso();
   P.x+=P.vx+viento.v*(P.piso?0.5:0.9);if(P.x<cam){P.x=cam;if(P.vx<0)P.vx=0;}
   for(const s of SOL)if(choca(P,s)){
-    // las cajas apiladas se suben caminando: si el escalón es de una caja y hay lugar arriba, el repartidor sube solo
-    if(s.t==='caja'&&P.piso&&P.y+P.h-s.y<=BLOQUE+1){const ny=s.y-P.h,q={x:P.x,y:ny,w:P.w,h:P.h};if(!SOL.some(o=>o!==s&&choca(q,o))){P.y=ny;continue;}}
     if(P.vx>0)P.x=s.x-P.w;else if(P.vx<0)P.x=s.x+s.w;P.vx=0;
   }
   P.y+=P.vy;const antes=P.piso;P.piso=false;
