@@ -148,6 +148,8 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 #titulo.anim #tInventario{animation:tFundido .45s ease-out 1.05s both}
 @media (prefers-reduced-motion:reduce){#titulo .menuV button{opacity:1!important;animation:none!important}}
 #opciones button.btn,#inventario button.btn,#inventario .invOpc .dif,#guia button.btn{border-radius:9px}
+#fin .menuV{flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;min-width:0}
+#fin button.btn{border-radius:9px;font-size:clamp(11px,1.7vw,15px);padding:5px 14px}
 .opc{display:flex;flex-direction:column;gap:8px;width:min(100%,460px);font-family:var(--display)}
 .opc label{display:grid;grid-template-columns:7em 1fr 3ch;align-items:center;gap:10px;text-align:left;font-size:clamp(12px,1.8vw,16px);color:var(--cal)}
 .opc input[type=range]{width:100%;accent-color:var(--sol);height:24px}
