@@ -505,7 +505,7 @@ function calcularReto(){const n=defEnem.filter(e=>e.tipo==='chorro'||e.tipo==='p
 function cfgPedido(){
   const k=PI;
   return{rio:!!N.rio,seed:N.seed+k*101+VAR*7919,largo:Math.round((1650+k*410)*LARGO_X),dif:Math.min(2.4,k*0.5+NI*0.08)+DF().hueco,caja:N.caja,flota:N.flota,
-    puentes:k===0?0.5:0.3,colgantes:k===0?0:0.5,roto:k>=2,ruinas:k===0?0.35:0.3,tuneles:k===0?0.7:0.6,techos:k>=3,pEnem:Math.min(0.98,0.35+k*0.15+DF().enem),pSigue:k===0?0:Math.min(0.9,0.35+k*0.1+DF().sigue),motos:k>=2||(modo!=='normal'&&k>=1),barro:k>=1,charcos:k>=1,
+    puentes:k===0?0.5:0.3,roto:k>=2,ruinas:k===0?0.35:0.3,tuneles:k===0?0.7:0.6,techos:k>=3,pEnem:Math.min(0.98,0.35+k*0.15+DF().enem),pSigue:k===0?0:Math.min(0.9,0.35+k*0.1+DF().sigue),motos:k>=2||(modo!=='normal'&&k>=1),barro:k>=1,charcos:k>=1,
     derr:Math.min(1.4,0.6+k*0.16+NI*0.02)*DF().derr,
     cables:k===0?0.7:0.95,cajas:k===0?0.6:0.7,altos:k===0?0:0.5,moviles:k===0?0:DF().moviles,
     viento:k>=2?(0.55+(k-2)*0.25)*(N.id==='glaciar'||N.id==='quebrada'?1.25:1):0};
@@ -588,7 +588,7 @@ function generar(cfg){
         if(r()<cfg.pEnem){
           const ob=[],mete=(a,b)=>{if(b>libre&&a<fin)ob.push([a-24,b+24]);};
           charcos.forEach(c=>mete(c.x,c.x+c.w));barros.forEach(c=>mete(c.x,c.x+c.w));cables.forEach(c=>mete(c.x-76,c.x+100));casasTecho.forEach(c=>mete(c.x,c.x+c.w));defBloques.forEach(b=>mete(b.x,b.x+BLOQUE));
-          plataformas.forEach(p=>{if(p.t==='puente'||p.t==='tablon')mete(p.x,p.x+p.w);});
+          plataformas.forEach(p=>{if(p.t==='puente')mete(p.x,p.x+p.w);});
           ob.sort((a,b)=>a[0]-b[0]);
           let mejor=null,cur=libre;const largo=m=>m?m[1]-m[0]:0;
           for(const [a,b] of ob){if(a-cur>largo(mejor))mejor=[cur,a];cur=Math.max(cur,b);}
@@ -625,8 +625,7 @@ function generar(cfg){
     // puente sobre el arroyo; desde el pedido 3 algunos tienen un tramo roto
     if(cfg.puentes&&k>0&&r()<cfg.puentes){
       x+=len;const gw=130+Math.floor(r()*60);
-      if(cfg.colgantes&&r()<cfg.colgantes){const n=Math.floor(gw/10);for(let i=0;i<n;i++)plataformas.push({x:x+i*10,y:GY,w:i===n-1?gw-i*10:10,h:4,t:'tablon',i,n});}
-      else if(cfg.roto&&r()<0.5){const h1=Math.floor(gw/2-20);plataformas.push({x,y:GY,w:h1,h:6,t:'puente',ini:true});plataformas.push({x:x+h1+40,y:GY,w:gw-h1-40,h:6,t:'puente',fin:true});defMedias.push([x+h1+20,GY-44]);}
+      if(cfg.roto&&r()<0.5){const h1=Math.floor(gw/2-20);plataformas.push({x,y:GY,w:h1,h:6,t:'puente',ini:true});plataformas.push({x:x+h1+40,y:GY,w:gw-h1-40,h:6,t:'puente',fin:true});defMedias.push([x+h1+20,GY-44]);}
       else plataformas.push({x,y:GY,w:gw,h:6,t:'puente',ini:true,fin:true});
       for(let j=1;j<4;j++)defMedias.push([x+j*gw/4,GY-12]);
       x+=gw;k++;continue;
@@ -1027,7 +1026,6 @@ const sfx={
   rompeMaceta(){ruido(0.16,1700,'bandpass',0.45,0,1.2);ruido(0.1,500,'lowpass',0.35);for(let k=0;k<4;k++)tono(1200+Math.random()*1500,900,0.06,'triangle',0.03,0.02+k*0.03);},
   caja(){tono(784,784,0.08,'square',0.04);tono(1047,1047,0.08,'square',0.04,0.09);tono(1568,1568,0.25,'square',0.04,0.18);},
   retumbe(v=1){ruido(0.5,70+Math.random()*60,'lowpass',0.45*v,0,0.9);tono(48+Math.random()*10,34,0.45,'sine',0.14*v);},
-  tablon(){ruido(0.07,1500,'bandpass',0.3,0,2);tono(240,110,0.1,'square',0.035);},
   zap(){ruido(0.25,3500,'highpass',0.5,0,0.8);tono(900,120,0.22,'sawtooth',0.09);tono(60,50,0.25,'square',0.07);},
   chispa(){ruido(0.05,5500,'highpass',0.1,0,1);tono(2400,1400,0.04,'square',0.015);},
   tucan(){for(let k=0;k<3;k++)tono(620,420,0.12,'sawtooth',0.05,k*0.16);},
@@ -1191,7 +1189,7 @@ function reaparecer(){
 // DERRUMBE Y CAJAS
 // =====================================================================
 // La tierra cede detrás del repartidor y lo persigue: todo lo que queda a la izquierda del frente se cae.
-const TROZO=10,BLOQUE=16,T_TABLON=24;
+const TROZO=10,BLOQUE=16;
 function armarSOL(){SOL=suelo.map(([x,w])=>({x,y:GY,w,h:60})).concat(plataformas,bloques);}
 function caePieza(p,esp=0){cae.push({pl:p,dy:0,vy:0,rot:0,vr:(Math.random()-.5)*0.05,esp});}
 function polvoAt(x,y,c){parts.push({x,y,vx:(Math.random()-.5)*1.6,vy:-0.4-Math.random()*1.2,v:18,c,r:1.5});}
@@ -1253,16 +1251,6 @@ function movilesPaso(){
     p.dx=nx-p.x;p.x=nx;
     if(sobre)P.x+=p.dx;
   }
-}
-// puente colgante: cada tablón aguanta un instante después de pisarlo y se suelta
-function tablonesPaso(){
-  let ch=false;
-  for(let i=plataformas.length-1;i>=0;i--){
-    const p=plataformas[i];if(p.t!=='tablon')continue;
-    if(!p.crujir&&P.piso&&P.x+P.w>p.x&&P.x<p.x+p.w&&Math.abs(P.y+P.h-p.y)<1){p.crujir=T_TABLON;if(p.i%3===0)sfx.tablon();}
-    else if(p.crujir>0&&--p.crujir===0){plataformas.splice(i,1);caePieza(p);ch=true;if(p.i%2===0)sfx.tablon();for(let k=0;k<3;k++)polvoAt(p.x+p.w/2,p.y,'#c9a27a99');}
-  }
-  if(ch)armarSOL();
 }
 // =====================================================================
 // CABLES SUELTOS: cuelgan de un poste, se balancean y quitan puntos
@@ -1364,7 +1352,7 @@ function paso(){
   parts=parts.filter(p=>p.v>0);
   cam=Math.max(cam,Math.min(P.x-W*0.4,LARGO-W));
   pistasPaso();avisosCamino();nochePaso();charlyPaso();proysPaso();rayoPaso();
-  tablonesPaso();cablesPaso();caePaso();
+  cablesPaso();caePaso();
   if(derrPaso())return;
   if(P.x>FIN)terminar(true);
 }
@@ -1401,8 +1389,7 @@ function avisosCamino(){
     if(p.t==='tunel'&&!pistasDadas.has('tunel')){pistasDadas.add('tunel');pista('Cerro con túnel: por abajo pasás rápido pero sin poder saltar alto (Charly con la C). Por arriba hay más comida: subí por la escalera de cajas.');}
     if(p.t==='ruina'&&!pistasDadas.has('ruina')){pistasDadas.add('ruina');pista('Casa derrumbada: subí por los escombros y cruzá el pozo por arriba de la losa.');}
     if(p.t==='puente'&&!pistasDadas.has('puente')&&!(p.ini&&p.fin)){pistasDadas.add('puente');pista('¡Ojo! Este puente tiene un tramo roto: saltá el hueco.');}
-    if(p.rio&&!pistasDadas.has('rio')){pistasDadas.add('rio');pista('El Riachuelo: cruzá el puente de hierro sin frenarte y no te caigas al agua.');}
-    if(p.t==='tablon'&&!pistasDadas.has('tablon')){pistasDadas.add('tablon');pista('Puente colgante: los tablones ceden apenas los pisás. ¡No te frenes!');}}
+    if(p.rio&&!pistasDadas.has('rio')){pistasDadas.add('rio');pista('El Riachuelo: cruzá el puente de hierro sin frenarte y no te caigas al agua.');}}
   if(!pistasDadas.has('cajas')&&!plataformas.some(p=>p.t==='tunel'&&p.x>P.x&&p.x-P.x<260)&&bloques.some(b=>b.x>P.x&&b.x-P.x<160)){pistasDadas.add('cajas');pista('Cajas en el camino: saltá de a una y subí por arriba para pasar.');}
 }
 function texto(x,y,s){parts.push({x,y,vx:0,vy:-0.4,v:50,txt:s});}
@@ -2189,12 +2176,6 @@ function dibujarPlat(p){
   case 'movil':dibujarPlat({...p,t:p.estilo});
     ctx.fillStyle='#f2c14e';ctx.beginPath();ctx.moveTo(x+3,y+p.h+4);ctx.lineTo(x+8,y+p.h+1);ctx.lineTo(x+8,y+p.h+7);ctx.moveTo(x+p.w-3,y+p.h+4);ctx.lineTo(x+p.w-8,y+p.h+1);ctx.lineTo(x+p.w-8,y+p.h+7);ctx.fill();break;
   case 'caja':cajaGfx(Math.round(x),Math.round(y),p.w);break;
-  case 'tablon':{const sh=p.crujir>0&&(p.crujir>>1)%2?1:0,yy=y+sh,ry=y-13+Math.sin(Math.PI*(p.i+0.5)/p.n)*5+sh;
-    R(x,yy,p.w+0.6,3,'#9a6a3a');R(x,yy,p.w,1,'#c99858');R(x+p.w-1,yy+1,1,2,'#5a3a1e');R(x,yy+3,p.w,1,'#5a3a1e');
-    R(x,ry,p.w+0.6,1,'#d8c27a');
-    if(p.i%2===0)R(x+p.w/2-0.5,ry,1,yy-ry,'#a08850');
-    if(p.i===0||p.i===p.n-1)R(p.i?x+p.w-3:x,yy-20,3,24,'#5a3a1e');
-  }break;
   }
 }
 function estrellaAzulOro(x,y){
