@@ -95,8 +95,6 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 .puntos{display:flex;gap:6px;justify-content:center}
 .puntos i{width:8px;height:8px;border-radius:50%;background:#4a4066}
 .puntos i.on{background:var(--sol)}
-.desglose{display:flex;height:16px;border:2px solid #3a3352;background:#0b0a12;overflow:hidden}
-.desglose i{display:block;height:100%}
 .bateria{display:flex;align-items:center;gap:6px;background:#0b0a12d9;border:2px solid #3a3352;padding:4px 8px;pointer-events:none;font-family:var(--display);font-size:clamp(10px,1.5vw,14px);color:var(--cal);box-shadow:3px 3px 0 #0008;transition:opacity .4s}
 .bateria svg.pila{width:clamp(30px,4.6vw,46px);height:auto}
 .bateria svg.spark{width:clamp(50px,8vw,84px);height:auto;background:#ffffff0d}
@@ -149,6 +147,7 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 #opciones button.btn,#inventario button.btn,#inventario .invOpc .dif,#guia button.btn{border-radius:9px}
 #fin .menuV{flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;min-width:0}
 #fin button.btn{border-radius:9px;font-size:clamp(11px,1.7vw,15px);padding:5px 14px}
+#finTexto{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 18px;text-align:center}
 .opc{display:flex;flex-direction:column;gap:8px;width:min(100%,460px);font-family:var(--display)}
 .opc label{display:grid;grid-template-columns:7em 1fr 3ch;align-items:center;gap:10px;text-align:left;font-size:clamp(12px,1.8vw,16px);color:var(--cal)}
 .opc input[type=range]{width:100%;accent-color:var(--sol);height:24px}
@@ -301,7 +300,7 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <h2 id="finTitulo"></h2>
     <div class="resumen" id="resumen" hidden></div>
     <ul class="datos" id="finTexto"></ul>
-    <div class="menuV"><button class="btn" id="sig">Siguiente pedido</button><button class="btn" id="otra">Reintentar</button><button class="btn sec" id="menu">Elegir escenario</button></div>
+    <div class="menuV"><button class="btn" id="otra">Reintentar</button><button class="btn" id="sig">Siguiente pedido</button><button class="btn sec" id="menu">Elegir escenario</button></div>
   </div>
 </div>
 
@@ -877,13 +876,10 @@ function terminar(gano,motivo){
     if(N.id==='boca')sfx.gol();
     $('finTitulo').textContent=ultimoDeTodo?'¡Entregaste todos los pedidos del país!':`¡Pedido ${PI+1} entregado!`;
     const ar=v=>v.toLocaleString('es-AR');
-    const partes=[['Rapidez',bono,'#f2a65a'],['Pisotones',pisotones*PTS_PISO,'#3fa7d6'],['Propina',ptsProp,'#f2c14e']].filter(x=>x[1]>0);
-    const sp=partes.reduce((a,x)=>a+x[1],0)||1;
     $('resumen').innerHTML=`<div class="estrellas">${[['Entregado',true],['Propina',conProp],[`Pisaste ${Math.min(pisotones,retoMeta)}/${retoMeta}`,retoOk]].map(([tx,on])=>`<div class="es${on?' on':''}"><i>★</i><span>${tx}</span></div>`).join('')}</div><div class="totalEst">${barraEstrellas(N.id,PI)}</div><div class="fila">
       <div class="tarjeta" id="rProp"><span class="lbl">💸 Propina de ${N.clientes[PI]}</span><span class="grande" style="color:${conProp?'#f2c14e':'var(--chapa)'}${conProp?'':';font-size:clamp(11px,1.6vw,14px)'}">${conProp?'$'+ar(prop):'Sin propina'}</span><span class="sub">${conProp?'+'+ar(ptsProp)+' puntos':'había que llegar en '+fmt(objetivo/60).slice(0,-2)}</span></div>
-      <div class="tarjeta"><span class="lbl">⭐ Puntos</span><span class="grande" style="color:var(--sol)">${ar(total)}</span><span class="sub">${total>record?'¡Nuevo récord!':'Récord: '+ar(record)}</span></div></div>
-      <div class="desglose" role="img" aria-label="Desglose de puntos">${partes.map(([n,v,c])=>`<i style="width:${(v/sp*100).toFixed(1)}%;background:${c}" title="${n}: ${ar(v)}"></i>`).join('')}</div>`;
-    const lin=[`⏱ Llegaste en <b>${fmt(t/60)}</b>`,`⏳ Te sobraron <b>${fmt(seg)}</b>`];
+      <div class="tarjeta"><span class="lbl">⭐ Puntos</span><span class="grande" style="color:var(--sol)">${ar(total)}</span><span class="sub">${total>record?'¡Nuevo récord!':'Récord: '+ar(record)}</span></div></div>`;
+    const lin=[`Llegaste en <b>${fmt(t/60)}</b>`,`Te sobraron <b>${fmt(seg)}</b>`];
     if(nuevo)lin.push('🔓 <b>¡Escenario nuevo desbloqueado!</b>');else if(hayProx&&!abiertoAhora)lin.push(`🔒 Para abrir el siguiente necesitás <b>${EST_REQ}★</b> (te faltan ${EST_REQ-estrellasEscenario(NI)})`);
     $('finTexto').innerHTML=lin.map(x=>`<li>${x}</li>`).join('');
     ($('sig').hidden?$('menu'):$('sig')).focus();
