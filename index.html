@@ -879,7 +879,7 @@ function terminar(gano,motivo){
     $('resumen').innerHTML=`<div class="estrellas">${[['Entregado',true],['Propina',conProp],[`Pisaste ${Math.min(pisotones,retoMeta)}/${retoMeta}`,retoOk]].map(([tx,on])=>`<div class="es${on?' on':''}"><i>★</i><span>${tx}</span></div>`).join('')}</div><div class="totalEst">${barraEstrellas(N.id,PI)}</div><div class="fila">
       <div class="tarjeta" id="rProp"><span class="lbl">💸 Propina de ${N.clientes[PI]}</span><span class="grande" style="color:${conProp?'#f2c14e':'var(--chapa)'}${conProp?'':';font-size:clamp(11px,1.6vw,14px)'}">${conProp?'$'+ar(prop):'Sin propina'}</span><span class="sub">${conProp?'+'+ar(ptsProp)+' puntos':'había que llegar en '+fmt(objetivo/60).slice(0,-2)}</span></div>
       <div class="tarjeta"><span class="lbl">⭐ Puntos</span><span class="grande" style="color:var(--sol)">${ar(total)}</span><span class="sub">${total>record?'¡Nuevo récord!':'Récord: '+ar(record)}</span></div></div>`;
-    const lin=[`Llegaste en <b>${fmt(t/60)}</b>`,`Te sobraron <b>${fmt(seg)}</b>`];
+    const lin=[];
     if(nuevo)lin.push('🔓 <b>¡Escenario nuevo desbloqueado!</b>');else if(hayProx&&!abiertoAhora)lin.push(`🔒 Para abrir el siguiente necesitás <b>${EST_REQ}★</b> (te faltan ${EST_REQ-estrellasEscenario(NI)})`);
     $('finTexto').innerHTML=lin.map(x=>`<li>${x}</li>`).join('');
     ($('sig').hidden?$('menu'):$('sig')).focus();
