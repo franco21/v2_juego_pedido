@@ -477,9 +477,9 @@ const NIVELES=[
 // parámetros de cada pedido: el 1 es un tutorial y cada uno suma largo, enemigos y mecánicas
 // dificultad: se elige en el menú y se guarda; cambia vidas, reloj, derrumbe, enemigos y plataformas móviles
 const DIFICULTADES={
-  normal:{nombre:'Normal',icono:'🙂',vidas:3,tiempo:1,derr:1,enem:0,sigue:0,moviles:0.7,vel:1,hueco:0,cable:3},
-  dificil:{nombre:'Difícil',icono:'😤',vidas:2,tiempo:0.9,derr:1.2,enem:0.2,sigue:0.2,moviles:0.8,vel:1.35,hueco:0.6,cable:5},
-  experto:{nombre:'Experto',icono:'💀',vidas:1,tiempo:0.8,derr:1.45,enem:0.35,sigue:0.35,moviles:0.9,vel:1.7,hueco:1.2,cable:7}};
+  normal:{nombre:'Normal',icono:'🙂',vidas:3,tiempo:1,derr:1,enem:0,sigue:0,moviles:0.7,vel:1,hueco:0,cable:3,azar:0},
+  dificil:{nombre:'Difícil',icono:'😤',vidas:2,tiempo:0.9,derr:1.2,enem:0.2,sigue:0.2,moviles:0.8,vel:1.35,hueco:0.6,cable:5,azar:1},
+  experto:{nombre:'Experto',icono:'💀',vidas:1,tiempo:0.8,derr:1.45,enem:0.35,sigue:0.35,moviles:0.9,vel:1.7,hueco:1.2,cable:7,azar:1.8}};
 let modo=(()=>{try{const d=localStorage.getItem('pec-dif');return DIFICULTADES[d]?d:'normal';}catch(e){return 'normal';}})();
 const DF=()=>DIFICULTADES[modo];
 // estrellas por pedido: ★ entregar, ★ ganar la propina, ★ pisar la cantidad de enemigos del reto; con 8 de 15 se abre el escenario siguiente
@@ -1322,13 +1322,14 @@ function paso(){
       const dx=P.x-e.x,cerca=Math.abs(dx)<(e.sigue?160:90)&&Math.abs(P.y-e.y)<70;
       e.persigue=e.sigue&&cerca;
       if(e.persigue){const obj=Math.abs(dx)>6?Math.sign(dx)*1.75*DF().vel:0;e.vx+=(obj-e.vx)*0.12;}
-      else if(Math.abs(e.vx)>0.95*DF().vel||Math.abs(e.vx)<0.5*DF().vel)e.vx=Math.sign(e.vx||1)*0.9*DF().vel;
+      else if(!DF().azar&&(Math.abs(e.vx)>0.95*DF().vel||Math.abs(e.vx)<0.5*DF().vel))e.vx=Math.sign(e.vx||1)*0.9*DF().vel;
       e.cd--;if(e.guau>0)e.guau--;
       if(cerca&&e.cd<=0){sfx.voz(e.skin,Math.max(-1,Math.min(1,(e.x-P.x)/120)));e.guau=30;e.cd=(e.persigue?60:100)+Math.random()*50;}
     }
     if(e.tipo==='techo')techoPaso(e);
     if(e.tipo==='moto'){if(e.skin==='tucan'){const tu=plataformas.find(p=>p.t==='tunel'&&e.x+e.w>p.x-70&&e.x<p.x+p.w+30);e.base+=((tu?tu.y-44:GY-22)-e.base)*0.1;e.y=e.base+Math.sin(t*0.15)*2;} // si ya venía volando, pasa por encima del cerro
       if(e.skin==='remolino')e.vx=(-1.6+Math.sin(t*0.05)*0.6)*DF().vel;}
+    azarEnemigo(e);
     e.x+=e.vx;
     if(e.tipo==='perro'&&e.persigue){if(e.x<e.smin){e.x=e.smin;e.vx=0;}if(e.x+e.w>e.smax){e.x=e.smax-e.w;e.vx=0;}}
     if(e.tipo!=='moto'&&!e.persigue){if(e.x<e.min){e.x=e.min;e.vx*=-1;}if(e.x+e.w>e.max){e.x=e.max-e.w;e.vx*=-1;}}
@@ -2648,6 +2649,18 @@ function dibujarCasaTecho(c){
   R(x+8,y+14,16,13,'#2e2a3a');R(x+10,y+16,12,4,luz);ctx.fillStyle='#6d6a73';for(let k=0;k<5;k++)ctx.fillRect(x+9+k*4,y+14,1,13);
   R(x+c.w-24,GY-24,13,24,d.puerta);R(x+c.w-14,GY-12,2,2,'#e8b04a');
   R(x+6,y+38,30,3,'#5a5f66');for(let k=0;k<4;k++)R(x+8+k*8,y+41,1,8,'#5a5f66');
+}
+// en Difícil y Experto los enemigos que patrullan no repiten el recorrido: cada tanto giran, se frenan un rato o cambian de velocidad (azar = más seguido)
+function azarEnemigo(e){
+  const A=DF().azar;if(!A||e.tipo==='moto')return;
+  if(e.persigue){e.paso=0;return;}
+  if(e.paso===undefined){e.paso=0;e.v0=({perro:0.9,techo:0.25}[e.tipo]||0.55)*DF().vel;}
+  if(--e.paso>0)return;
+  const r=Math.random(),d=Math.sign(e.vx)||(Math.random()<.5?1:-1);
+  e.paso=Math.round((30+Math.random()*90)/A);
+  if(r<0.25)e.vx=-d*e.v0*(0.6+Math.random()*0.8); // da media vuelta
+  else if(r<0.4){e.vx=d*0.01;e.paso=Math.round(15+Math.random()*30);} // se frena un rato (queda mirando para el mismo lado)
+  else e.vx=d*e.v0*(0.5+Math.random()*0.9); // sigue pero a otra velocidad
 }
 function techoPaso(e){
   const dx=P.x-e.x;
