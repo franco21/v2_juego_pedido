@@ -141,10 +141,10 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 #titulo #tInventario{margin-right:calc(var(--o)*-1);padding-right:calc(var(--o) + 12px)}
 #titulo #tOpciones{margin-left:calc(var(--o)*-1);padding-left:calc(var(--o) + 12px)}
 @keyframes tPop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.12);opacity:1}100%{transform:scale(1);opacity:1}}
-@keyframes tSale{0%{transform:translateX(var(--x));opacity:0}25%{opacity:1}100%{transform:translateX(0);opacity:1}}
+@keyframes tFundido{from{opacity:0}to{opacity:1}}
 #titulo #tJugar{animation:tPop .5s cubic-bezier(.3,.7,.4,1) both}
-#titulo #tOpciones{--x:calc(var(--d)/-2 - (5.7em + var(--o) + 36px)/2 + var(--o));animation:tSale .45s ease-out .55s both}
-#titulo #tInventario{--x:calc(var(--d)/2 + (5.7em + var(--o) + 36px)/2 - var(--o));animation:tSale .45s ease-out 1.05s both}
+#titulo #tOpciones{animation:tFundido .45s ease-out .55s both}
+#titulo #tInventario{animation:tFundido .45s ease-out 1.05s both}
 @media (prefers-reduced-motion:reduce){#titulo #tJugar,#titulo #tOpciones,#titulo #tInventario{animation:none}}
 #opciones button.btn,#inventario button.btn,#inventario .invOpc .dif,#guia button.btn{border-radius:9px}
 .opc{display:flex;flex-direction:column;gap:8px;width:min(100%,460px);font-family:var(--display)}
