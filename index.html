@@ -229,11 +229,11 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
     <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
     <h1>Pedido en Camino</h1>
     <p class="sub">Un repartidor, un pedido y el reloj corriendo.</p>
-    <div class="menuV"><button class="btn" id="tJugar">▶ Jugar</button><button class="btn sec" id="tInventario">🎒 Inventario</button><button class="btn sec" id="tOpciones">⚙ Opciones</button></div>
+    <div class="menuV"><button class="btn" id="tJugar">Jugar</button><button class="btn sec" id="tInventario">Inventario</button><button class="btn sec" id="tOpciones">Opciones</button></div>
   </div>
   <div class="capa" id="inicio">
     <button class="mute btnPantalla" style="position:absolute;top:8px;right:8px" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button>
-    <div style="position:absolute;top:8px;left:8px;display:flex;gap:6px"><button class="mute" id="aTitulo">‹ Inicio</button><button class="mute" id="verGuia">❓ Cómo se juega</button></div>
+    <div style="position:absolute;top:8px;left:8px;display:flex;gap:6px"><button class="mute" id="aTitulo">Inicio</button><button class="mute" id="verGuia">Cómo se juega</button></div>
     <h1>Pedido en Camino</h1>
     <p>Nueve lugares del país, cinco pedidos en cada uno. Sumá ★ para abrir el escenario siguiente: una por entregar, otra por ganar la propina y otra por pisar enemigos.</p>
     <div class="dificultad" id="dificultad" role="group" aria-label="Dificultad"></div>
@@ -253,28 +253,28 @@ body.touch .hud{gap:4px 10px;padding:6px 10px}
 
   <div class="capa" id="pausaCapa" hidden>
     <h2>Pausa</h2>
-    <div class="menuV"><button class="btn" id="pSeguir">▶ Seguir</button><button class="btn sec" id="pReiniciar">↻ Reiniciar pedido</button><button class="btn sec" id="pOpciones">⚙ Opciones</button><button class="btn sec" id="pMenu">⌂ Menú principal</button></div>
+    <div class="menuV"><button class="btn" id="pSeguir">Seguir</button><button class="btn sec" id="pReiniciar">Reiniciar pedido</button><button class="btn sec" id="pOpciones">Opciones</button><button class="btn sec" id="pMenu">Menú principal</button></div>
   </div>
   <div class="capa" id="opciones" hidden>
     <h2>Opciones</h2>
     <div class="opc">
-      <label>🔊 Efectos<input type="range" id="volEf" min="0" max="100" step="5"><b id="volEfN">100</b></label>
-      <label>🌲 Ambiente<input type="range" id="volAm" min="0" max="100" step="5"><b id="volAmN">100</b></label>
-      <div class="botones"><button class="btn sec" id="optSonido">🔊 Sonido activado</button></div>
-      <div class="botones" id="optBorrarFila"><button class="btn sec" id="borrarBtn">🗑 Borrar progreso</button><span id="borrarConf" hidden>¿Seguro? Se borran estrellas y récords. <button class="btn" id="borrarSi">Sí, borrar</button> <button class="btn sec" id="borrarNo">No</button></span></div>
-      <div class="botones"><button class="btn sec" id="optPriv">🔒 Privacidad</button></div>
-      <div class="botones"><button class="btn sec" id="optCred">🎵 Créditos</button></div>
+      <label>Efectos<input type="range" id="volEf" min="0" max="100" step="5"><b id="volEfN">100</b></label>
+      <label>Ambiente<input type="range" id="volAm" min="0" max="100" step="5"><b id="volAmN">100</b></label>
+      <div class="botones"><button class="btn sec" id="optSonido">Sonido activado</button></div>
+      <div class="botones" id="optBorrarFila"><button class="btn sec" id="borrarBtn">Borrar progreso</button><span id="borrarConf" hidden>¿Seguro? Se borran estrellas y récords. <button class="btn" id="borrarSi">Sí, borrar</button> <button class="btn sec" id="borrarNo">No</button></span></div>
+      <div class="botones"><button class="btn sec" id="optPriv">Privacidad</button></div>
+      <div class="botones"><button class="btn sec" id="optCred">Créditos</button></div>
       <div class="opcMsg" id="opcMsg" role="status"></div>
     </div>
-    <div class="botones"><button class="btn" id="optVolver">‹ Volver</button></div>
+    <div class="botones"><button class="btn" id="optVolver">Volver</button></div>
   </div>
   <div class="capa" id="inventario" hidden>
-    <h2>🎒 Inventario</h2>
+    <h2>Inventario</h2>
     <div class="inv">
       <div class="invVista"><canvas id="invCv" aria-label="Vista previa del repartidor"></canvas></div>
       <div class="invCats" id="invCats"></div>
     </div>
-    <div class="botones"><button class="btn" id="invVolver">‹ Volver</button></div>
+    <div class="botones"><button class="btn" id="invVolver">Volver</button></div>
   </div>
   <div class="capa" id="guia" hidden>
     <h2>Cómo se juega</h2>
@@ -721,11 +721,11 @@ function leerRecord(id){try{return +localStorage.getItem('pec-rec-'+id)||0;}catc
 function leerProg(id){try{return +localStorage.getItem('pec-prog-'+id+sufModo())||0;}catch(e){return 0;}}
 function guardarProg(id,n){try{if(n>leerProg(id))localStorage.setItem('pec-prog-'+id+sufModo(),n);}catch(e){}}
 function armarMenu(){
-  $('dificultad').innerHTML=Object.entries(DIFICULTADES).map(([k,d])=>`<button class="dif" data-d="${k}" aria-pressed="${k===modo}">${d.icono} ${d.nombre}</button>`).join('')+`<small>${DF().vidas} ${DF().vidas>1?'vidas':'vida'} · reloj al ${Math.round(DF().tiempo*100)}%</small>`;
+  $('dificultad').innerHTML=Object.entries(DIFICULTADES).map(([k,d])=>`<button class="dif" data-d="${k}" aria-pressed="${k===modo}">${d.nombre}</button>`).join('')+`<small>${DF().vidas} ${DF().vidas>1?'vidas':'vida'} · reloj al ${Math.round(DF().tiempo*100)}%</small>`;
   $('dificultad').querySelectorAll('.dif').forEach(b=>b.onclick=()=>{modo=b.dataset.d;try{localStorage.setItem('pec-dif',modo);}catch(e){}armarMenu();});
   $('niveles').innerHTML=NIVELES.map((n,i)=>{const pr=leerProg(n.id);
     if(escenarioAbierto(i))return `<button class="nivel" data-i="${i}"><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>${n.nombre}</b><span>Entregados ${pr}/5 · ★ ${estrellasEscenario(i)}/15</span></button>`;
-    return `<button class="nivel bloq" data-i="${i}" disabled><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>🔒 ${n.nombre}</b><span>Necesitás ${EST_REQ}★ en ${NIVELES[i-1].nombre} (${estrellasEscenario(i-1)}/${EST_REQ})</span></button>`;}).join('');
+    return `<button class="nivel bloq" data-i="${i}" disabled><span><span class="num">${i+1}</span> · ${n.lugar}</span><b>${n.nombre}</b><span>Necesitás ${EST_REQ}★ en ${NIVELES[i-1].nombre} (${estrellasEscenario(i-1)}/${EST_REQ})</span></button>`;}).join('');
   $('niveles').querySelectorAll('.nivel:not(.bloq)').forEach(b=>{b.onclick=()=>abrirBrief(+b.dataset.i);b.onfocus=b.onmouseenter=()=>{if(estado==='inicio'&&NI!==+b.dataset.i){cargarNivel(+b.dataset.i);}};});
 }
 function mostrar(id){['titulo','inicio','brief','fin','guia','opciones','inventario'].forEach(c=>$(c).hidden=c!==id);$('tactil').hidden=id!==null;$('pausaCapa').hidden=true;if(id!==null)$('pista').hidden=true;}
@@ -762,7 +762,7 @@ $('aTitulo').onclick=abrirTitulo;
 let opcDesde='titulo';
 function pintarOpciones(){
   $('volEf').value=volEf;$('volEfN').textContent=volEf;$('volAm').value=volAm;$('volAmN').textContent=volAm;
-  $('optSonido').textContent=mudo?'🔇 Sonido apagado':'🔊 Sonido activado';
+  $('optSonido').textContent=mudo?'Sonido apagado':'Sonido activado';
   $('optBorrarFila').hidden=opcDesde==='pausa';$('borrarBtn').hidden=false;$('borrarConf').hidden=true;$('opcMsg').textContent='';
 }
 function abrirOpciones(desde){opcDesde=desde;if(desde!=='pausa')estado='opciones';mostrar('opciones');pintarOpciones();$('optVolver').focus();}
@@ -803,7 +803,7 @@ function abrirBrief(i,pi){
   estado='brief';audioInit();ambienteNivel(N.id);
   $('bLugar').textContent=N.lugar;$('bNombre').textContent=`${NI+1}. ${N.nombre}`;
   $('bEstrellas').innerHTML=barraEstrellas(N.id,PI);
-  $('pedidos').innerHTML=[0,1,2,3,4].map(k=>{const e=leerEstrellas(N.id,k);return `<button class="ped" data-k="${k}" aria-pressed="${k===PI}" ${k>prog?'disabled':''}>${k>prog?'🔒 ':''}Pedido ${k+1}${k<prog?' '+'★'.repeat(e)+'☆'.repeat(3-e):''}</button>`;}).join('');
+  $('pedidos').innerHTML=[0,1,2,3,4].map(k=>{const e=leerEstrellas(N.id,k);return `<button class="ped" data-k="${k}" aria-pressed="${k===PI}" ${k>prog?'disabled':''}>Pedido ${k+1}${k<prog?' '+'★'.repeat(e)+'☆'.repeat(3-e):''}</button>`;}).join('');
   $('pedidos').querySelectorAll('.ped').forEach(b=>b.onclick=()=>abrirBrief(NI,+b.dataset.k));
   const rec=leerRecord(claveRec()),seg=segundosPedido();
   $('bTicket').innerHTML=`PEDIDO #${NI+1}${PI+1}${(NI*7+PI*3)%10}${(NI+PI*5)%10} · ${DF().icono} ${DF().nombre}<br>${N.pedidos[PI]}<br>Cliente: ${N.clientes[PI]} · Tiempo: ${fmt(seg).slice(0,-2)} · ${DF().vidas} ${DF().vidas>1?'vidas':'vida'}<br>${ESTACIONES[EST].icono} ${ESTACIONES[EST].nombre}${N.noche?' · 🌙 Noche de apagón':''}`+(rec?` · Récord ${rec.toLocaleString('es-AR')}`:'')+`<br>★ entregar · ★ propina (llegá en ${fmt(TOT*0.55/60).slice(0,-2)}) · ★ pisá ${retoMeta} enemigo${retoMeta>1?'s':''}`;
@@ -1116,7 +1116,7 @@ const AMB={
       tono(ac[0],ac[0],corch*5,'triangle',0.08,c,mus);
       [1,2,3,2,1].forEach((k,j)=>tono(ac[k]*2,ac[k]*2,0.9,'triangle',0.035,c+corch*(j+1),mus));});
   },
-  // música de la pantalla de título: sigue hasta que se toca ▶ Jugar y se pasa al ambiente del escenario
+  // música de la pantalla de título: sigue hasta que se toca Jugar y se pasa al ambiente del escenario
   titulo(bus,gen){
     const mus=filtroMusica(bus,2400,1.4),negra=60/100;
     const bajo=[130.8,110,87.3,98],arp=[[261.6,329.6,392],[220,261.6,329.6],[174.6,220,261.6],[196,246.9,293.7]];
@@ -2214,10 +2214,10 @@ function dibujarItem(m){
 // =====================================================================
 // estilo del repartidor: cada catálogo es [id guardado, nombre en el menú]; los dibujos están en REMERAS, PANTALONES, zapato() y sombrero()
 const ESTILO_CATS=[
-  {id:'s',nombre:'Sombrero',titulo:'🧢 Sombrero',op:[['gorra','Gorra'],['lana','Gorro de lana'],['paja','Sombrero de paja'],['casco','Casco'],['boina','Boina'],['nada','Sin sombrero']]},
-  {id:'r',nombre:'Remera',titulo:'👕 Remera',op:[['verde','Verde 65'],['celeste','Celeste y blanca'],['boca','Azul y oro'],['roja','Roja'],['negra','Negra'],['naranja','Naranja']]},
-  {id:'p',nombre:'Pantalón',titulo:'👖 Pantalón',op:[['oscuro','Clásico'],['jean','Jean'],['gris','Jogging'],['bermuda','Bermuda'],['short','Short rojo']]},
-  {id:'z',nombre:'Calzado',titulo:'👟 Calzado',op:[['clasicas','Zapatillas'],['botas','Botas'],['montana','Zapatillas de montaña'],['roller','Rollers'],['ojotas','Ojotas'],['descalzo','Descalzo']]},
+  {id:'s',nombre:'Sombrero',titulo:'Sombrero',op:[['gorra','Gorra'],['lana','Gorro de lana'],['paja','Sombrero de paja'],['casco','Casco'],['boina','Boina'],['nada','Sin sombrero']]},
+  {id:'r',nombre:'Remera',titulo:'Remera',op:[['verde','Verde 65'],['celeste','Celeste y blanca'],['boca','Azul y oro'],['roja','Roja'],['negra','Negra'],['naranja','Naranja']]},
+  {id:'p',nombre:'Pantalón',titulo:'Pantalón',op:[['oscuro','Clásico'],['jean','Jean'],['gris','Jogging'],['bermuda','Bermuda'],['short','Short rojo']]},
+  {id:'z',nombre:'Calzado',titulo:'Calzado',op:[['clasicas','Zapatillas'],['botas','Botas'],['montana','Zapatillas de montaña'],['roller','Rollers'],['ojotas','Ojotas'],['descalzo','Descalzo']]},
 ];
 const REMERAS={ // b: color base, v: rayas verticales, h: franja horizontal, n: color del número
   verde:{b:'#3f9a4a',n:'#f4ecdf'},
