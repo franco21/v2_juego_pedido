@@ -142,10 +142,11 @@ button.btn:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
 #titulo #tOpciones{margin-left:calc(var(--o)*-1);padding-left:calc(var(--o) + 12px)}
 @keyframes tPop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.12);opacity:1}100%{transform:scale(1);opacity:1}}
 @keyframes tFundido{from{opacity:0}to{opacity:1}}
-#titulo #tJugar{animation:tPop .5s cubic-bezier(.3,.7,.4,1) both}
-#titulo #tOpciones{animation:tFundido .45s ease-out .55s both}
-#titulo #tInventario{animation:tFundido .45s ease-out 1.05s both}
-@media (prefers-reduced-motion:reduce){#titulo #tJugar,#titulo #tOpciones,#titulo #tInventario{animation:none}}
+#titulo .menuV button{opacity:0}
+#titulo.anim #tJugar{animation:tPop .5s cubic-bezier(.3,.7,.4,1) both}
+#titulo.anim #tOpciones{animation:tFundido .45s ease-out .55s both}
+#titulo.anim #tInventario{animation:tFundido .45s ease-out 1.05s both}
+@media (prefers-reduced-motion:reduce){#titulo .menuV button{opacity:1!important;animation:none!important}}
 #opciones button.btn,#inventario button.btn,#inventario .invOpc .dif,#guia button.btn{border-radius:9px}
 .opc{display:flex;flex-direction:column;gap:8px;width:min(100%,460px);font-family:var(--display)}
 .opc label{display:grid;grid-template-columns:7em 1fr 3ch;align-items:center;gap:10px;text-align:left;font-size:clamp(12px,1.8vw,16px);color:var(--cal)}
@@ -766,7 +767,8 @@ $('guiaSig').onclick=()=>{if(guiaN<pasosGuia().length-1){guiaN++;pintarGuia();}e
 $('guiaOmitir').onclick=cerrarGuia;
 $('verGuia').onclick=abrirGuia;
 // ---------- título y opciones ----------
-function abrirTitulo(){estado='titulo';$('izq').hidden=true;$('hud').hidden=true;$('reloj').hidden=true;mostrar('titulo');$('tJugar').focus();audioInit();ambienteNivel('titulo');}
+function animarTitulo(){const t=$('titulo');t.classList.remove('anim');void t.offsetWidth;requestAnimationFrame(()=>t.classList.add('anim'));} // reinicia la entrada de los botones cada vez que se vuelve al menú principal
+function abrirTitulo(){estado='titulo';$('izq').hidden=true;$('hud').hidden=true;$('reloj').hidden=true;mostrar('titulo');animarTitulo();$('tJugar').focus();audioInit();ambienteNivel('titulo');}
 // el navegador no deja sonar hasta el primer toque o tecla: ahí arranca la música del título
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>audioInit(),{once:true,capture:true}));
 $('tJugar').onclick=()=>{audioInit();if(!guiaVista())abrirGuia();else abrirMenu();};
